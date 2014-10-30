@@ -37,7 +37,6 @@ function addon:InjectPaperDollSidebarTab(name, frame, icon, texCoords)
 		prevSetLevel()
 
 		if CharacterFrameInsetRight:IsVisible() then
-			local i
 			for i = 1, CharacterLevelText:GetNumPoints() do
 				point, relativeTo, relativePoint, xOffset, yOffset = CharacterLevelText:GetPoint(i)
 				if point == "CENTER" then
@@ -52,4 +51,31 @@ function addon:OnEnable()
 end
 
 function addon:OnDisable()
+end
+
+function addon:GetProfiles()
+	local profiles = self.db.global.profiles
+
+	if not profiles then
+		profiles = {}
+		self.db.global.profiles = profiles
+	end
+
+	local sorted = {}
+	for k, v in pairs(profiles) do
+		v.name = k
+		table.insert(sorted, v)
+	end
+
+	local class = select(3, UnitClass("player"))
+
+	table.sort(sorted, function(a, b)
+		if a.class == b.class then
+			return a.name < b.name
+		else
+			return a.class == class
+		end
+	end)
+
+	return sorted
 end
