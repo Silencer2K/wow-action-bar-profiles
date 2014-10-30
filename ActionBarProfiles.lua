@@ -13,6 +13,8 @@ function addon:OnInitialize()
 		"Interface\\AddOns\\ActionBarProfiles\\assets\\CharDollBtn",
 		{ 0, 0.515625, 0, 0.13671875 }
 	)
+
+	PaperDollActionBarProfilesPane:OnInitialize()
 end
 
 function addon:InjectPaperDollSidebarTab(name, frame, icon, texCoords)
