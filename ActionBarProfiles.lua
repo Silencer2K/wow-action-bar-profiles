@@ -8,7 +8,7 @@ function addon:OnInitialize()
 	self.db = LibStub("AceDB-3.0"):New(addonName .. "DB")
 
 	self:InjectPaperDollSidebarTab(
-		L.charframe_button_hint,
+		L.charframe_tab,
 		"PaperDollActionBarProfilesPane",
 		"Interface\\AddOns\\ActionBarProfiles\\assets\\CharDollBtn",
 		{ 0, 0.515625, 0, 0.13671875 }
