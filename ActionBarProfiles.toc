@@ -2,7 +2,7 @@
 ## Title: Action Bar Profiles
 ## Author: silencer2k@gmail.com
 ## SavedVariables: ActionBarProfilesDB
-## Version: 0.1
+## Version: 0.1-beta
 
 locales\enUS.lua
 locales\ruRU.lua
