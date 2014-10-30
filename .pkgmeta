@@ -1,0 +1,12 @@
+package-as: ActionBarProfiles
+
+enable-nolib-creation: no
+
+externals:
+    libs/LibStub: svn://svn.wowace.com/wow/ace3/mainline/trunk/LibStub
+    libs/AceAddon-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceAddon-3.0
+    libs/AceDB-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDB-3.0
+    libs/AceLocale-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceLocale-3.0
+
+ignore:
+    assets/src

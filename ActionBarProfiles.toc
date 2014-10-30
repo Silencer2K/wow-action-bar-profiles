@@ -1,0 +1,24 @@
+## Interface: 60000
+## Title: Action Bar Profiles
+## Author: silencer2k@gmail.com
+## SavedVariables: ActionBarProfilesDB
+## Version: 0.1
+
+locales\enUS.lua
+locales\ruRU.lua
+
+locales\deDE.lua
+locales\esES.lua
+locales\esMX.lua
+locales\frFR.lua
+locales\itIT.lua
+locales\koKR.lua
+locales\ptBR.lua
+locales\zhCN.lua
+locales\zhTW.lua
+
+ActionBarProfiles.xml
+ActionBarProfiles.lua
+
+ABPFrame.xml
+ABPFrame.lua
