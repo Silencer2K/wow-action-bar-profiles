@@ -15,10 +15,6 @@ function frame:OnInitialize()
 	self.UseProfile:SetFrameLevel(self:GetFrameLevel() + 3)
 	self.SaveProfile:SetFrameLevel(self:GetFrameLevel() + 3)
 
-	self:SetScript("OnShow", function() self:OnShow() end)
-	self:SetScript("OnHide", function() self:OnHide() end)
-	self:SetScript("OnUpdate", function() self:OnUpdate() end)
-
 	HybridScrollFrame_OnLoad(self)
 	self.update = function() self:Update() end
 
@@ -57,9 +53,39 @@ function frame:OnUpdate()
 	end
 end
 
+function frame:OnProfileClick(button)
+	if button.name and button.name ~= "" then
+		PlaySound("igMainMenuOptionCheckBoxOn")
+
+		self.selectedName = button.name
+		self:Update()
+	else
+		self.selectedName = nil
+		self:Update()
+	end
+end
+
+function frame:OnProfileDoubleClick(button)
+end
+
+function frame:OnDeleteClick(button)
+end
+
+function frame:OnEditClick(button)
+	self:OnProfileClick(button)
+end
+
 function frame:Update()
 	local profiles = addon:GetProfiles()
 	local numRows = #profiles + 1
+
+	if self.selectedName then
+		self.UseProfile:Enable()
+		self.SaveProfile:Enable()
+	else
+		self.UseProfile:Disable()
+		self.SaveProfile:Disable()
+	end
 
 	HybridScrollFrame_Update(self, numRows * ACTION_BAR_PROFILE_BUTTON_HEIGHT + self.UseProfile:GetHeight() + 20, self:GetHeight())
 
@@ -97,6 +123,12 @@ function frame:Update()
 
 				button.icon:SetSize(36, 36)
 				button.icon:SetPoint("LEFT", 4, 0)
+
+				if self.selectedName and self.selectedName == profile.name then
+					button.SelectedBar:Show()
+				else
+					button.SelectedBar:Hide()
+				end
 			end
 
 			if ((i + scrollOffset) == 1) then

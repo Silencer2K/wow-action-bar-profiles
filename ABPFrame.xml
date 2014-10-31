@@ -39,6 +39,17 @@
 				</Anchors>
 			</Slider>
 		</Frames>
+		<Scripts>
+			<OnShow>
+				self:OnShow()
+			</OnShow>
+			<OnHide>
+				self:OnHide()
+			</OnHide>
+			<OnUpdate>
+				self:OnUpdate()
+			</OnUpdate>
+		</Scripts>
 	</ScrollFrame>
 
 	<Button name="ActionBarProfileButtonTemplate" virtual="true">
@@ -106,6 +117,26 @@
 						<Texture file="Interface\Buttons\UI-GroupLoot-Pass-Up" alpha="0.5" parentKey="texture"/>
 					</Layer>
 				</Layers>
+				<Scripts>
+					<OnEnter>
+						self.texture:SetAlpha(1.0)
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+						GameTooltip:SetText(DELETE)
+					</OnEnter>
+					<OnLeave>
+						self.texture:SetAlpha(0.5)
+						GameTooltip_Hide()
+					</OnLeave>
+					<OnMouseDown>
+						self.texture:SetPoint("TOPLEFT", 1, -1)
+					</OnMouseDown>
+					<OnMouseUp>
+						self.texture:SetPoint("TOPLEFT", 0, 0)
+					</OnMouseUp>
+					<OnClick>
+						PaperDollActionBarProfilesPane:OnDeleteClick(self:GetParent())
+					</OnClick>
+				</Scripts>
 			</Button>
 			<Button name="$parentEditButton" parentKey="EditButton" hidden="true">
 				<Size>
@@ -119,6 +150,26 @@
 						<Texture file="Interface\WorldMap\GEAR_64GREY" alpha="0.5" parentKey="texture"/>
 					</Layer>
 				</Layers>
+				<Scripts>
+					<OnEnter>
+						self.texture:SetAlpha(1.0)
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+						GameTooltip:SetText(EDIT)
+					</OnEnter>
+					<OnLeave>
+						self.texture:SetAlpha(0.5)
+						GameTooltip_Hide()
+					</OnLeave>
+					<OnMouseDown>
+						self.texture:SetPoint("TOPLEFT", 1, -1)
+					</OnMouseDown>
+					<OnMouseUp>
+						self.texture:SetPoint("TOPLEFT", 0, 0)
+					</OnMouseUp>
+					<OnClick>
+						PaperDollActionBarProfilesPane:OnEditClick(self:GetParent())
+					</OnClick>
+				</Scripts>
 			</Button>
 		</Frames>
 		<NormalTexture name="$parentIcon" parentKey="icon">
@@ -137,6 +188,12 @@
 			<OnLoad>
 				SetClampedTextureRotation(self.BgBottom, 180)
 			</OnLoad>
+			<OnClick>
+				PaperDollActionBarProfilesPane:OnProfileClick(self)
+			</OnClick>
+			<OnDoubleClick>
+				PaperDollActionBarProfilesPane:OnProfileDoubleClick(self)
+			</OnDoubleClick>
 		</Scripts>
 	</Button>
 </Ui>
