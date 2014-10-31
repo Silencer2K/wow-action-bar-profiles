@@ -15,6 +15,7 @@ function addon:OnInitialize()
 	)
 
 	PaperDollActionBarProfilesPane:OnInitialize()
+	PaperDollActionBarProfilesSaveDialog:OnInitialize()
 end
 
 function addon:InjectPaperDollSidebarTab(name, frame, icon, texCoords)

@@ -22,3 +22,6 @@ ActionBarProfiles.lua
 
 ABPFrame.xml
 ABPFrame.lua
+
+ABPSaveDialog.xml
+ABPSaveDialog.lua

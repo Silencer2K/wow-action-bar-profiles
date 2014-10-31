@@ -21,12 +21,22 @@
 						</Texture>
 					</Layer>
 				</Layers>
+				<Scripts>
+					<OnClick>
+						PaperDollActionBarProfilesPane:OnUseClick()
+					</OnClick>
+				</Scripts>
 			</Button>
 			<Button name="$parentSaveProfile" text="SAVE" parentKey="SaveProfile" inherits="UIPanelButtonTemplate">
 				<Size x="87" y="22"/>
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parentUseProfile" relativePoint="RIGHT"/>
 				</Anchors>
+				<Scripts>
+					<OnClick>
+						PaperDollActionBarProfilesPane:OnSaveClick()
+					</OnClick>
+				</Scripts>
 			</Button>
 			<Slider name="$parentScrollBar" inherits="HybridScrollBarTemplate" parentKey="scrollBar">
 				<Anchors>

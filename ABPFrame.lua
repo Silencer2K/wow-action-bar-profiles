@@ -2,10 +2,11 @@ local addonName, addon = ...
 
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
-local frame = PaperDollActionBarProfilesPane
-
 local STRIPE_COLOR = { r = 0.9, g = 0.9, b = 1 }
 local ACTION_BAR_PROFILE_BUTTON_HEIGHT = 44
+
+local frame = PaperDollActionBarProfilesPane
+local saveDialog = PaperDollActionBarProfilesSaveDialog
 
 function frame:OnInitialize()
 	self.scrollBar.doNotHide = 1
@@ -73,6 +74,12 @@ end
 
 function frame:OnEditClick(button)
 	self:OnProfileClick(button)
+end
+
+function frame:OnUseClick()
+end
+
+function frame:OnSaveClick()
 end
 
 function frame:Update()
