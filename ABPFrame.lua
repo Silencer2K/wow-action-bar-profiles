@@ -5,6 +5,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 local frame = PaperDollActionBarProfilesPane
 
 local STRIPE_COLOR = { r = 0.9, g = 0.9, b = 1 }
+local ACTION_BAR_PROFILE_BUTTON_HEIGHT = 44
 
 function frame:OnInitialize()
 	self.scrollBar.doNotHide = 1
@@ -21,12 +22,12 @@ function frame:OnInitialize()
 	HybridScrollFrame_OnLoad(self)
 	self.update = function() self:Update() end
 
-	HybridScrollFrame_CreateButtons(self, "GearSetButtonTemplate", 2, -(self.UseProfile:GetHeight() + 4))
+	HybridScrollFrame_CreateButtons(self, "ActionBarProfileButtonTemplate", 2, -(self.UseProfile:GetHeight() + 4))
 	self:Update()
 end
 
 function frame:OnShow()
-	HybridScrollFrame_CreateButtons(self, "GearSetButtonTemplate")
+	HybridScrollFrame_CreateButtons(self, "ActionBarProfileButtonTemplate")
 	self:Update()
 end
 
@@ -60,9 +61,10 @@ function frame:Update()
 	local profiles = addon:GetProfiles()
 	local numRows = #profiles + 1
 
-	HybridScrollFrame_Update(self, numRows * EQUIPMENTSET_BUTTON_HEIGHT + self.UseProfile:GetHeight() + 20, self:GetHeight())
+	HybridScrollFrame_Update(self, numRows * ACTION_BAR_PROFILE_BUTTON_HEIGHT + self.UseProfile:GetHeight() + 20, self:GetHeight())
 
 	local scrollOffset = HybridScrollFrame_GetOffset(self)
+	local class = select(2, UnitClass("player"))
 
 	for i = 1, #self.buttons do
 		local button = self.buttons[i]
@@ -86,6 +88,9 @@ function frame:Update()
 				button.name = profile.name
 
 				button.text:SetText(profile.name)
+				if profile.class ~= class then
+					button.text:SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
+				end
 
 				button.icon:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
 				button.icon:SetTexCoord(unpack(CLASS_ICON_TCOORDS[profile.class]))
