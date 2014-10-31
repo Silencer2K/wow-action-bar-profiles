@@ -38,7 +38,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-			</Layer>  
+			</Layer>
 			<Layer level="ARTWORK">
 				<FontString inherits="GameFontHighlightSmall" name="$parentNameText" parentKey="NameText">
 					<Anchors>
