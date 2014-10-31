@@ -23,7 +23,7 @@
 				</Layers>
 				<Scripts>
 					<OnClick>
-						PaperDollActionBarProfilesPane:OnUseClick()
+						self:GetParent():OnUseClick()
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -34,7 +34,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						PaperDollActionBarProfilesPane:OnSaveClick()
+						self:GetParent():OnSaveClick()
 					</OnClick>
 				</Scripts>
 			</Button>

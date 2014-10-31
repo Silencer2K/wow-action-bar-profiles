@@ -49,5 +49,82 @@
 				</FontString>
 			</Layer>
 		</Layers>
+		<Frames>
+			<EditBox name="$parentEditBox" letters="16" historyLines="0" autoFocus="true" parentKey="EditBox">
+				<Size x="182" y="20"/>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="29" y="-35"/>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentLeft" file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
+							<Size x="12" y="29"/>
+							<Anchors>
+								<Anchor point="TOPLEFT">
+									<Offset x="-11" y="0"/>
+								</Anchor>
+							</Anchors>
+							<TexCoords left="0" right="0.09375" top="0" bottom="1.0"/>
+						</Texture>
+						<Texture name="$parentMiddle" file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
+							<Size x="175" y="29"/>
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT"/>
+							</Anchors>
+							<TexCoords left="0.09375" right="0.90625" top="0" bottom="1.0"/>
+						</Texture>
+						<Texture name="$parentRight" file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
+							<Size x="12" y="29"/>
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parentMiddle" relativePoint="RIGHT"/>
+							</Anchors>
+							<TexCoords left="0.90625" right="1.0" top="0" bottom="1.0"/>
+						</Texture>
+					</Layer>
+				</Layers>
+				<FontString inherits="ChatFontNormal"/>
+				<Scripts>
+					<OnEscapePressed>
+						self:GetParent():OnCancelClick()
+					</OnEscapePressed>
+					<OnEnterPressed>
+						if self:GetParent().Okay:IsEnabled() then
+							self:GetParent():OnOkayClick()
+						end
+					</OnEnterPressed>
+					<OnTextChanged>
+						self:GetParent():Update()
+					</OnTextChanged>
+				</Scripts>
+			</EditBox>
+			<Button name="$parentCancel" inherits="UIPanelButtonTemplate" text="CANCEL">
+				<Size x="78" y="22"/>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="-11" y="13"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						self:GetParent():OnCancelClick()
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentOkay" inherits="UIPanelButtonTemplate" text="OKAY" parentKey="Okay">
+				<Size x="78" y="22"/>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$parentCancel" relativePoint="BOTTOMLEFT">
+						<Offset x="-2" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						self:GetParent():OnOkayClick()
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
 	</Frame>
 </Ui>

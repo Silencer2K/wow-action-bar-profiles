@@ -80,3 +80,21 @@ function addon:GetProfiles()
 
 	return sorted
 end
+
+function addon:GetProfile(name)
+	local profiles = self.db.global.profiles
+
+	if not profiles then
+		profiles = {}
+		self.db.global.profiles = profiles
+	end
+
+	local profile = profiles[name]
+
+	if profile then
+		profile.name = name
+		return profile
+	end
+
+	return
+end

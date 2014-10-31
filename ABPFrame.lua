@@ -6,7 +6,6 @@ local STRIPE_COLOR = { r = 0.9, g = 0.9, b = 1 }
 local ACTION_BAR_PROFILE_BUTTON_HEIGHT = 44
 
 local frame = PaperDollActionBarProfilesPane
-local saveDialog = PaperDollActionBarProfilesSaveDialog
 
 function frame:OnInitialize()
 	self.scrollBar.doNotHide = 1
@@ -29,6 +28,7 @@ function frame:OnShow()
 end
 
 function frame:OnHide()
+	PaperDollActionBarProfilesSaveDialog:Hide()
 end
 
 function frame:OnUpdate()
@@ -56,13 +56,16 @@ end
 
 function frame:OnProfileClick(button)
 	if button.name and button.name ~= "" then
-		PlaySound("igMainMenuOptionCheckBoxOn")
-
 		self.selectedName = button.name
 		self:Update()
+
+		PaperDollActionBarProfilesSaveDialog:Hide()
 	else
 		self.selectedName = nil
 		self:Update()
+
+		PaperDollActionBarProfilesSaveDialog:SetProfile()
+		PaperDollActionBarProfilesSaveDialog:Show()
 	end
 end
 
@@ -74,6 +77,9 @@ end
 
 function frame:OnEditClick(button)
 	self:OnProfileClick(button)
+
+	PaperDollActionBarProfilesSaveDialog:SetProfile(button.name)
+	PaperDollActionBarProfilesSaveDialog:Show()
 end
 
 function frame:OnUseClick()
