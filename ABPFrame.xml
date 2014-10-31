@@ -133,5 +133,10 @@
 				</Anchor>
 			</Anchors>
 		</NormalTexture>
+		<Scripts>
+			<OnLoad>
+				SetClampedTextureRotation(self.BgBottom, 180)
+			</OnLoad>
+		</Scripts>
 	</Button>
 </Ui>
