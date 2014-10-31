@@ -4,6 +4,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
 local frame = PaperDollActionBarProfilesPane
 
+local STRIPE_COLOR = { r = 0.9, g = 0.9, b = 1 }
+
 function frame:OnInitialize()
 	self.scrollBar.doNotHide = 1
 
@@ -73,12 +75,23 @@ function frame:Update()
 				button.text:SetTextColor(GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b)
 
 				button.icon:SetTexture("Interface\\PaperDollInfoFrame\\Character-Plus")
+
 				button.icon:SetSize(30, 30)
 				button.icon:SetPoint("LEFT", 7, 0)
 
 				button.SelectedBar:Hide()
 			else
-				-- existing profile
+				local profile = profiles[scrollOffset + i - 1]
+
+				button.name = profile.name
+
+				button.text:SetText(profile.name)
+
+				button.icon:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
+				button.icon:SetTexCoord(unpack(CLASS_ICON_TCOORDS[profile.class]))
+
+				button.icon:SetSize(36, 36)
+				button.icon:SetPoint("LEFT", 4, 0)
 			end
 
 			if ((i + scrollOffset) == 1) then

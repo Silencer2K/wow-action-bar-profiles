@@ -67,7 +67,7 @@ function addon:GetProfiles()
 		table.insert(sorted, v)
 	end
 
-	local class = select(3, UnitClass("player"))
+	local class = select(2, UnitClass("player"))
 
 	table.sort(sorted, function(a, b)
 		if a.class == b.class then
