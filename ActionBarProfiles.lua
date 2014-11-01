@@ -113,9 +113,10 @@ function addon:PreloadSpells()
 				self.spellsById[id] = j
 
 				local name, stance = GetSpellBookItemName(j, BOOKTYPE_SPELL)
-				self.spellsByName[name] = j
 				if stance and stance ~= "" then
 					self.spellsByName[name .. "|" .. stance] = j
+				else
+					self.spellsByName[name] = j
 				end
 
 				local icon = GetSpellBookItemTexture(j, BOOKTYPE_SPELL)
@@ -143,12 +144,6 @@ function addon:RestoreSpell(profile, slot, checkOnly)
 	end
 
 	self:ClearSlot(slot, checkOnly)
-end
-
-function addon:PreloadPets()
-end
-
-function addon:RestorePet(profile, slot, checkOnly)
 end
 
 function addon:PreloadMounts()
@@ -195,7 +190,6 @@ function addon:UseProfile(name, checkOnly)
 	local fail, total = 0, 0
 
 	self:PreloadSpells()
-	self:PreloadPets()
 	self:PreloadMounts()
 
 	if profile then
@@ -268,8 +262,15 @@ function addon:UpdateProfileBars(name)
 			local type, id, subType, extraId = GetActionInfo(slot)
 
 			if type then
-				if type == "spell" or type == "companion" then
+				if type == "spell" then
 					profile.actions[slot] = { type, id, subType, extraId, GetSpellInfo(id) }
+
+				elseif type == "spell" then
+					if subType == "MOUNT" then
+						profile.actions[slot] = { type, id, subType, extraId, GetSpellInfo(id) }
+					else
+						profile.actions[slot] = { type, id, subType, extraId }
+					end
 
 				elseif type == "item" then
 					profile.actions[slot] = { type, id, subType, extraId, GetItemInfo(id) }
@@ -283,6 +284,9 @@ function addon:UpdateProfileBars(name)
 				elseif type == "summonmount" then -- convert to legacy format
 					local legacyId = MOUNT_INDEX_TO_SPELL_ID[id]
 					profile.actions[slot] = { "companion", legacyId, "MOUNT", nil, legacyId }
+
+				elseif type == "summonpet" then
+					profile.actions[slot] = { type, id, subType, extraId, C_PetJournal.GetPetInfoByPetID(id) }
 
 				else
 					profile.actions[slot] = { type, id, subType, extraId }
