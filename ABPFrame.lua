@@ -25,7 +25,7 @@ function frame:OnInitialize()
 		text = L.confirm_save,
 		button1 = YES,
 		button2 = NO,
-		OnAccept = function(popup) end,
+		OnAccept = function(popup) self:OnSaveConfirm(popup) end,
 		OnCancel = function(popup) end,
 		OnHide = function(popup) end,
 		hideOnEscape = 1,
@@ -129,6 +129,9 @@ function frame:OnSaveClick()
 	else
 		UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
 	end
+end
+
+function frame:OnSaveConfirm(popup)
 end
 
 function frame:Update()
