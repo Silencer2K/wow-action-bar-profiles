@@ -17,6 +17,8 @@ locales\ptBR.lua
 locales\zhCN.lua
 locales\zhTW.lua
 
+Mounts.lua
+
 ActionBarProfiles.xml
 ActionBarProfiles.lua
 

@@ -4,6 +4,9 @@ LibStub("AceAddon-3.0"):NewAddon(addon, addonName)
 
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
+local MAX_ACTION_BUTTONS = 120
+local MAX_GLOBAL_MACROS = 120
+
 function addon:OnInitialize()
 	self.db = LibStub("AceDB-3.0"):New(addonName .. "DB")
 
@@ -105,12 +108,6 @@ function addon:SaveProfile(name)
 	self:UpdateProfileBars(name)
 end
 
-function addon:DeleteProfile(name)
-	local profiles = self.db.global.profiles or {}
-
-	profiles[name] = nil
-end
-
 function addon:UpdateProfileParams(name, newName)
 	local profiles = self.db.global.profiles or {}
 	local profile = profiles[name]
@@ -131,5 +128,36 @@ function addon:UpdateProfileBars(name)
 
 	if profile then
 		profile.class = select(2, UnitClass("player"))
+		profile.owner = string.format("%s-%s", GetUnitName("player"), GetRealmName())
+
+		profile.actions = {}
+
+		for i = 1, MAX_ACTION_BUTTONS do
+			local type, id, subType, extraId = GetActionInfo(i)
+
+			if type then
+				if type == "spell" or type == "companion" then
+					profile.actions[i] = { type, id, subType, extraId, GetSpellInfo(id) }
+
+				elseif type == "item" then
+					profile.actions[i] = { type, id, subType, extraId, GetItemInfo(id) }
+
+				elseif type == "flyout" then
+					profile.actions[i] = { type, id, subType, extraId, GetFlyoutInfo(id) }
+
+				elseif type == "macro" then
+					profile.actions[i] = { type, id, subType, extraId, GetMacroInfo(id) }
+
+				else
+					profile.actions[i] = { type, id, subType, extraId }
+				end
+			end
+		end
 	end
+end
+
+function addon:DeleteProfile(name)
+	local profiles = self.db.global.profiles or {}
+
+	profiles[name] = nil
 end
