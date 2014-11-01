@@ -104,23 +104,31 @@ function addon:PreloadSpells()
 	self.spellsByName = {}
 	self.spellsByIcon = {}
 
+	self.flyoutsById = {}
+
 	for i = 1, MAX_SKILLLINE_TABS do
 		local _, _, offset, numSpells, _, offSpecId = GetSpellTabInfo(i)
 
 		if offSpecId == 0 then
 			for j = offset + 1, offset + numSpells do
-				local _, id = GetSpellBookItemInfo(j, BOOKTYPE_SPELL)
-				self.spellsById[id] = j
+				local type, id = GetSpellBookItemInfo(j, BOOKTYPE_SPELL)
 
-				local name, stance = GetSpellBookItemName(j, BOOKTYPE_SPELL)
-				if stance and stance ~= "" then
-					self.spellsByName[name .. "|" .. stance] = j
-				else
-					self.spellsByName[name] = j
+				if type == "SPELL" then
+					self.spellsById[id] = j
+
+					local name, stance = GetSpellBookItemName(j, BOOKTYPE_SPELL)
+					if stance and stance ~= "" then
+						self.spellsByName[name .. "|" .. stance] = j
+					else
+						self.spellsByName[name] = j
+					end
+
+					local icon = GetSpellBookItemTexture(j, BOOKTYPE_SPELL)
+					self.spellsByIcon[icon] = j
+
+				elseif type == "FLYOUT" then
+					self.flyoutsById[id] = j
 				end
-
-				local icon = GetSpellBookItemTexture(j, BOOKTYPE_SPELL)
-				self.spellsByIcon[icon] = j
 			end
 		end
 	end
@@ -137,6 +145,23 @@ function addon:RestoreSpell(profile, slot, checkOnly)
 	if (spell) then
 		if not checkOnly then
 			PickupSpellBookItem(spell, BOOKTYPE_SPELL)
+			PlaceAction(slot)
+			ClearCursor()
+		end
+		return true
+	end
+
+	self:ClearSlot(slot, checkOnly)
+end
+
+function addon:RestoreFlyout(profile, slot, checkOnly)
+	local _, id = unpack(profile.actions[slot])
+
+	local flyout = self.flyoutsById[id]
+
+	if (flyout) then
+		if not checkOnly then
+			PickupSpellBookItem(flyout, BOOKTYPE_SPELL)
 			PlaceAction(slot)
 			ClearCursor()
 		end
@@ -202,6 +227,10 @@ function addon:UseProfile(name, checkOnly)
 
 				if type == "spell" then
 					if not self:RestoreSpell(profile, slot, checkOnly) then
+						fail = fail + 1
+					end
+				elseif type == "flyout" then
+					if not self:RestoreFlyout(profile, slot, checkOnly) then
 						fail = fail + 1
 					end
 				elseif type == "companion" then
