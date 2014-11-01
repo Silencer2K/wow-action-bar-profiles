@@ -88,6 +88,14 @@ function addon:GetProfile(name)
 	return
 end
 
+function addon:UseProfile(name)
+	local profiles = self.db.global.profiles or {}
+	local profile = profiles[name]
+
+	if profile then
+	end
+end
+
 function addon:SaveProfile(name)
 	local profiles = self.db.global.profiles or {}
 

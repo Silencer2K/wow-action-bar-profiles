@@ -102,6 +102,8 @@ function frame:OnEditClick(button)
 end
 
 function frame:OnProfileDoubleClick(button)
+	addon:UseProfile(button.name)
+	self:Update()
 end
 
 function frame:OnProfileClick(button)
@@ -120,6 +122,8 @@ function frame:OnProfileClick(button)
 end
 
 function frame:OnUseClick()
+	addon:UseProfile(self.selectedName)
+	self:Update()
 end
 
 function frame:OnSaveClick()
