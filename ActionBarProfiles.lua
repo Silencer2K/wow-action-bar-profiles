@@ -227,6 +227,7 @@ end
 
 function addon:SaveProfile(name)
 	local profiles = self.db.global.profiles or {}
+	self.db.global.profiles = profiles
 
 	profiles[name] = { name = name }
 
