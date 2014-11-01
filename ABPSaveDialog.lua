@@ -31,7 +31,7 @@ function frame:OnOkayClick()
 				return
 			end
 		end
-		addon:UpdateProfile(self.name, name)
+		addon:UpdateProfileParams(self.name, name)
 	else
 		if addon:GetProfile(name) then
 			local popup = StaticPopup_Show("CONFIRM_OVERWRITE_ACTION_BAR_PROFILE", name)

@@ -91,11 +91,10 @@ end
 function addon:SaveProfile(name)
 	local profiles = self.db.global.profiles or {}
 
-	profiles[name] = {
-		name = name,
-		class = select(2, UnitClass("player")),
-		bars = {},
-	}
+	profiles[name] = { name = name }
+
+	self:UpdateProfileParams(name)
+	self:UpdateProfileBars(name)
 end
 
 function addon:DeleteProfile(name)
@@ -104,16 +103,25 @@ function addon:DeleteProfile(name)
 	profiles[name] = nil
 end
 
-function addon:UpdateProfile(name, newName)
+function addon:UpdateProfileParams(name, newName)
 	local profiles = self.db.global.profiles or {}
 	local profile = profiles[name]
 
 	if profile then
-		if name ~= newName then
+		if newName and name ~= newName then
 			profiles[name] = nil
 			profiles[newName] = profile
 
 			profile.name = newName
 		end
+	end
+end
+
+function addon:UpdateProfileBars(name)
+	local profiles = self.db.global.profiles or {}
+	local profile = profiles[name]
+
+	if profile then
+		profile.class = select(2, UnitClass("player"))
 	end
 end

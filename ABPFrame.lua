@@ -132,6 +132,8 @@ function frame:OnSaveClick()
 end
 
 function frame:OnSaveConfirm(popup)
+	addon:UpdateProfileBars(popup.name)
+	self:Update()
 end
 
 function frame:Update()
