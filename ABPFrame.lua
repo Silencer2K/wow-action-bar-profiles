@@ -21,6 +21,19 @@ function frame:OnInitialize()
 		whileDead = 1,
 	}
 
+	StaticPopupDialogs.CONFIRM_SAVE_ACTION_BAR_PROFILE = {
+		text = L.confirm_save,
+		button1 = YES,
+		button2 = NO,
+		OnAccept = function(popup) end,
+		OnCancel = function(popup) end,
+		OnHide = function(popup) end,
+		hideOnEscape = 1,
+		timeout = 0,
+		exclusive = 1,
+		whileDead = 1,
+	}
+
 	self.scrollBar.doNotHide = 1
 
 	self:SetFrameLevel(CharacterFrameInsetRight:GetFrameLevel() + 1)
@@ -110,6 +123,12 @@ function frame:OnUseClick()
 end
 
 function frame:OnSaveClick()
+	local popup = StaticPopup_Show("CONFIRM_SAVE_ACTION_BAR_PROFILE", self.selectedName)
+	if popup then
+		popup.name = self.selectedName
+	else
+		UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
+	end
 end
 
 function frame:Update()
