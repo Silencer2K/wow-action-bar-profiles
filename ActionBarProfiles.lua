@@ -92,6 +92,13 @@ function addon:GetProfile(name)
 	return
 end
 
+function addon:ClearSlot(slot, checkOnly)
+	if not checkOnly then
+		PickupAction(slot)
+		ClearCursor()
+	end
+end
+
 function addon:PreloadSpells()
 	self.spellsById = {}
 	self.spellsByName = {}
@@ -102,8 +109,8 @@ function addon:PreloadSpells()
 
 		if offSpecId == 0 then
 			for j = offset + 1, offset + numSpells do
-				local _, spellId = GetSpellBookItemInfo(j, BOOKTYPE_SPELL)
-				self.spellsById[spellId] = j
+				local _, id = GetSpellBookItemInfo(j, BOOKTYPE_SPELL)
+				self.spellsById[id] = j
 
 				local name, stance = GetSpellBookItemName(j, BOOKTYPE_SPELL)
 				self.spellsByName[name] = j
@@ -118,19 +125,63 @@ function addon:PreloadSpells()
 	end
 end
 
-function addon:FindSpell(profile, action)
-	local type, id, subType, spellId, name, stance, icon = unpack(action)
+function addon:RestoreSpell(profile, slot, checkOnly)
+	local _, id, _, _, name, stance, icon = unpack(profile.actions[slot])
 
-	return self.spellsById[id]
-		or (stance and stance ~= "" and self.spellsByName[name .. "|" .. stance])
-		or self.spellsByName[name]
-		or self.spellsByIcon[icon]
+	local spell = self.spellsById[id] or
+		(stance and stance ~= "" and self.spellsByName[name .. "|" .. stance]) or
+		self.spellsByName[name] or
+		self.spellsByIcon[icon]
+
+	if (spell) then
+		if not checkOnly then
+			PickupSpellBookItem(spell, BOOKTYPE_SPELL)
+			PlaceAction(slot)
+			ClearCursor()
+		end
+		return true
+	end
+
+	self:ClearSlot(slot, checkOnly)
 end
 
 function addon:PreloadPets()
 end
 
+function addon:RestorePet(profile, slot, checkOnly)
+end
+
 function addon:PreloadMounts()
+	self.mountsById = {}
+	self.mountsByName = {}
+	self.mountsByIcon = {}
+
+	for i = 1, C_MountJournal.GetNumMounts() do
+		local name, id, icon = C_MountJournal.GetMountInfo(i)
+
+		self.mountsById[id] = i
+		self.mountsByName[name] = i
+		self.mountsByIcon[icon] = i
+	end
+end
+
+function addon:RestoreMount(profile, slot, checkOnly)
+	local _, id, _, _, name, _, icon = unpack(profile.actions[slot])
+
+	local mount = self.mountsById[id] or
+		self.mountsByName[name] or
+		self.mountsByIcon[icon]
+
+	if (mount) then
+		if not checkOnly then
+			C_MountJournal.Pickup(mount)
+			PlaceAction(slot)
+			ClearCursor()
+		end
+		return true
+	end
+
+	self:ClearSlot(slot, checkOnly)
 end
 
 function addon:CanUseProfile(name)
@@ -151,32 +202,25 @@ function addon:UseProfile(name, checkOnly)
 		local slot
 		for slot = 1, MAX_ACTION_BUTTONS do
 			if not profile.actions[slot] then
-				if not checkOnly then
-					PickupAction(slot)
-					ClearCursor()
-				end
+				self:ClearSlot(slot, checkOnly)
 			else
 				local type, id, subType, spellId = unpack(profile.actions[slot])
 
 				if type == "spell" then
-					local spell = self:FindSpell(profile, profile.actions[slot])
-					if (spell) then
-						if not checkOnly then
-							PickupSpellBookItem(spell, BOOKTYPE_SPELL)
-							PlaceAction(slot)
+					if not self:RestoreSpell(profile, slot, checkOnly) then
+						fail = fail + 1
+					end
+				elseif type == "companion" then
+					if subType == "MOUNT" then
+						if not self:RestoreMount(profile, slot, checkOnly) then
+							fail = fail + 1
 						end
 					else
-						if not checkOnly then
-							PickupAction(slot)
-							ClearCursor()
-						end
+						self:ClearSlot(slot, checkOnly)
 						fail = fail + 1
 					end
 				else
-					if not checkOnly then
-						PickupAction(slot)
-						ClearCursor()
-					end
+					self:ClearSlot(slot, checkOnly)
 					fail = fail + 1
 				end
 			end
