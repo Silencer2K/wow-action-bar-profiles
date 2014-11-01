@@ -9,9 +9,9 @@ function frame:OnInitialize()
 		text = L.confirm_overwrite,
 		button1 = YES,
 		button2 = NO,
-		OnAccept = function(self) end,
-		OnCancel = function(self) end,
-		OnHide = function (self) end,
+		OnAccept = function(popup) end,
+		OnCancel = function(popup) end,
+		OnHide = function(popup) end,
 		hideOnEscape = 1,
 		timeout = 0,
 		exclusive = 1,
@@ -26,16 +26,29 @@ function frame:OnOkayClick()
 
 	if self.name then
 		if name ~= self.name then
-		else
+			if addon:GetProfile(name) then
+				UIErrorsFrame:AddMessage(L.error_exists, 1.0, 0.1, 0.1, 1.0)
+				return
+			end
 		end
+		addon:UpdateProfile(self.name, name)
 	else
 		if addon:GetProfile(name) then
-		else
-			addon:SaveProfile(name)
-			PaperDollActionBarProfilesPane:Update()
-			self:Hide()
+			local popup = StaticPopup_Show("CONFIRM_OVERWRITE_ACTION_BAR_PROFILE", name)
+			if popup then
+				popup.data = {
+					name = name,
+				}
+			else
+				UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
+			end
+			return
 		end
+		addon:SaveProfile(name)
 	end
+
+	PaperDollActionBarProfilesPane:Update()
+	self:Hide()
 end
 
 function frame:OnCancelClick()

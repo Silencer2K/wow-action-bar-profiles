@@ -78,7 +78,6 @@ end
 
 function addon:GetProfile(name)
 	local profiles = self.db.global.profiles or {}
-
 	local profile = profiles[name]
 
 	if profile then
@@ -103,4 +102,15 @@ function addon:DeleteProfile(name)
 	local profiles = self.db.global.profiles or {}
 
 	profiles[name] = nil
+end
+
+function addon:UpdateProfile(name, newName)
+	local profiles = self.db.global.profiles or {}
+	local profile = profiles[name]
+
+	if profile then
+		profiles[name] = nil
+		profile.name = newName
+		profiles[newName] = profile
+	end
 end
