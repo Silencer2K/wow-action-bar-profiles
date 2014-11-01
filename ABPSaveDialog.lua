@@ -36,9 +36,7 @@ function frame:OnOkayClick()
 		if addon:GetProfile(name) then
 			local popup = StaticPopup_Show("CONFIRM_OVERWRITE_ACTION_BAR_PROFILE", name)
 			if popup then
-				popup.data = {
-					name = name,
-				}
+				popup.name = name
 			else
 				UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
 			end

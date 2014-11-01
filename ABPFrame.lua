@@ -12,7 +12,7 @@ function frame:OnInitialize()
 		text = L.confirm_delete,
 		button1 = YES,
 		button2 = NO,
-		OnAccept = function(popup) end,
+		OnAccept = function(popup) self:Delete(popup.name) end,
 		OnCancel = function(popup) end,
 		OnHide = function(popup) end,
 		hideOnEscape = 1,
@@ -70,7 +70,7 @@ end
 function frame:OnDeleteClick(button)
 	local popup = StaticPopup_Show("CONFIRM_DELETE_ACTION_BAR_PROFILE", button.name)
 	if popup then
-		popup.data = button.name
+		popup.name = button.name
 	else
 		UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
 	end
@@ -196,4 +196,9 @@ function frame:Update()
 			button:Hide()
 		end
 	end
+end
+
+function frame:Delete(name)
+	addon:DeleteProfile(name)
+	self:Update()
 end
