@@ -109,8 +109,11 @@ function addon:UpdateProfile(name, newName)
 	local profile = profiles[name]
 
 	if profile then
-		profiles[name] = nil
-		profile.name = newName
-		profiles[newName] = profile
+		if name ~= newName then
+			profiles[name] = nil
+			profiles[newName] = profile
+
+			profile.name = newName
+		end
 	end
 end

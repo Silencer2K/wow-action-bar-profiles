@@ -9,7 +9,7 @@ function frame:OnInitialize()
 		text = L.confirm_overwrite,
 		button1 = YES,
 		button2 = NO,
-		OnAccept = function(popup) end,
+		OnAccept = function(popup) self:OnOverwriteConfirm(popup) end,
 		OnCancel = function(popup) end,
 		OnHide = function(popup) end,
 		hideOnEscape = 1,
@@ -44,6 +44,13 @@ function frame:OnOkayClick()
 		end
 		addon:SaveProfile(name)
 	end
+
+	PaperDollActionBarProfilesPane:Update()
+	self:Hide()
+end
+
+function frame:OnOverwriteConfirm(popup)
+	addon:SaveProfile(popup.name)
 
 	PaperDollActionBarProfilesPane:Update()
 	self:Hide()

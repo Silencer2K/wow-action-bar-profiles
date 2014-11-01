@@ -12,7 +12,7 @@ function frame:OnInitialize()
 		text = L.confirm_delete,
 		button1 = YES,
 		button2 = NO,
-		OnAccept = function(popup) self:Delete(popup.name) end,
+		OnAccept = function(popup) self:OnDeleteConfirm(popup) end,
 		OnCancel = function(popup) end,
 		OnHide = function(popup) end,
 		hideOnEscape = 1,
@@ -74,6 +74,11 @@ function frame:OnDeleteClick(button)
 	else
 		UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
 	end
+end
+
+function frame:OnDeleteConfirm(popup)
+	addon:DeleteProfile(popup.name)
+	self:Update()
 end
 
 function frame:OnEditClick(button)
@@ -196,9 +201,4 @@ function frame:Update()
 			button:Hide()
 		end
 	end
-end
-
-function frame:Delete(name)
-	addon:DeleteProfile(name)
-	self:Update()
 end
