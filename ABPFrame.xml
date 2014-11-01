@@ -198,12 +198,12 @@
 			<OnLoad>
 				SetClampedTextureRotation(self.BgBottom, 180)
 			</OnLoad>
-			<OnClick>
-				PaperDollActionBarProfilesPane:OnProfileClick(self)
-			</OnClick>
 			<OnDoubleClick>
 				PaperDollActionBarProfilesPane:OnProfileDoubleClick(self)
 			</OnDoubleClick>
+			<OnClick>
+				PaperDollActionBarProfilesPane:OnProfileClick(self)
+			</OnClick>
 		</Scripts>
 	</Button>
 </Ui>

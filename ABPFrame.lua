@@ -54,6 +54,19 @@ function frame:OnUpdate()
 	end
 end
 
+function frame:OnDeleteClick(button)
+end
+
+function frame:OnEditClick(button)
+	self:OnProfileClick(button)
+
+	PaperDollActionBarProfilesSaveDialog:SetProfile(button.name)
+	PaperDollActionBarProfilesSaveDialog:Show()
+end
+
+function frame:OnProfileDoubleClick(button)
+end
+
 function frame:OnProfileClick(button)
 	if button.name and button.name ~= "" then
 		self.selectedName = button.name
@@ -67,19 +80,6 @@ function frame:OnProfileClick(button)
 		PaperDollActionBarProfilesSaveDialog:SetProfile()
 		PaperDollActionBarProfilesSaveDialog:Show()
 	end
-end
-
-function frame:OnProfileDoubleClick(button)
-end
-
-function frame:OnDeleteClick(button)
-end
-
-function frame:OnEditClick(button)
-	self:OnProfileClick(button)
-
-	PaperDollActionBarProfilesSaveDialog:SetProfile(button.name)
-	PaperDollActionBarProfilesSaveDialog:Show()
 end
 
 function frame:OnUseClick()
