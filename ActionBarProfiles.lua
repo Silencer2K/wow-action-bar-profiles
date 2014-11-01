@@ -43,6 +43,7 @@ function addon:InjectPaperDollSidebarTab(name, frame, icon, texCoords)
 		if CharacterFrameInsetRight:IsVisible() then
 			for i = 1, CharacterLevelText:GetNumPoints() do
 				point, relativeTo, relativePoint, xOffset, yOffset = CharacterLevelText:GetPoint(i)
+
 				if point == "CENTER" then
 					CharacterLevelText:SetPoint(point, relativeTo, relativePoint, xOffset - 30, yOffset)
 				end
@@ -91,12 +92,99 @@ function addon:GetProfile(name)
 	return
 end
 
-function addon:UseProfile(name)
+function addon:PreloadSpells()
+	self.spellsById = {}
+	self.spellsByName = {}
+	self.spellsByIcon = {}
+
+	for i = 1, MAX_SKILLLINE_TABS do
+		local _, _, offset, numSpells, _, offSpecId = GetSpellTabInfo(i)
+
+		if offSpecId == 0 then
+			for j = offset + 1, offset + numSpells do
+				local _, spellId = GetSpellBookItemInfo(j, BOOKTYPE_SPELL)
+				self.spellsById[spellId] = j
+
+				local name, stance = GetSpellBookItemName(j, BOOKTYPE_SPELL)
+				self.spellsByName[name] = j
+				if stance and stance ~= "" then
+					self.spellsByName[name .. "|" .. stance] = j
+				end
+
+				local icon = GetSpellBookItemTexture(j, BOOKTYPE_SPELL)
+				self.spellsByIcon[icon] = j
+			end
+		end
+	end
+end
+
+function addon:FindSpell(profile, action)
+	local type, id, subType, spellId, name, stance, icon = unpack(action)
+
+	return self.spellsById[id]
+		or (stance and stance ~= "" and self.spellsByName[name .. "|" .. stance])
+		or self.spellsByName[name]
+		or self.spellsByIcon[icon]
+end
+
+function addon:PreloadPets()
+end
+
+function addon:PreloadMounts()
+end
+
+function addon:CanUseProfile(name)
+	return addon:UseProfile(name, true)
+end
+
+function addon:UseProfile(name, checkOnly)
 	local profiles = self.db.global.profiles or {}
 	local profile = profiles[name]
 
+	local fail, total = 0, 0
+
+	self:PreloadSpells()
+	self:PreloadPets()
+	self:PreloadMounts()
+
 	if profile then
+		local slot
+		for slot = 1, MAX_ACTION_BUTTONS do
+			if not profile.actions[slot] then
+				if not checkOnly then
+					PickupAction(slot)
+					ClearCursor()
+				end
+			else
+				local type, id, subType, spellId = unpack(profile.actions[slot])
+
+				if type == "spell" then
+					local spell = self:FindSpell(profile, profile.actions[slot])
+					if (spell) then
+						if not checkOnly then
+							PickupSpellBookItem(spell, BOOKTYPE_SPELL)
+							PlaceAction(slot)
+						end
+					else
+						if not checkOnly then
+							PickupAction(slot)
+							ClearCursor()
+						end
+						fail = fail + 1
+					end
+				else
+					if not checkOnly then
+						PickupAction(slot)
+						ClearCursor()
+					end
+					fail = fail + 1
+				end
+			end
+			total = total + 1
+		end
 	end
+
+	return fail, total
 end
 
 function addon:SaveProfile(name)
@@ -132,24 +220,28 @@ function addon:UpdateProfileBars(name)
 
 		profile.actions = {}
 
-		for i = 1, MAX_ACTION_BUTTONS do
-			local type, id, subType, extraId = GetActionInfo(i)
+		for slot = 1, MAX_ACTION_BUTTONS do
+			local type, id, subType, extraId = GetActionInfo(slot)
 
 			if type then
 				if type == "spell" or type == "companion" then
-					profile.actions[i] = { type, id, subType, extraId, GetSpellInfo(id) }
+					profile.actions[slot] = { type, id, subType, extraId, GetSpellInfo(id) }
 
 				elseif type == "item" then
-					profile.actions[i] = { type, id, subType, extraId, GetItemInfo(id) }
+					profile.actions[slot] = { type, id, subType, extraId, GetItemInfo(id) }
 
 				elseif type == "flyout" then
-					profile.actions[i] = { type, id, subType, extraId, GetFlyoutInfo(id) }
+					profile.actions[slot] = { type, id, subType, extraId, GetFlyoutInfo(id) }
 
 				elseif type == "macro" then
-					profile.actions[i] = { type, id, subType, extraId, GetMacroInfo(id) }
+					profile.actions[slot] = { type, id, subType, extraId, GetMacroInfo(id) }
+
+				elseif type == "summonmount" then -- convert to legacy format
+					local legacyId = MOUNT_INDEX_TO_SPELL_ID[id]
+					profile.actions[slot] = { "companion", legacyId, "MOUNT", nil, legacyId }
 
 				else
-					profile.actions[i] = { type, id, subType, extraId }
+					profile.actions[slot] = { type, id, subType, extraId }
 				end
 			end
 		end
