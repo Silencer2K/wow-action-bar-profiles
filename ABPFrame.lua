@@ -8,6 +8,18 @@ local ACTION_BAR_PROFILE_BUTTON_HEIGHT = 44
 local frame = PaperDollActionBarProfilesPane
 
 function frame:OnInitialize()
+	StaticPopupDialogs.CONFIRM_DELETE_ACTION_BAR_PROFILE = {
+		text = L.confirm_delete,
+		button1 = YES,
+		button2 = NO,
+		OnAccept = function(self) end,
+		OnCancel = function(self) end,
+		hideOnEscape = 1,
+		timeout = 0,
+		exclusive = 1,
+		whileDead = 1,
+	}
+
 	self.scrollBar.doNotHide = 1
 
 	self:SetFrameLevel(CharacterFrameInsetRight:GetFrameLevel() + 1)
@@ -55,6 +67,12 @@ function frame:OnUpdate()
 end
 
 function frame:OnDeleteClick(button)
+	local popup = StaticPopup_Show("CONFIRM_DELETE_ACTION_BAR_PROFILE", button.name)
+	if popup then
+		popup.data = button.name
+	else
+		UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
+	end
 end
 
 function frame:OnEditClick(button)
@@ -89,7 +107,7 @@ function frame:OnSaveClick()
 end
 
 function frame:Update()
-	local profiles = addon:GetProfiles()
+	local profiles = addon:GetSortedProfiles()
 	local numRows = #profiles + 1
 
 	if self.selectedName then
@@ -116,6 +134,7 @@ function frame:Update()
 				button.text:SetTextColor(GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b)
 
 				button.icon:SetTexture("Interface\\PaperDollInfoFrame\\Character-Plus")
+				button.icon:SetTexCoord(0, 1, 0, 1)
 
 				button.icon:SetSize(30, 30)
 				button.icon:SetPoint("LEFT", 7, 0)
@@ -127,7 +146,9 @@ function frame:Update()
 				button.name = profile.name
 
 				button.text:SetText(profile.name)
-				if profile.class ~= class then
+				if profile.class == class then
+					button.text:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+				else
 					button.text:SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
 				end
 

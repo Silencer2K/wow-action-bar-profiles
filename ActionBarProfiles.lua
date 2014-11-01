@@ -54,13 +54,8 @@ end
 function addon:OnDisable()
 end
 
-function addon:GetProfiles()
-	local profiles = self.db.global.profiles
-
-	if not profiles then
-		profiles = {}
-		self.db.global.profiles = profiles
-	end
+function addon:GetSortedProfiles()
+	local profiles = self.db.global.profiles or {}
 
 	local sorted = {}
 	for k, v in pairs(profiles) do
@@ -82,12 +77,7 @@ function addon:GetProfiles()
 end
 
 function addon:GetProfile(name)
-	local profiles = self.db.global.profiles
-
-	if not profiles then
-		profiles = {}
-		self.db.global.profiles = profiles
-	end
+	local profiles = self.db.global.profiles or {}
 
 	local profile = profiles[name]
 
@@ -97,4 +87,20 @@ function addon:GetProfile(name)
 	end
 
 	return
+end
+
+function addon:SaveProfile(name)
+	local profiles = self.db.global.profiles or {}
+
+	profiles[name] = {
+		name = name,
+		class = select(2, UnitClass("player")),
+		bars = {},
+	}
+end
+
+function addon:DeleteProfile(name)
+	local profiles = self.db.global.profiles or {}
+
+	profiles[name] = nil
 end
