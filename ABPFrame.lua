@@ -140,18 +140,13 @@ function frame:Update()
 	local profiles = addon:GetSortedProfiles()
 	local numRows = #profiles + 1
 
-	if self.selectedName then
-		self.UseProfile:Enable()
-		self.SaveProfile:Enable()
-	else
-		self.UseProfile:Disable()
-		self.SaveProfile:Disable()
-	end
-
 	HybridScrollFrame_Update(self, numRows * ACTION_BAR_PROFILE_BUTTON_HEIGHT + self.UseProfile:GetHeight() + 20, self:GetHeight())
 
 	local scrollOffset = HybridScrollFrame_GetOffset(self)
 	local class = select(2, UnitClass("player"))
+
+	local selectedName = self.selectedName
+	self.selectedName = nil
 
 	for i = 1, #self.buttons do
 		local button = self.buttons[i]
@@ -188,8 +183,9 @@ function frame:Update()
 				button.icon:SetSize(36, 36)
 				button.icon:SetPoint("LEFT", 4, 0)
 
-				if self.selectedName and self.selectedName == profile.name then
+				if selectedName and selectedName == profile.name then
 					button.SelectedBar:Show()
+					self.selectedName = selectedName
 				else
 					button.SelectedBar:Hide()
 				end
@@ -224,5 +220,13 @@ function frame:Update()
 		else
 			button:Hide()
 		end
+	end
+
+	if self.selectedName then
+		self.UseProfile:Enable()
+		self.SaveProfile:Enable()
+	else
+		self.UseProfile:Disable()
+		self.SaveProfile:Disable()
 	end
 end
