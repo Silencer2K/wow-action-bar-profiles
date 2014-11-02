@@ -4,6 +4,7 @@ LibStub("AceAddon-3.0"):NewAddon(addon, addonName)
 
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
+local MAX_SPELLBOOK_TABS = 10
 local MAX_ACTION_BUTTONS = 120
 local MAX_GLOBAL_MACROS = 120
 
@@ -139,7 +140,7 @@ function addon:MakeCache()
         local mounts = { id = {}, name = {}, icon = {} }
 
 	local bookIndex, spellIndex
-	for bookIndex = 1, MAX_SKILLLINE_TABS do
+	for bookIndex = 1, MAX_SPELLBOOK_TABS do
 		local bookOffset, numSpells, offSpecId = unpackByIndex({ GetSpellTabInfo(bookIndex) }, 3, 4, 6)
 
 		if offSpecId == 0 then
