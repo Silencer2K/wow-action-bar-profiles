@@ -134,9 +134,9 @@ end
 
 function addon:MakeCache()
         local spells = { id = {}, name = {}, icon = {} }
-        local flyouts = { id = {}, name = {}, icon = {} }
-        local items = { id = {}, name = {}, icon = {} }
-        local equipped = { id = {}, name = {}, icon = {} }
+        local flyouts = { id = {}, name = {} }
+        local items = { id = {}, name = {} }
+        local equipped = { id = {}, name = {} }
         local mounts = { id = {}, name = {}, icon = {} }
 
 	local bookIndex, spellIndex
@@ -152,7 +152,7 @@ function addon:MakeCache()
 				if type == "SPELL" then
 					self:UpdateCache(spells, spellIndex, id, name, stance, icon)
 				elseif type == "FLYOUT" then
-					self:UpdateCache(flyouts, spellIndex, id, name, stance, icon)
+					self:UpdateCache(flyouts, spellIndex, id, name)
 				end
 			end
 		end
@@ -169,14 +169,24 @@ function addon:MakeCache()
 		end
 	end
 
+	local slotIndex
+	for slotIndex = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
+		local id = GetInventoryItemID("player", slotIndex)
+
+		if id then
+			local name = GetItemInfo(id)
+			self:UpdateCache(equipped, slotIndex, id, name)
+		end
+	end
+
 	local bagIndex, itemIndex
 	for bagIndex = 0, NUM_BAG_SLOTS do
 		for itemIndex = 1, GetContainerNumSlots(bagIndex) do
 			local id = GetContainerItemID(bagIndex, itemIndex)
 
 			if id and (IsEquippableItem(id) or IsHelpfulItem(id) or IsHarmfulItem(id)) then
-				local name, icon = unpackByIndex({ GetItemInfo(id) }, 1, 10)
-				self:UpdateCache(items, { bagIndex, itemIndex }, id, name, nil, icon)
+				local name = GetItemInfo(id)
+				self:UpdateCache(items, { bagIndex, itemIndex }, id, name)
 			end
 		end
 	end
@@ -220,10 +230,24 @@ function addon:RestoreFlyout(cache, profile, slot, checkOnly)
 	end
 end
 
-function addon:RestoreItem(cache, profile, slot, checkOnly)
-	local id, name, icon = unpackByIndex(profile.actions[slot], 2, 5, 14)
+function addon:RestoreEquippedItem(cache, profile, slot, checkOnly)
+	local id, name = unpackByIndex(profile.actions[slot], 2, 5)
 
-	local item = self:GetFromCache(cache, id, name, nil, icon)
+	local item = self:GetFromCache(cache, id, name)
+
+	if (item) then
+		if not checkOnly then
+			PickupInventoryItem(item)
+			self:PlaceToSlot(slot)
+		end
+		return true
+	end
+end
+
+function addon:RestoreBagItem(cache, profile, slot, checkOnly)
+	local id, name = unpackByIndex(profile.actions[slot], 2, 5)
+
+	local item = self:GetFromCache(cache, id, name)
 
 	if (item) then
 		if not checkOnly then
@@ -294,7 +318,9 @@ function addon:UseProfile(name, checkOnly)
 					ok = self:RestoreFlyout(cache.flyouts, profile, slot, checkOnly)
 
 				elseif type == "item" then
-					ok = self:RestoreItem(cache.items, profile, slot, checkOnly)
+					ok = self:RestoreEquippedItem(cache.equipped, profile, slot, checkOnly) or
+						self:RestoreBagItem(cache.items, profile, slot, checkOnly)
+
 					if not ok then
 						ok = self:RestoreMissingItem(profile, slot, checkOnly)
 						if ok then
