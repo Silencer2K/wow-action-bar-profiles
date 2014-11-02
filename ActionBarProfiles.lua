@@ -173,7 +173,8 @@ function addon:MakeCache()
 	for bagIndex = 0, NUM_BAG_SLOTS do
 		for itemIndex = 1, GetContainerNumSlots(bagIndex) do
 			local id = GetContainerItemID(bagIndex, itemIndex)
-			if id then
+
+			if id and (IsEquippableItem(id) or IsHelpfulItem(id) or IsHarmfulItem(id)) then
 				local name, icon = unpackByIndex({ GetItemInfo(id) }, 1, 10)
 				self:UpdateCache(items, { bagIndex, itemIndex }, id, name, nil, icon)
 			end
