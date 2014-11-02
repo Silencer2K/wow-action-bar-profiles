@@ -237,7 +237,6 @@ function addon:UseProfile(name, checkOnly)
 
 	local fail, total = 0, 0
 	local cache = self:MakeCache()
-self.db.global.cache = cache
 
 	if profile then
 		local slot
