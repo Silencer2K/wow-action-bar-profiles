@@ -41,6 +41,7 @@ function addon:InjectPaperDollSidebarTab(name, frame, icon, texCoords)
 		prevSetLevel()
 
 		if CharacterFrameInsetRight:IsVisible() then
+			local i
 			for i = 1, CharacterLevelText:GetNumPoints() do
 				point, relativeTo, relativePoint, xOffset, yOffset = CharacterLevelText:GetPoint(i)
 
@@ -106,10 +107,12 @@ function addon:PreloadSpells()
 
 	self.flyoutsById = {}
 
+	local i
 	for i = 1, MAX_SKILLLINE_TABS do
 		local _, _, offset, numSpells, _, offSpecId = GetSpellTabInfo(i)
 
 		if offSpecId == 0 then
+			local j
 			for j = offset + 1, offset + numSpells do
 				local type, id = GetSpellBookItemInfo(j, BOOKTYPE_SPELL)
 
@@ -182,6 +185,7 @@ function addon:PreloadMounts()
 	self.mountsByName = {}
 	self.mountsByIcon = {}
 
+	local i
 	for i = 1, C_MountJournal.GetNumMounts() do
 		local name, id, icon = C_MountJournal.GetMountInfo(i)
 

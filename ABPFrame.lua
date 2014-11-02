@@ -58,6 +58,7 @@ function frame:OnHide()
 end
 
 function frame:OnUpdate()
+	local i
 	for i = 1, #self.buttons do
 		local button = self.buttons[i]
 
@@ -152,6 +153,7 @@ function frame:Update()
 	local selectedName = self.selectedName
 	self.selectedName = nil
 
+	local i
 	for i = 1, #self.buttons do
 		local button = self.buttons[i]
 
