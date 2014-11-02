@@ -7,6 +7,16 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 local MAX_ACTION_BUTTONS = 120
 local MAX_GLOBAL_MACROS = 120
 
+local function unpackByIndex(tab, ...)
+	local indexes, res = {...}, {}
+	local i, j = 0
+	for _, j in pairs(indexes) do
+		i = i + 1
+		res[i] = tab[j]
+	end
+	return unpack(res, 1, i)
+end
+
 function addon:OnInitialize()
 	self.db = LibStub("AceDB-3.0"):New(addonName .. "DB")
 
@@ -100,137 +110,121 @@ function addon:ClearSlot(slot, checkOnly)
 	end
 end
 
-function addon:PreloadSpells()
-	self.spellsById = {}
-	self.spellsByName = {}
-	self.spellsByIcon = {}
+function addon:PutToSlot(slot, checkOnly)
+	if not checkOnly then
+		PlaceAction(slot)
+		ClearCursor()
+	end
+end
 
-	self.flyoutsById = {}
-	self.flyoutsByName = {}
+function addon:UpdateCache(cache, index, id, name, stance, icon)
+	cache.id[id] = index
 
-	local i
-	for i = 1, MAX_SKILLLINE_TABS do
-		local _, _, offset, numSpells, _, offSpecId = GetSpellTabInfo(i)
+	if stance and stance ~= "" then
+		cache.name[name .. "|" .. stance] = index
+	else
+		cache.name[name] = index
+	end
+
+	if icon then
+		cache.icon[icon] = index
+	end
+end
+
+function addon:MakeCache()
+        local spells = { id = {}, name = {}, icon = {} }
+        local flyouts = { id = {}, name = {}, icon = {} }
+        local items = { id = {}, name = {}, icon = {} }
+        local mounts = { id = {}, name = {}, icon = {} }
+
+	local bookIndex, spellIndex
+	for bookIndex = 1, MAX_SKILLLINE_TABS do
+		local bookOffset, numSpells, offSpecId = unpackByIndex({ GetSpellTabInfo(bookIndex) }, 3, 4, 6)
 
 		if offSpecId == 0 then
-			local j
-			for j = offset + 1, offset + numSpells do
-				local type, id = GetSpellBookItemInfo(j, BOOKTYPE_SPELL)
+			for spellIndex = bookOffset + 1, bookOffset + numSpells do
+				local type, id = GetSpellBookItemInfo(spellIndex, BOOKTYPE_SPELL)
+				local name, stance = GetSpellBookItemName(spellIndex, BOOKTYPE_SPELL)
+				local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE_SPELL)
 
 				if type == "SPELL" then
-					self.spellsById[id] = j
-
-					local name, stance = GetSpellBookItemName(j, BOOKTYPE_SPELL)
-					if stance and stance ~= "" then
-						self.spellsByName[name .. "|" .. stance] = j
-					else
-						self.spellsByName[name] = j
-					end
-
-					local icon = GetSpellBookItemTexture(j, BOOKTYPE_SPELL)
-					self.spellsByIcon[icon] = j
-
+					self:UpdateCache(spells, spellIndex, id, name, stance, icon)
 				elseif type == "FLYOUT" then
-					self.flyoutsById[id] = j
-
-					local name = GetSpellBookItemName(j, BOOKTYPE_SPELL)
-					self.flyoutsByName[name] = j
+					self:UpdateCache(flyouts, spellIndex, id, name, stance, icon)
 				end
 			end
 		end
 	end
-end
 
-function addon:RestoreSpell(profile, slot, checkOnly)
-	local _, id, _, _, name, stance, icon = unpack(profile.actions[slot])
+	local playerFaction = (UnitFactionGroup("player") == "Alliance" and 1) or 0
 
-	local spell
-	if stance and stance ~= "" then
-		spell = self.spellsById[id] or
-			self.spellsByName[name .. "|" .. stance] or
-			self.spellsByIcon[icon]
-	else
-		spell = self.spellsById[id] or
-			self.spellsByName[name] or
-			self.spellsByIcon[icon]
+	local mountIndex
+	for mountIndex = 1, C_MountJournal.GetNumMounts() do
+		local name, id, icon, faction, isCollected = unpackByIndex({ C_MountJournal.GetMountInfo(mountIndex) }, 1, 2, 3, 9, 11)
+
+		if isCollected and (not faction or faction == playerFaction) then
+			self:UpdateCache(mounts, mountIndex, id, name, nil, icon)
+		end
 	end
 
-	if (spell) then
+	return { spells = spells, flyouts = flyouts, items = items, mounts = mounts }
+end
+
+function addon:GetFromCache(cache, id, name, stance, icon)
+	if stance and stance ~= "" then
+		return cache.id[id] or cache.name[name .. "|" .. stance] or (icon and cache.icon[icon])
+	end
+
+	return cache.id[id] or cache.name[name] or (icon and cache.icon[icon])
+end
+
+function addon:RestoreSpell(cache, profile, slot, checkOnly)
+	local id, name, stance, icon = unpackByIndex(profile.actions[slot], 2, 5, 6, 7)
+
+	local spell = self:GetFromCache(cache, id, name, stance, icon)
+
+	if spell then
 		if not checkOnly then
 			PickupSpellBookItem(spell, BOOKTYPE_SPELL)
-			PlaceAction(slot)
-			ClearCursor()
+			self:PutToSlot(slot)
 		end
 		return true
 	end
-
-	self:ClearSlot(slot, checkOnly)
 end
 
-function addon:RestoreFlyout(profile, slot, checkOnly)
-	local _, id, _, _, name = unpack(profile.actions[slot])
+function addon:RestoreFlyout(cache, profile, slot, checkOnly)
+	local id, name = unpackByIndex(profile.actions[slot], 2, 5)
 
-	local flyout = self.flyoutsById[id] or
-		self.flyoutsByName[name]
+	local flyout = self:GetFromCache(cache, id, name)
 
 	if (flyout) then
 		if not checkOnly then
 			PickupSpellBookItem(flyout, BOOKTYPE_SPELL)
-			PlaceAction(slot)
-			ClearCursor()
+			self:PutToSlot(slot)
 		end
 		return true
 	end
-
-	self:ClearSlot(slot, checkOnly)
 end
 
-function addon:PreloadMounts()
-	self.mountsById = {}
-	self.mountsByName = {}
-	self.mountsByIcon = {}
-
-	local playerFaction = 0
-	if UnitFactionGroup("player") == "Alliance" then
-		playerFaction = 1
-	end
-
-	local i
-	for i = 1, C_MountJournal.GetNumMounts() do
-		local name, id, icon, _, _, _, _, _, faction, _, isCollected = C_MountJournal.GetMountInfo(i)
-
-		if isCollected and (not faction or faction == playerFaction) then
-			self.mountsById[id] = i
-			self.mountsByName[name] = i
-			self.mountsByIcon[icon] = i
-		end
-	end
-end
-
-function addon:RestoreMount(profile, slot, checkOnly)
+function addon:RestoreMount(cache, profile, slot, checkOnly)
 	local type = profile.actions[slot][1]
 	local id, name, icon
 
 	if type == "summonmount" then
-		_, _, _, _, id, name, _, icon = unpack(profile.actions[slot])
+		id, name, icon = unpackByIndex(profile.actions[slot], 5, 6, 8)
 	else
-		_, id, _, _, name, _, icon = unpack(profile.actions[slot])
+		id, name, icon = unpackByIndex(profile.actions[slot], 2, 5, 7)
 	end
 
-	local mount = self.mountsById[id] or
-		self.mountsByName[name] or
-		self.mountsByIcon[icon]
+	local mount = self:GetFromCache(cache, id, name, nil, icon)
 
 	if (mount) then
 		if not checkOnly then
 			C_MountJournal.Pickup(mount)
-			PlaceAction(slot)
-			ClearCursor()
+			self:PutToSlot(slot)
 		end
 		return true
 	end
-
-	self:ClearSlot(slot, checkOnly)
 end
 
 function addon:CheckUseProfile(name)
@@ -242,9 +236,8 @@ function addon:UseProfile(name, checkOnly)
 	local profile = profiles[name]
 
 	local fail, total = 0, 0
-
-	self:PreloadSpells()
-	self:PreloadMounts()
+	local cache = self:MakeCache()
+self.db.global.cache = cache
 
 	if profile then
 		local slot
@@ -253,29 +246,21 @@ function addon:UseProfile(name, checkOnly)
 				self:ClearSlot(slot, checkOnly)
 			else
 				local type, id, subType, spellId = unpack(profile.actions[slot])
+				local ok
 
 				if type == "spell" then
-					if not self:RestoreSpell(profile, slot, checkOnly) then
-						fail = fail + 1
-					end
+					ok = self:RestoreSpell(cache.spells, profile, slot, checkOnly)
 				elseif type == "flyout" then
-					if not self:RestoreFlyout(profile, slot, checkOnly) then
-						fail = fail + 1
-					end
+					ok = self:RestoreFlyout(cache.flyouts, profile, slot, checkOnly)
 				elseif type == "companion" then
 					if subType == "MOUNT" then
-						if not self:RestoreMount(profile, slot, checkOnly) then
-							fail = fail + 1
-						end
-					else
-						self:ClearSlot(slot, checkOnly)
-						fail = fail + 1
+						ok = self:RestoreMount(cache.mounts, profile, slot, checkOnly)
 					end
 				elseif type == "summonmount" then
-					if not self:RestoreMount(profile, slot, checkOnly) then
-						fail = fail + 1
-					end
-				else
+					ok = self:RestoreMount(cache.mounts, profile, slot, checkOnly)
+				end
+
+				if not ok then
 					self:ClearSlot(slot, checkOnly)
 					fail = fail + 1
 				end
@@ -346,6 +331,7 @@ function addon:UpdateProfileBars(name)
 
 				elseif type == "summonmount" then
 					local spellId = MOUNT_INDEX_TO_SPELL_ID[id]
+
 					profile.actions[slot] = { type, id, subType, extraId, spellId, GetSpellInfo(spellId) }
 
 				elseif type == "summonpet" then
