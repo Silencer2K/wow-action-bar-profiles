@@ -34,6 +34,19 @@ function frame:OnInitialize()
 		whileDead = 1,
 	}
 
+	StaticPopupDialogs.CONFIRM_USE_ACTION_BAR_PROFILE = {
+		text = "%s out of %s action buttons of that profile can not be used by the current character. Do you want to use it anyway?",
+		button1 = YES,
+		button2 = NO,
+		OnAccept = function(popup) self:OnUseConfirm(popup) end,
+		OnCancel = function(popup) end,
+		OnHide = function(popup) end,
+		hideOnEscape = 1,
+		timeout = 0,
+		exclusive = 1,
+		whileDead = 1,
+	}
+
 	self.scrollBar.doNotHide = 1
 
 	self:SetFrameLevel(CharacterFrameInsetRight:GetFrameLevel() + 1)
@@ -103,8 +116,18 @@ function frame:OnEditClick(button)
 end
 
 function frame:OnProfileDoubleClick(button)
-	addon:UseProfile(button.name)
-	self:Update()
+	local fail, total = addon:CheckUseProfile(button.name)
+	if fail > 0 then
+		local popup = StaticPopup_Show("CONFIRM_USE_ACTION_BAR_PROFILE", fail, total)
+		if popup then
+			popup.name = self.selectedName
+		else
+			UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
+		end
+	else
+		addon:UseProfile(button.name)
+		self:Update()
+	end
 end
 
 function frame:OnProfileClick(button)
@@ -123,7 +146,22 @@ function frame:OnProfileClick(button)
 end
 
 function frame:OnUseClick()
-	addon:UseProfile(self.selectedName)
+	local fail, total = addon:CheckUseProfile(self.selectedName)
+	if fail > 0 then
+		local popup = StaticPopup_Show("CONFIRM_USE_ACTION_BAR_PROFILE", fail, total)
+		if popup then
+			popup.name = self.selectedName
+		else
+			UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
+		end
+	else
+		addon:UseProfile(self.selectedName)
+		self:Update()
+	end
+end
+
+function frame:OnUseConfirm(popup)
+	addon:UseProfile(popup.name)
 	self:Update()
 end
 

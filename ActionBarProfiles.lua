@@ -185,18 +185,32 @@ function addon:PreloadMounts()
 	self.mountsByName = {}
 	self.mountsByIcon = {}
 
+	local playerFaction = 0
+	if UnitFactionGroup("player") == "Alliance" then
+		playerFaction = 1
+	end
+
 	local i
 	for i = 1, C_MountJournal.GetNumMounts() do
-		local name, id, icon = C_MountJournal.GetMountInfo(i)
+		local name, id, icon, _, _, _, _, _, faction, _, isCollected = C_MountJournal.GetMountInfo(i)
 
-		self.mountsById[id] = i
-		self.mountsByName[name] = i
-		self.mountsByIcon[icon] = i
+		if isCollected and (not faction or faction == playerFaction) then
+			self.mountsById[id] = i
+			self.mountsByName[name] = i
+			self.mountsByIcon[icon] = i
+		end
 	end
 end
 
 function addon:RestoreMount(profile, slot, checkOnly)
-	local _, id, _, _, name, _, icon = unpack(profile.actions[slot])
+	local type = profile.actions[slot][1]
+	local id, name, icon
+
+	if type == "summonmount" then
+		_, _, _, _, id, name, _, icon = unpack(profile.actions[slot])
+	else
+		_, id, _, _, name, _, icon = unpack(profile.actions[slot])
+	end
 
 	local mount = self.mountsById[id] or
 		self.mountsByName[name] or
@@ -252,6 +266,10 @@ function addon:UseProfile(name, checkOnly)
 						self:ClearSlot(slot, checkOnly)
 						fail = fail + 1
 					end
+				elseif type == "summonmount" then
+					if not self:RestoreMount(profile, slot, checkOnly) then
+						fail = fail + 1
+					end
 				else
 					self:ClearSlot(slot, checkOnly)
 					fail = fail + 1
@@ -305,7 +323,7 @@ function addon:UpdateProfileBars(name)
 				if type == "spell" then
 					profile.actions[slot] = { type, id, subType, extraId, GetSpellInfo(id) }
 
-				elseif type == "spell" then
+				elseif type == "companion" then
 					if subType == "MOUNT" then
 						profile.actions[slot] = { type, id, subType, extraId, GetSpellInfo(id) }
 					else
@@ -321,9 +339,9 @@ function addon:UpdateProfileBars(name)
 				elseif type == "macro" then
 					profile.actions[slot] = { type, id, subType, extraId, GetMacroInfo(id) }
 
-				elseif type == "summonmount" then -- convert to legacy format
-					local legacyId = MOUNT_INDEX_TO_SPELL_ID[id]
-					profile.actions[slot] = { "companion", legacyId, "MOUNT", nil, GetSpellInfo(legacyId) }
+				elseif type == "summonmount" then
+					local spellId = MOUNT_INDEX_TO_SPELL_ID[id]
+					profile.actions[slot] = { type, id, subType, extraId, spellId, GetSpellInfo(spellId) }
 
 				elseif type == "summonpet" then
 					profile.actions[slot] = { type, id, subType, extraId, C_PetJournal.GetPetInfoByPetID(id) }
