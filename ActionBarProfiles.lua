@@ -137,10 +137,16 @@ end
 function addon:RestoreSpell(profile, slot, checkOnly)
 	local _, id, _, _, name, stance, icon = unpack(profile.actions[slot])
 
-	local spell = self.spellsById[id] or
-		(stance and stance ~= "" and self.spellsByName[name .. "|" .. stance]) or
-		self.spellsByName[name] or
-		self.spellsByIcon[icon]
+	local spell
+	if stance and stance ~= "" then
+		spell = self.spellsById[id] or
+			self.spellsByName[name .. "|" .. stance] or
+			self.spellsByIcon[icon]
+	else
+		spell = self.spellsById[id] or
+			self.spellsByName[name] or
+			self.spellsByIcon[icon]
+	end
 
 	if (spell) then
 		if not checkOnly then
@@ -204,7 +210,7 @@ function addon:RestoreMount(profile, slot, checkOnly)
 	self:ClearSlot(slot, checkOnly)
 end
 
-function addon:CanUseProfile(name)
+function addon:CheckUseProfile(name)
 	return addon:UseProfile(name, true)
 end
 
