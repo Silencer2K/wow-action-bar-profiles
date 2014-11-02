@@ -135,6 +135,7 @@ function addon:MakeCache()
         local spells = { id = {}, name = {}, icon = {} }
         local flyouts = { id = {}, name = {}, icon = {} }
         local items = { id = {}, name = {}, icon = {} }
+        local equipped = { id = {}, name = {}, icon = {} }
         local mounts = { id = {}, name = {}, icon = {} }
 
 	local bookIndex, spellIndex
@@ -167,7 +168,18 @@ function addon:MakeCache()
 		end
 	end
 
-	return { spells = spells, flyouts = flyouts, items = items, mounts = mounts }
+	local bagIndex, itemIndex
+	for bagIndex = 0, NUM_BAG_SLOTS do
+		for itemIndex = 1, GetContainerNumSlots(bagIndex) do
+			local id = GetContainerItemID(bagIndex, itemIndex)
+			if id then
+				local name, icon = unpackByIndex({ GetItemInfo(id) }, 1, 10)
+				self:UpdateCache(items, { bagIndex, itemIndex }, id, name, nil, icon)
+			end
+		end
+	end
+
+	return { spells = spells, flyouts = flyouts, items = items, equipped = equipped, mounts = mounts }
 end
 
 function addon:GetFromCache(cache, id, name, stance, icon)
@@ -200,6 +212,32 @@ function addon:RestoreFlyout(cache, profile, slot, checkOnly)
 	if (flyout) then
 		if not checkOnly then
 			PickupSpellBookItem(flyout, BOOKTYPE_SPELL)
+			self:PlaceToSlot(slot)
+		end
+		return true
+	end
+end
+
+function addon:RestoreItem(cache, profile, slot, checkOnly)
+	local id, name, icon = unpackByIndex(profile.actions[slot], 2, 5, 14)
+
+	local item = self:GetFromCache(cache, id, name, nil, icon)
+
+	if (item) then
+		if not checkOnly then
+			PickupContainerItem(item[1], item[2])
+			self:PlaceToSlot(slot)
+		end
+		return true
+	end
+end
+
+function addon:RestoreMissingItem(profile, slot, checkOnly)
+	local id = unpackByIndex(profile.actions[slot], 2)
+
+	if GetItemInfo(id) then
+		if not checkOnly then
+			PickupItem(id)
 			self:PlaceToSlot(slot)
 		end
 		return true
@@ -252,6 +290,15 @@ function addon:UseProfile(name, checkOnly)
 
 				elseif type == "flyout" then
 					ok = self:RestoreFlyout(cache.flyouts, profile, slot, checkOnly)
+
+				elseif type == "item" then
+					ok = self:RestoreItem(cache.items, profile, slot, checkOnly)
+					if not ok then
+						ok = self:RestoreMissingItem(profile, slot, checkOnly)
+						if ok then
+							fail = fail + 1
+						end
+					end
 
 				elseif type == "companion" then
 					if subType == "MOUNT" then
