@@ -110,7 +110,7 @@ function addon:ClearSlot(slot, checkOnly)
 	end
 end
 
-function addon:PutToSlot(slot, checkOnly)
+function addon:PlaceToSlot(slot, checkOnly)
 	if not checkOnly then
 		PlaceAction(slot)
 		ClearCursor()
@@ -186,7 +186,7 @@ function addon:RestoreSpell(cache, profile, slot, checkOnly)
 	if spell then
 		if not checkOnly then
 			PickupSpellBookItem(spell, BOOKTYPE_SPELL)
-			self:PutToSlot(slot)
+			self:PlaceToSlot(slot)
 		end
 		return true
 	end
@@ -200,7 +200,7 @@ function addon:RestoreFlyout(cache, profile, slot, checkOnly)
 	if (flyout) then
 		if not checkOnly then
 			PickupSpellBookItem(flyout, BOOKTYPE_SPELL)
-			self:PutToSlot(slot)
+			self:PlaceToSlot(slot)
 		end
 		return true
 	end
@@ -221,7 +221,7 @@ function addon:RestoreMount(cache, profile, slot, checkOnly)
 	if (mount) then
 		if not checkOnly then
 			C_MountJournal.Pickup(mount)
-			self:PutToSlot(slot)
+			self:PlaceToSlot(slot)
 		end
 		return true
 	end
@@ -250,12 +250,15 @@ self.db.global.cache = cache
 
 				if type == "spell" then
 					ok = self:RestoreSpell(cache.spells, profile, slot, checkOnly)
+
 				elseif type == "flyout" then
 					ok = self:RestoreFlyout(cache.flyouts, profile, slot, checkOnly)
+
 				elseif type == "companion" then
 					if subType == "MOUNT" then
 						ok = self:RestoreMount(cache.mounts, profile, slot, checkOnly)
 					end
+
 				elseif type == "summonmount" then
 					ok = self:RestoreMount(cache.mounts, profile, slot, checkOnly)
 				end
