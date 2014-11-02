@@ -35,7 +35,7 @@ function frame:OnInitialize()
 	}
 
 	StaticPopupDialogs.CONFIRM_USE_ACTION_BAR_PROFILE = {
-		text = "%s out of %s action buttons of that profile can not be used by the current character. Do you want to use it anyway?",
+		text = L.confirm_use,
 		button1 = YES,
 		button2 = NO,
 		OnAccept = function(popup) self:OnUseConfirm(popup) end,
