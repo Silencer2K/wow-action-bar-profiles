@@ -106,6 +106,7 @@ function addon:PreloadSpells()
 	self.spellsByIcon = {}
 
 	self.flyoutsById = {}
+	self.flyoutsByName = {}
 
 	local i
 	for i = 1, MAX_SKILLLINE_TABS do
@@ -131,6 +132,9 @@ function addon:PreloadSpells()
 
 				elseif type == "FLYOUT" then
 					self.flyoutsById[id] = j
+
+					local name = GetSpellBookItemName(j, BOOKTYPE_SPELL)
+					self.flyoutsByName[name] = j
 				end
 			end
 		end
@@ -164,9 +168,10 @@ function addon:RestoreSpell(profile, slot, checkOnly)
 end
 
 function addon:RestoreFlyout(profile, slot, checkOnly)
-	local _, id = unpack(profile.actions[slot])
+	local _, id, _, _, name = unpack(profile.actions[slot])
 
-	local flyout = self.flyoutsById[id]
+	local flyout = self.flyoutsById[id] or
+		self.flyoutsByName[name]
 
 	if (flyout) then
 		if not checkOnly then
