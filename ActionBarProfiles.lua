@@ -323,7 +323,7 @@ function addon:UpdateProfileBars(name)
 
 				elseif type == "summonmount" then -- convert to legacy format
 					local legacyId = MOUNT_INDEX_TO_SPELL_ID[id]
-					profile.actions[slot] = { "companion", legacyId, "MOUNT", nil, legacyId }
+					profile.actions[slot] = { "companion", legacyId, "MOUNT", nil, GetSpellInfo(legacyId) }
 
 				elseif type == "summonpet" then
 					profile.actions[slot] = { type, id, subType, extraId, C_PetJournal.GetPetInfoByPetID(id) }
