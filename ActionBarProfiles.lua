@@ -251,8 +251,8 @@ function addon:MakeCache()
 
 	local petIndex
 	for petIndex = 1, C_PetJournal:GetNumPets() do
-		id, creatureId = unpackByIndex({ C_PetJournal.GetPetInfoByIndex(petIndex) }, 1, 11)
-		self:UpdateCache(pets, id, creatureId)
+		local petId, id = unpackByIndex({ C_PetJournal.GetPetInfoByIndex(petIndex) }, 1, 11)
+		self:UpdateCache(pets, petId, id)
 	end
 
 	self:RestorePetJournalFilters(saved)
