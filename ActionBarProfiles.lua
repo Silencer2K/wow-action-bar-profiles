@@ -138,11 +138,12 @@ function addon:MakeCache()
         local items = { id = {}, name = {} }
         local mounts = { id = {}, name = {}, icon = {} }
 
-	local bookIndex, spellIndex
+	local bookIndex
 	for bookIndex = 1, MAX_SPELLBOOK_TABS do
 		local bookOffset, numSpells, offSpecId = unpackByIndex({ GetSpellTabInfo(bookIndex) }, 3, 4, 6)
 
 		if offSpecId == 0 then
+			local spellIndex
 			for spellIndex = bookOffset + 1, bookOffset + numSpells do
 				local type, id = GetSpellBookItemInfo(spellIndex, BOOKTYPE_SPELL)
 				local name, stance = GetSpellBookItemName(spellIndex, BOOKTYPE_SPELL)
@@ -158,17 +159,6 @@ function addon:MakeCache()
 		end
 	end
 
-	local playerFaction = (UnitFactionGroup("player") == "Alliance" and 1) or 0
-
-	local mountIndex
-	for mountIndex = 1, C_MountJournal.GetNumMounts() do
-		local name, id, icon, faction, isCollected = unpackByIndex({ C_MountJournal.GetMountInfo(mountIndex) }, 1, 2, 3, 9, 11)
-
-		if isCollected and (not faction or faction == playerFaction) then
-			self:UpdateCache(mounts, id, id, name, nil, icon)
-		end
-	end
-
 	local slotIndex
 	for slotIndex = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
 		local id = GetInventoryItemID("player", slotIndex)
@@ -179,8 +169,9 @@ function addon:MakeCache()
 		end
 	end
 
-	local bagIndex, itemIndex
-	for bagIndex = 0, NUM_BAG_SLOTS do
+	local bagIndex
+	for bagIndex = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+		local itemIndex
 		for itemIndex = 1, GetContainerNumSlots(bagIndex) do
 			local id = GetContainerItemID(bagIndex, itemIndex)
 
@@ -188,6 +179,17 @@ function addon:MakeCache()
 				local name = GetItemInfo(id)
 				self:UpdateCache(items, id, id, name)
 			end
+		end
+	end
+
+	local playerFaction = (UnitFactionGroup("player") == "Alliance" and 1) or 0
+
+	local mountIndex
+	for mountIndex = 1, C_MountJournal.GetNumMounts() do
+		local name, id, icon, faction, isCollected = unpackByIndex({ C_MountJournal.GetMountInfo(mountIndex) }, 1, 2, 3, 9, 11)
+
+		if isCollected and (not faction or faction == playerFaction) then
+			self:UpdateCache(mounts, id, id, name, nil, icon)
 		end
 	end
 
@@ -243,6 +245,14 @@ function addon:RestoreItem(cache, profile, slot, checkOnly)
 	local item = self:GetFromCache(cache.items, id, name)
 
 	if (item) then
+		if not checkOnly then
+			PickupItem(item)
+			self:PlaceToSlot(slot)
+		end
+		return true
+	end
+
+	if PlayerHasToy(id) then
 		if not checkOnly then
 			PickupItem(item)
 			self:PlaceToSlot(slot)
