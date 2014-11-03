@@ -146,12 +146,13 @@ function addon:MakeCache()
 		if offSpecId == 0 then
 			for spellIndex = bookOffset + 1, bookOffset + numSpells do
 				local type, id = GetSpellBookItemInfo(spellIndex, BOOKTYPE_SPELL)
-				local name, stance = GetSpellBookItemName(spellIndex, BOOKTYPE_SPELL)
-				local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE_SPELL)
 
 				if type == "SPELL" then
-					self:UpdateCache(spells, spellIndex, id, name, stance, icon)
+					local name, stance, icon = GetSpellInfo(id)
+					self:UpdateCache(spells, id, id, name, stance, icon)
+
 				elseif type == "FLYOUT" then
+					local name = GetFlyoutInfo(id)
 					self:UpdateCache(flyouts, spellIndex, id, name)
 				end
 			end
@@ -165,7 +166,7 @@ function addon:MakeCache()
 		local name, id, icon, faction, isCollected = unpackByIndex({ C_MountJournal.GetMountInfo(mountIndex) }, 1, 2, 3, 9, 11)
 
 		if isCollected and (not faction or faction == playerFaction) then
-			self:UpdateCache(mounts, mountIndex, id, name, nil, icon)
+			self:UpdateCache(mounts, id, id, name, nil, icon)
 		end
 	end
 
@@ -203,13 +204,14 @@ function addon:GetFromCache(cache, id, name, stance, icon)
 end
 
 function addon:RestoreSpell(cache, profile, slot, checkOnly)
-	local id, name, stance, icon = unpackByIndex(profile.actions[slot], 2, 5, 6, 7)
+	local id = profile.actions[slot][2]
+	local name, rank, icon = GetSpellInfo(id)
 
-	local spell = self:GetFromCache(cache, id, name, stance, icon)
+	local spell = self:GetFromCache(cache.spells, id, name, stance, icon)
 
 	if spell then
 		if not checkOnly then
-			PickupSpellBookItem(spell, BOOKTYPE_SPELL)
+			PickupSpell(spell)
 			self:PlaceToSlot(slot)
 		end
 		return true
@@ -217,9 +219,10 @@ function addon:RestoreSpell(cache, profile, slot, checkOnly)
 end
 
 function addon:RestoreFlyout(cache, profile, slot, checkOnly)
-	local id, name = unpackByIndex(profile.actions[slot], 2, 5)
+	local id = profile.actions[slot][2]
+	local name = GetFlyoutInfo(id)
 
-	local flyout = self:GetFromCache(cache, id, name)
+	local flyout = self:GetFromCache(cache.flyouts, id, name)
 
 	if (flyout) then
 		if not checkOnly then
@@ -271,20 +274,19 @@ function addon:RestoreMissingItem(profile, slot, checkOnly)
 end
 
 function addon:RestoreMount(cache, profile, slot, checkOnly)
-	local type = profile.actions[slot][1]
-	local id, name, icon
+	local type, id = unpack(profile.actions[slot])
 
 	if type == "summonmount" then
-		id, name, icon = unpackByIndex(profile.actions[slot], 5, 6, 8)
-	else
-		id, name, icon = unpackByIndex(profile.actions[slot], 2, 5, 7)
+		id = MOUNT_INDEX_TO_SPELL_ID[id]
 	end
 
-	local mount = self:GetFromCache(cache, id, name, nil, icon)
+	local name, icon = unpackByIndex({ GetSpellInfo(id) }, 1, 3)
+
+	local mount = self:GetFromCache(cache.mounts, id, name, nil, icon)
 
 	if (mount) then
 		if not checkOnly then
-			C_MountJournal.Pickup(mount)
+			PickupSpell(mount)
 			self:PlaceToSlot(slot)
 		end
 		return true
@@ -312,10 +314,10 @@ function addon:UseProfile(name, checkOnly)
 				local ok
 
 				if type == "spell" then
-					ok = self:RestoreSpell(cache.spells, profile, slot, checkOnly)
+					ok = self:RestoreSpell(cache, profile, slot, checkOnly)
 
 				elseif type == "flyout" then
-					ok = self:RestoreFlyout(cache.flyouts, profile, slot, checkOnly)
+					ok = self:RestoreFlyout(cache, profile, slot, checkOnly)
 
 				elseif type == "item" then
 					ok = self:RestoreEquippedItem(cache.equipped, profile, slot, checkOnly) or
@@ -330,11 +332,11 @@ function addon:UseProfile(name, checkOnly)
 
 				elseif type == "companion" then
 					if subType == "MOUNT" then
-						ok = self:RestoreMount(cache.mounts, profile, slot, checkOnly)
+						ok = self:RestoreMount(cache, profile, slot, checkOnly)
 					end
 
 				elseif type == "summonmount" then
-					ok = self:RestoreMount(cache.mounts, profile, slot, checkOnly)
+					ok = self:RestoreMount(cache, profile, slot, checkOnly)
 				end
 
 				if not ok then
@@ -387,32 +389,11 @@ function addon:UpdateProfileBars(name)
 			local type, id, subType, extraId = GetActionInfo(slot)
 
 			if type then
-				if type == "spell" then
-					profile.actions[slot] = { type, id, subType, extraId, GetSpellInfo(id) }
-
-				elseif type == "companion" then
-					if subType == "MOUNT" then
-						profile.actions[slot] = { type, id, subType, extraId, GetSpellInfo(id) }
-					else
-						profile.actions[slot] = { type, id, subType, extraId }
-					end
-
-				elseif type == "item" then
+				if type == "item" then
 					profile.actions[slot] = { type, id, subType, extraId, GetItemInfo(id) }
-
-				elseif type == "flyout" then
-					profile.actions[slot] = { type, id, subType, extraId, GetFlyoutInfo(id) }
 
 				elseif type == "macro" then
 					profile.actions[slot] = { type, id, subType, extraId, GetMacroInfo(id) }
-
-				elseif type == "summonmount" then
-					local spellId = MOUNT_INDEX_TO_SPELL_ID[id]
-
-					profile.actions[slot] = { type, id, subType, extraId, spellId, GetSpellInfo(spellId) }
-
-				elseif type == "summonpet" then
-					profile.actions[slot] = { type, id, subType, extraId, C_PetJournal.GetPetInfoByPetID(id) }
 
 				else
 					profile.actions[slot] = { type, id, subType, extraId }
