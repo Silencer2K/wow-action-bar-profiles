@@ -469,7 +469,12 @@ function addon:UseProfile(name, checkOnly)
 					ok = self:RestorePet(cache, profile, slot, checkOnly)
 
 				elseif type == "macro" then
-					ok = self:RestoreMacro(cache, profile, slot, checkOnly)
+					if id > 0 then
+						ok = self:RestoreMacro(cache, profile, slot, checkOnly)
+					else
+						ok = true
+						self:ClearSlot(slot, checkOnly)
+					end
 				end
 
 				if not ok then
@@ -526,7 +531,9 @@ function addon:UpdateProfileBars(name)
 					profile.actions[slot] = { type, id, subType, extraId, unpackByIndex({ GetItemInfo(id) }, 1) }
 
 				elseif type == "macro" then
-					profile.actions[slot] = { type, id, subType, extraId, unpackByIndex({ GetMacroInfo(id) }, 1, 2) }
+					if id > 0 then
+						profile.actions[slot] = { type, id, subType, extraId, unpackByIndex({ GetMacroInfo(id) }, 1, 2) }
+					end
 
 				elseif type == "summonpet" then
 					profile.actions[slot] = { type, id, subType, extraId, unpackByIndex({ C_PetJournal.GetPetInfoByPetID(id) }, 11) }
