@@ -145,13 +145,13 @@ function addon:MakeCache()
 		if offSpecId == 0 then
 			for spellIndex = bookOffset + 1, bookOffset + numSpells do
 				local type, id = GetSpellBookItemInfo(spellIndex, BOOKTYPE_SPELL)
+				local name, stance = GetSpellBookItemName(spellIndex, BOOKTYPE_SPELL)
+				local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE_SPELL)
 
 				if type == "SPELL" then
-					local name, stance, icon = GetSpellInfo(id)
 					self:UpdateCache(spells, id, id, name, stance, icon)
 
 				elseif type == "FLYOUT" then
-					local name = GetFlyoutInfo(id)
 					self:UpdateCache(flyouts, spellIndex, id, name)
 				end
 			end
