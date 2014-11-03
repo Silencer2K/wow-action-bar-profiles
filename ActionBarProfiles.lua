@@ -293,6 +293,18 @@ function addon:RestoreMount(cache, profile, slot, checkOnly)
 	end
 end
 
+function addon:RestorePet(cache, profile, slot, checkOnly)
+	local id = profile.actions[slot][2]
+
+	if C_PetJournal.GetPetInfoByPetID(id) then
+		if not checkOnly then
+			C_PetJournal.PickupPet(id)
+			self:PlaceToSlot(slot)
+		end
+		return true
+	end
+end
+
 function addon:CheckUseProfile(name)
 	return addon:UseProfile(name, true)
 end
@@ -336,6 +348,9 @@ function addon:UseProfile(name, checkOnly)
 
 				elseif type == "summonmount" then
 					ok = self:RestoreMount(cache, profile, slot, checkOnly)
+
+				elseif type == "summonpet" then
+					ok = self:RestorePet(cache, profile, slot, checkOnly)
 				end
 
 				if not ok then
@@ -393,6 +408,9 @@ function addon:UpdateProfileBars(name)
 
 				elseif type == "macro" then
 					profile.actions[slot] = { type, id, subType, extraId, unpackByIndex({ GetMacroInfo(id) }, 1, 2) }
+
+				elseif type == "summonpet" then
+					profile.actions[slot] = { type, id, subType, extraId, unpackByIndex({ C_PetJournal.GetPetInfoByPetID(id) }, 11) }
 
 				else
 					profile.actions[slot] = { type, id, subType, extraId }
