@@ -119,14 +119,14 @@ function addon:PlaceToSlot(slot, checkOnly)
 	end
 end
 
-function addon:UpdateCache(cache, index, id, name, stance)
-	cache.id[id] = index
+function addon:UpdateCache(cache, value, id, name, stance)
+	cache.id[id] = value
 
 	if name then
 		if stance and stance ~= "" then
-			cache.name[name .. "|" .. stance] = index
+			cache.name[name .. "|" .. stance] = value
 		else
-			cache.name[name] = index
+			cache.name[name] = value
 		end
 	end
 end
@@ -142,14 +142,14 @@ function addon:PreloadSpells()
 		if offSpecId == 0 then
 			local spellIndex
 			for spellIndex = bookOffset + 1, bookOffset + numSpells do
-				local type, id = GetSpellBookItemInfo(spellIndex, BOOKTYPE_SPELL)
+				local type, spellId = GetSpellBookItemInfo(spellIndex, BOOKTYPE_SPELL)
 				local name, stance = GetSpellBookItemName(spellIndex, BOOKTYPE_SPELL)
 
 				if type == "SPELL" then
-					self:UpdateCache(spells, id, id, name, stance)
+					self:UpdateCache(spells, spellId, spellId, name, stance)
 
 				elseif type == "FLYOUT" then
-					self:UpdateCache(flyouts, spellIndex, id, name)
+					self:UpdateCache(flyouts, spellIndex, spellId, name)
 				end
 			end
 		end
@@ -163,11 +163,11 @@ function addon:PreloadItems()
 
 	local slotIndex
 	for slotIndex = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
-		local id = GetInventoryItemID("player", slotIndex)
+		local itemId = GetInventoryItemID("player", slotIndex)
 
-		if id then
-			local name = GetItemInfo(id)
-			self:UpdateCache(items, id, id, name)
+		if itemId then
+			local name = GetItemInfo(itemId)
+			self:UpdateCache(items, itemId, itemId, name)
 		end
 	end
 
@@ -175,11 +175,11 @@ function addon:PreloadItems()
 	for bagIndex = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
 		local itemIndex
 		for itemIndex = 1, GetContainerNumSlots(bagIndex) do
-			local id = GetContainerItemID(bagIndex, itemIndex)
+			local itemId = GetContainerItemID(bagIndex, itemIndex)
 
-			if id then
-				local name = GetItemInfo(id)
-				self:UpdateCache(items, id, id, name)
+			if itemId then
+				local name = GetItemInfo(itemId)
+				self:UpdateCache(items, itemId, itemId, name)
 			end
 		end
 	end
@@ -194,10 +194,10 @@ function addon:PreloadMounts()
 
 	local mountIndex
 	for mountIndex = 1, C_MountJournal.GetNumMounts() do
-		local name, id, faction, isCollected = unpackByIndex({ C_MountJournal.GetMountInfo(mountIndex) }, 1, 2, 9, 11)
+		local name, spellId, faction, isCollected = unpackByIndex({ C_MountJournal.GetMountInfo(mountIndex) }, 1, 2, 9, 11)
 
 		if isCollected and (not faction or faction == playerFaction) then
-			self:UpdateCache(mounts, id, id, name)
+			self:UpdateCache(mounts, spellId, spellId, name)
 		end
 	end
 
@@ -261,8 +261,8 @@ function addon:PreloadPets()
 
 	local petIndex
 	for petIndex = 1, C_PetJournal:GetNumPets() do
-		local petId, id = unpackByIndex({ C_PetJournal.GetPetInfoByIndex(petIndex) }, 1, 11)
-		self:UpdateCache(pets, petId, id)
+		local petId, creatureId = unpackByIndex({ C_PetJournal.GetPetInfoByIndex(petIndex) }, 1, 11)
+		self:UpdateCache(pets, petId, creatureId)
 	end
 
 	self:RestorePetJournalFilters(saved)
@@ -308,11 +308,11 @@ function addon:RestoreSpell(cache, profile, slot, checkOnly)
 	local id = profile.actions[slot][2]
 	local name, stance = GetSpellInfo(id)
 
-	local spell = self:GetFromCache(cache.spells, id, name, stance)
+	local spellId = self:GetFromCache(cache.spells, id, name, stance)
 
-	if spell then
+	if spellId then
 		if not checkOnly then
-			PickupSpell(spell)
+			PickupSpell(spellId)
 			self:PlaceToSlot(slot)
 		end
 		return true
@@ -323,11 +323,11 @@ function addon:RestoreFlyout(cache, profile, slot, checkOnly)
 	local id = profile.actions[slot][2]
 	local name = GetFlyoutInfo(id)
 
-	local flyout = self:GetFromCache(cache.flyouts, id, name)
+	local flyoutIndex = self:GetFromCache(cache.flyouts, id, name)
 
-	if (flyout) then
+	if (flyoutIndex) then
 		if not checkOnly then
-			PickupSpellBookItem(flyout, BOOKTYPE_SPELL)
+			PickupSpellBookItem(flyoutIndex, BOOKTYPE_SPELL)
 			self:PlaceToSlot(slot)
 		end
 		return true
@@ -342,11 +342,11 @@ function addon:RestoreItem(cache, profile, slot, checkOnly)
 		name = profile.actions[slot][5]
 	end
 
-	local item = self:GetFromCache(cache.items, id, name)
+	local itemId = self:GetFromCache(cache.items, id, name)
 
-	if (item) then
+	if (itemId) then
 		if not checkOnly then
-			PickupItem(item)
+			PickupItem(itemId)
 			self:PlaceToSlot(slot)
 		end
 		return true
@@ -382,11 +382,11 @@ function addon:RestoreMount(cache, profile, slot, checkOnly)
 
 	local name = GetSpellInfo(id)
 
-	local mount = self:GetFromCache(cache.mounts, id, name)
+	local spellId = self:GetFromCache(cache.mounts, id, name)
 
-	if (mount) then
+	if (spellId) then
 		if not checkOnly then
-			PickupSpell(mount)
+			PickupSpell(spellId)
 			self:PlaceToSlot(slot)
 		end
 		return true
@@ -396,11 +396,11 @@ end
 function addon:RestorePet(cache, profile, slot, checkOnly)
 	local id = profile.actions[slot][5]
 
-	local pet = self:GetFromCache(cache.pets, id)
+	local petId = self:GetFromCache(cache.pets, id)
 
-	if pet then
+	if petId then
 		if not checkOnly then
-			C_PetJournal.PickupPet(pet)
+			C_PetJournal.PickupPet(petId)
 			self:PlaceToSlot(slot)
 		end
 		return true
@@ -438,7 +438,7 @@ function addon:UseProfile(name, checkOnly)
 			if not profile.actions[slot] then
 				self:ClearSlot(slot, checkOnly)
 			else
-				local type, id, subType, spellId = unpack(profile.actions[slot])
+				local type, id, subType, extraId = unpack(profile.actions[slot])
 				local ok
 
 				if type == "spell" then
