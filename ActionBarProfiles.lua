@@ -318,7 +318,7 @@ function addon:RestoreItem(cache, profile, slot, checkOnly)
 
 	if PlayerHasToy(id) then
 		if not checkOnly then
-			PickupItem(item)
+			PickupItem(id)
 			self:PlaceToSlot(slot)
 		end
 		return true
