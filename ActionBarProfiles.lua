@@ -8,6 +8,8 @@ local MAX_SPELLBOOK_TABS = 10
 local MAX_ACTION_BUTTONS = 120
 local MAX_GLOBAL_MACROS = 120
 
+local PET_JOURNAL_FLAGS = { LE_PET_JOURNAL_FLAG_COLLECTED, LE_PET_JOURNAL_FLAG_NOT_COLLECTED, LE_PET_JOURNAL_FLAG_FAVORITES }
+
 local function unpackByIndex(tab, ...)
 	local indexes, res = {...}, {}
 	local i, j = 0
@@ -118,13 +120,64 @@ function addon:PlaceToSlot(slot, checkOnly)
 	end
 end
 
+function addon:SavePetJournalFilters()
+	local saved = { flag = {}, source = {}, type = {} }
+
+	saved.text = C_PetJournal.GetSearchFilter()
+
+	local i
+	for _, i in pairs(PET_JOURNAL_FLAGS) do
+		saved.flag[i] = C_PetJournal.IsFlagFiltered(i)
+	end
+
+	for i = 1, C_PetJournal.GetNumPetSources() do
+		saved.source[i] = C_PetJournal.IsPetSourceFiltered(i)
+	end
+
+	for i = 1, C_PetJournal.GetNumPetTypes() do
+		saved.type[i] = C_PetJournal.IsPetTypeFiltered(i)
+	end
+
+	return saved
+end
+
+function addon:RestorePetJournalFilters(saved)
+	C_PetJournal.SetSearchFilter(saved.text)
+
+	local i
+	for _, i in pairs(PET_JOURNAL_FLAGS) do
+		C_PetJournal.SetFlagFilter(i, saved.flag[i])
+	end
+
+	for i = 1, C_PetJournal.GetNumPetSources() do
+		C_PetJournal.SetPetSourceFilter(i, saved.source[i])
+	end
+
+	for i = 1, C_PetJournal.GetNumPetTypes() do
+		C_PetJournal.SetPetTypeFilter(i, saved.type[i])
+	end
+end
+
+function addon:ClearPetJournalFilters()
+	C_PetJournal.ClearSearchFilter()
+
+	C_PetJournal.SetFlagFilter(LE_PET_JOURNAL_FLAG_COLLECTED, true)
+	C_PetJournal.SetFlagFilter(LE_PET_JOURNAL_FLAG_NOT_COLLECTED, false)
+	C_PetJournal.SetFlagFilter(LE_PET_JOURNAL_FLAG_FAVORITES, false)
+
+	C_PetJournal.AddAllPetSourcesFilter()
+	C_PetJournal.AddAllPetTypesFilter()
+end
+
 function addon:UpdateCache(cache, index, id, name, stance, icon)
 	cache.id[id] = index
 
-	if stance and stance ~= "" then
-		cache.name[name .. "|" .. stance] = index
-	else
-		cache.name[name] = index
+	if name then
+		if stance and stance ~= "" then
+			cache.name[name .. "|" .. stance] = index
+		else
+			cache.name[name] = index
+		end
 	end
 
 	if icon then
@@ -133,10 +186,11 @@ function addon:UpdateCache(cache, index, id, name, stance, icon)
 end
 
 function addon:MakeCache()
-        local spells = { id = {}, name = {}, icon = {} }
+        local spells = { id = {}, name = {} }
         local flyouts = { id = {}, name = {} }
         local items = { id = {}, name = {} }
-        local mounts = { id = {}, name = {}, icon = {} }
+        local mounts = { id = {}, name = {} }
+        local pets = { id = {} }
 
 	local bookIndex
 	for bookIndex = 1, MAX_SPELLBOOK_TABS do
@@ -147,10 +201,9 @@ function addon:MakeCache()
 			for spellIndex = bookOffset + 1, bookOffset + numSpells do
 				local type, id = GetSpellBookItemInfo(spellIndex, BOOKTYPE_SPELL)
 				local name, stance = GetSpellBookItemName(spellIndex, BOOKTYPE_SPELL)
-				local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE_SPELL)
 
 				if type == "SPELL" then
-					self:UpdateCache(spells, id, id, name, stance, icon)
+					self:UpdateCache(spells, id, id, name, stance)
 
 				elseif type == "FLYOUT" then
 					self:UpdateCache(flyouts, spellIndex, id, name)
@@ -186,29 +239,40 @@ function addon:MakeCache()
 
 	local mountIndex
 	for mountIndex = 1, C_MountJournal.GetNumMounts() do
-		local name, id, icon, faction, isCollected = unpackByIndex({ C_MountJournal.GetMountInfo(mountIndex) }, 1, 2, 3, 9, 11)
+		local name, id, faction, isCollected = unpackByIndex({ C_MountJournal.GetMountInfo(mountIndex) }, 1, 2, 9, 11)
 
 		if isCollected and (not faction or faction == playerFaction) then
-			self:UpdateCache(mounts, id, id, name, nil, icon)
+			self:UpdateCache(mounts, id, id, name)
 		end
 	end
 
-	return { spells = spells, flyouts = flyouts, items = items, mounts = mounts }
+	local saved = self:SavePetJournalFilters()
+	self:ClearPetJournalFilters()
+
+	local petIndex
+	for petIndex = 1, C_PetJournal:GetNumPets() do
+		id, creatureId = unpackByIndex({ C_PetJournal.GetPetInfoByIndex(petIndex) }, 1, 11)
+		self:UpdateCache(pets, id, creatureId)
+	end
+
+	self:RestorePetJournalFilters(saved)
+
+	return { spells = spells, flyouts = flyouts, items = items, mounts = mounts, pets = pets }
 end
 
 function addon:GetFromCache(cache, id, name, stance, icon)
 	if stance and stance ~= "" then
-		return cache.id[id] or cache.name[name .. "|" .. stance] or (icon and cache.icon[icon])
+		return cache.id[id] or (name and cache.name[name .. "|" .. stance]) or (icon and cache.icon[icon])
 	end
 
-	return cache.id[id] or cache.name[name] or (icon and cache.icon[icon])
+	return cache.id[id] or (name and cache.name[name]) or (icon and cache.icon[icon])
 end
 
 function addon:RestoreSpell(cache, profile, slot, checkOnly)
 	local id = profile.actions[slot][2]
-	local name, rank, icon = GetSpellInfo(id)
+	local name, stance = GetSpellInfo(id)
 
-	local spell = self:GetFromCache(cache.spells, id, name, stance, icon)
+	local spell = self:GetFromCache(cache.spells, id, name, stance)
 
 	if spell then
 		if not checkOnly then
@@ -280,9 +344,9 @@ function addon:RestoreMount(cache, profile, slot, checkOnly)
 		id = MOUNT_INDEX_TO_SPELL_ID[id]
 	end
 
-	local name, icon = unpackByIndex({ GetSpellInfo(id) }, 1, 3)
+	local name = GetSpellInfo(id)
 
-	local mount = self:GetFromCache(cache.mounts, id, name, nil, icon)
+	local mount = self:GetFromCache(cache.mounts, id, name)
 
 	if (mount) then
 		if not checkOnly then
@@ -294,11 +358,13 @@ function addon:RestoreMount(cache, profile, slot, checkOnly)
 end
 
 function addon:RestorePet(cache, profile, slot, checkOnly)
-	local id = profile.actions[slot][2]
+	local id = profile.actions[slot][5]
 
-	if C_PetJournal.GetPetInfoByPetID(id) then
+	local pet = self:GetFromCache(cache.pets, id)
+
+	if pet then
 		if not checkOnly then
-			C_PetJournal.PickupPet(id)
+			C_PetJournal.PickupPet(pet)
 			self:PlaceToSlot(slot)
 		end
 		return true

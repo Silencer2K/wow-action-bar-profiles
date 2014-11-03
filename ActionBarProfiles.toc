@@ -5,6 +5,7 @@
 ## Version: 0.1-beta
 
 Mounts.lua
+PetJournal.lua
 
 ActionBarProfiles.xml
 
