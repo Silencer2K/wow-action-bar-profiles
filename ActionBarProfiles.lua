@@ -119,6 +119,91 @@ function addon:PlaceToSlot(slot, checkOnly)
 	end
 end
 
+function addon:UpdateCache(cache, index, id, name, stance)
+	cache.id[id] = index
+
+	if name then
+		if stance and stance ~= "" then
+			cache.name[name .. "|" .. stance] = index
+		else
+			cache.name[name] = index
+		end
+	end
+end
+
+function addon:PreloadSpells()
+        local spells = { id = {}, name = {} }
+        local flyouts = { id = {}, name = {} }
+
+	local bookIndex
+	for bookIndex = 1, MAX_SPELLBOOK_TABS do
+		local bookOffset, numSpells, offSpecId = unpackByIndex({ GetSpellTabInfo(bookIndex) }, 3, 4, 6)
+
+		if offSpecId == 0 then
+			local spellIndex
+			for spellIndex = bookOffset + 1, bookOffset + numSpells do
+				local type, id = GetSpellBookItemInfo(spellIndex, BOOKTYPE_SPELL)
+				local name, stance = GetSpellBookItemName(spellIndex, BOOKTYPE_SPELL)
+
+				if type == "SPELL" then
+					self:UpdateCache(spells, id, id, name, stance)
+
+				elseif type == "FLYOUT" then
+					self:UpdateCache(flyouts, spellIndex, id, name)
+				end
+			end
+		end
+	end
+
+	return spells, flyouts
+end
+
+function addon:PreloadItems()
+        local items = { id = {}, name = {} }
+
+	local slotIndex
+	for slotIndex = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
+		local id = GetInventoryItemID("player", slotIndex)
+
+		if id then
+			local name = GetItemInfo(id)
+			self:UpdateCache(items, id, id, name)
+		end
+	end
+
+	local bagIndex
+	for bagIndex = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+		local itemIndex
+		for itemIndex = 1, GetContainerNumSlots(bagIndex) do
+			local id = GetContainerItemID(bagIndex, itemIndex)
+
+			if id then
+				local name = GetItemInfo(id)
+				self:UpdateCache(items, id, id, name)
+			end
+		end
+	end
+
+	return items
+end
+
+function addon:PreloadMounts()
+        local mounts = { id = {}, name = {} }
+
+	local playerFaction = (UnitFactionGroup("player") == "Alliance" and 1) or 0
+
+	local mountIndex
+	for mountIndex = 1, C_MountJournal.GetNumMounts() do
+		local name, id, faction, isCollected = unpackByIndex({ C_MountJournal.GetMountInfo(mountIndex) }, 1, 2, 9, 11)
+
+		if isCollected and (not faction or faction == playerFaction) then
+			self:UpdateCache(mounts, id, id, name)
+		end
+	end
+
+	return mounts
+end
+
 function addon:SavePetJournalFilters()
 	local saved = { flag = {}, source = {}, type = {} }
 
@@ -168,79 +253,8 @@ function addon:ClearPetJournalFilters()
 	C_PetJournal.AddAllPetTypesFilter()
 end
 
-function addon:UpdateCache(cache, index, id, name, stance)
-	cache.id[id] = index
-
-	if name then
-		if stance and stance ~= "" then
-			cache.name[name .. "|" .. stance] = index
-		else
-			cache.name[name] = index
-		end
-	end
-end
-
-function addon:MakeCache()
-        local spells = { id = {}, name = {} }
-        local flyouts = { id = {}, name = {} }
-        local items = { id = {}, name = {} }
-        local mounts = { id = {}, name = {} }
+function addon:PreloadPets()
         local pets = { id = {} }
-        local macros = { id = {} }
-
-	local bookIndex
-	for bookIndex = 1, MAX_SPELLBOOK_TABS do
-		local bookOffset, numSpells, offSpecId = unpackByIndex({ GetSpellTabInfo(bookIndex) }, 3, 4, 6)
-
-		if offSpecId == 0 then
-			local spellIndex
-			for spellIndex = bookOffset + 1, bookOffset + numSpells do
-				local type, id = GetSpellBookItemInfo(spellIndex, BOOKTYPE_SPELL)
-				local name, stance = GetSpellBookItemName(spellIndex, BOOKTYPE_SPELL)
-
-				if type == "SPELL" then
-					self:UpdateCache(spells, id, id, name, stance)
-
-				elseif type == "FLYOUT" then
-					self:UpdateCache(flyouts, spellIndex, id, name)
-				end
-			end
-		end
-	end
-
-	local slotIndex
-	for slotIndex = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
-		local id = GetInventoryItemID("player", slotIndex)
-
-		if id then
-			local name = GetItemInfo(id)
-			self:UpdateCache(items, id, id, name)
-		end
-	end
-
-	local bagIndex
-	for bagIndex = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
-		local itemIndex
-		for itemIndex = 1, GetContainerNumSlots(bagIndex) do
-			local id = GetContainerItemID(bagIndex, itemIndex)
-
-			if id then
-				local name = GetItemInfo(id)
-				self:UpdateCache(items, id, id, name)
-			end
-		end
-	end
-
-	local playerFaction = (UnitFactionGroup("player") == "Alliance" and 1) or 0
-
-	local mountIndex
-	for mountIndex = 1, C_MountJournal.GetNumMounts() do
-		local name, id, faction, isCollected = unpackByIndex({ C_MountJournal.GetMountInfo(mountIndex) }, 1, 2, 9, 11)
-
-		if isCollected and (not faction or faction == playerFaction) then
-			self:UpdateCache(mounts, id, id, name)
-		end
-	end
 
 	local saved = self:SavePetJournalFilters()
 	self:ClearPetJournalFilters()
@@ -253,6 +267,12 @@ function addon:MakeCache()
 
 	self:RestorePetJournalFilters(saved)
 
+	return pets
+end
+
+function addon:PreloadMacros()
+        local macros = { id = {} }
+
 	local macroIndex
 	for macroIndex = 1, MAX_ACCOUNT_MACROS + MAX_CHARACTER_MACROS do
 		local name, icon = GetMacroInfo(macroIndex)
@@ -262,7 +282,18 @@ function addon:MakeCache()
 		end
 	end
 
-	return { spells = spells, flyouts = flyouts, items = items, mounts = mounts, pets = pets, macros = macros }
+	return macros
+end
+
+function addon:MakeCache()
+	local spells, flyouts = self:PreloadSpells()
+	local items = self:PreloadItems()
+	local mounts = self:PreloadMounts()
+	local pets = self:PreloadPets()
+	local macros = self:PreloadMacros()
+
+	return { spells = spells, flyouts = flyouts, items = items,
+		mounts = mounts, pets = pets, macros = macros }
 end
 
 function addon:GetFromCache(cache, id, name, stance)
