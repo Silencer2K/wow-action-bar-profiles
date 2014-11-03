@@ -6,7 +6,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
 local MAX_SPELLBOOK_TABS = 10
 local MAX_ACTION_BUTTONS = 120
-local MAX_GLOBAL_MACROS = 120
 
 local PET_JOURNAL_FLAGS = { LE_PET_JOURNAL_FLAG_COLLECTED, LE_PET_JOURNAL_FLAG_NOT_COLLECTED, LE_PET_JOURNAL_FLAG_FAVORITES }
 
@@ -169,7 +168,7 @@ function addon:ClearPetJournalFilters()
 	C_PetJournal.AddAllPetTypesFilter()
 end
 
-function addon:UpdateCache(cache, index, id, name, stance, icon)
+function addon:UpdateCache(cache, index, id, name, stance)
 	cache.id[id] = index
 
 	if name then
@@ -179,10 +178,6 @@ function addon:UpdateCache(cache, index, id, name, stance, icon)
 			cache.name[name] = index
 		end
 	end
-
-	if icon then
-		cache.icon[icon] = index
-	end
 end
 
 function addon:MakeCache()
@@ -191,6 +186,7 @@ function addon:MakeCache()
         local items = { id = {}, name = {} }
         local mounts = { id = {}, name = {} }
         local pets = { id = {} }
+        local macros = { id = {} }
 
 	local bookIndex
 	for bookIndex = 1, MAX_SPELLBOOK_TABS do
@@ -257,15 +253,24 @@ function addon:MakeCache()
 
 	self:RestorePetJournalFilters(saved)
 
-	return { spells = spells, flyouts = flyouts, items = items, mounts = mounts, pets = pets }
-end
+	local macroIndex
+	for macroIndex = 1, MAX_ACCOUNT_MACROS + MAX_CHARACTER_MACROS do
+		local name, icon = GetMacroInfo(macroIndex)
 
-function addon:GetFromCache(cache, id, name, stance, icon)
-	if stance and stance ~= "" then
-		return cache.id[id] or (name and cache.name[name .. "|" .. stance]) or (icon and cache.icon[icon])
+		if name and name ~= "" then
+			self:UpdateCache(macros, macroIndex, name .. "|" .. icon)
+		end
 	end
 
-	return cache.id[id] or (name and cache.name[name]) or (icon and cache.icon[icon])
+	return { spells = spells, flyouts = flyouts, items = items, mounts = mounts, pets = pets, macros = macros }
+end
+
+function addon:GetFromCache(cache, id, name, stance)
+	if stance and stance ~= "" then
+		return cache.id[id] or (name and cache.name[name .. "|" .. stance])
+	end
+
+	return cache.id[id] or (name and cache.name[name])
 end
 
 function addon:RestoreSpell(cache, profile, slot, checkOnly)
@@ -371,6 +376,20 @@ function addon:RestorePet(cache, profile, slot, checkOnly)
 	end
 end
 
+function addon:RestoreMacro(cache, profile, slot, checkOnly)
+	local name, icon = unpackByIndex(profile.actions[slot], 5, 6)
+
+	local macro = self:GetFromCache(cache.macros, name .. "|" .. icon)
+
+	if macro then
+		if not checkOnly then
+			PickupMacro(macro)
+			self:PlaceToSlot(slot)
+		end
+		return true
+	end
+end
+
 function addon:CheckUseProfile(name)
 	return addon:UseProfile(name, true)
 end
@@ -417,6 +436,9 @@ function addon:UseProfile(name, checkOnly)
 
 				elseif type == "summonpet" then
 					ok = self:RestorePet(cache, profile, slot, checkOnly)
+
+				elseif type == "macro" then
+					ok = self:RestoreMacro(cache, profile, slot, checkOnly)
 				end
 
 				if not ok then
