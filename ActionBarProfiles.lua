@@ -4,25 +4,17 @@ LibStub("AceAddon-3.0"):NewAddon(addon, addonName)
 
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
+local S2K = LibStub("S2KTools-1.0")
+
 local MAX_SPELLBOOK_TABS = 10
 local MAX_ACTION_BUTTONS = 120
 
 local PET_JOURNAL_FLAGS = { LE_PET_JOURNAL_FLAG_COLLECTED, LE_PET_JOURNAL_FLAG_NOT_COLLECTED, LE_PET_JOURNAL_FLAG_FAVORITES }
 
-local function unpackByIndex(tab, ...)
-	local indexes, res = {...}, {}
-	local i, j = 0
-	for _, j in pairs(indexes) do
-		i = i + 1
-		res[i] = tab[j]
-	end
-	return unpack(res, 1, i)
-end
-
 function addon:OnInitialize()
 	self.db = LibStub("AceDB-3.0"):New(addonName .. "DB")
 
-	self:InjectPaperDollSidebarTab(
+	S2K:InjectPaperDollSidebarTab(
 		L.charframe_tab,
 		"PaperDollActionBarProfilesPane",
 		"Interface\\AddOns\\ActionBarProfiles\\assets\\CharDollBtn",
@@ -31,38 +23,6 @@ function addon:OnInitialize()
 
 	PaperDollActionBarProfilesPane:OnInitialize()
 	PaperDollActionBarProfilesSaveDialog:OnInitialize()
-end
-
-function addon:InjectPaperDollSidebarTab(name, frame, icon, texCoords)
-	local tabIndex = #PAPERDOLL_SIDEBARS + 1
-
-	PAPERDOLL_SIDEBARS[tabIndex] = { name = name, frame = frame, icon = icon, texCoords = texCoords }
-
-	local tabButton = CreateFrame("Button", "PaperDollSidebarTab" .. tabIndex, PaperDollSidebarTabs, "PaperDollSidebarTabTemplate", tabIndex)
-
-	tabButton:SetPoint("BOTTOMRIGHT", -30, 0)
-
-	local prevTabButton = _G["PaperDollSidebarTab" .. (tabIndex - 1)]
-
-	prevTabButton:ClearAllPoints()
-	prevTabButton:SetPoint("RIGHT", tabButton, "LEFT", -4, 0)
-
-	local prevSetLevel = PaperDollFrame_SetLevel
-
-	PaperDollFrame_SetLevel = function()
-		prevSetLevel()
-
-		if CharacterFrameInsetRight:IsVisible() then
-			local i
-			for i = 1, CharacterLevelText:GetNumPoints() do
-				point, relativeTo, relativePoint, xOffset, yOffset = CharacterLevelText:GetPoint(i)
-
-				if point == "CENTER" then
-					CharacterLevelText:SetPoint(point, relativeTo, relativePoint, xOffset - 30, yOffset)
-				end
-			end
-		end
-	end
 end
 
 function addon:OnEnable()
