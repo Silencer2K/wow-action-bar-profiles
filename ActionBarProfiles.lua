@@ -421,6 +421,18 @@ function addon:RestoreMacro(cache, profile, slot, checkOnly)
 	end
 end
 
+function addon:RestoreEquipSet(cache, profile, slot, checkOnly)
+	local name = profile.actions[slot][2]
+
+	if (GetEquipmentSetInfoByName(name)) then
+		if not checkOnly then
+			PickupEquipmentSetByName(name)
+			self:PlaceToSlot(slot)
+		end
+		return true
+	end
+end
+
 function addon:CheckUseProfile(name)
 	return addon:UseProfile(name, true)
 end
@@ -475,6 +487,9 @@ function addon:UseProfile(name, checkOnly)
 						ok = true
 						self:ClearSlot(slot, checkOnly)
 					end
+
+				elseif type == "equipmentset" then
+					ok = self:RestoreEquipSet(cache, profile, slot, checkOnly)
 				end
 
 				if not ok then
