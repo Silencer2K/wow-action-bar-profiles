@@ -65,4 +65,6 @@ local function HookPetJournal()
 	C_PetJournal.GetSearchFilter = function() return saved.search end
 end
 
-HookPetJournal()
+if not oldMinor then
+	HookPetJournal()
+end
