@@ -21,7 +21,7 @@ function lib:InjectPaperDollSidebarTab(name, frame, icon, texCoords)
 	local tabIndex = #PAPERDOLL_SIDEBARS + 1
 	local extraTabs = tabIndex - DEFAULT_PAPERDOLL_NUM_TABS
 
-	PAPERDOLL_SIDEBARS[tabIndex] = { name = name,frame = frame, icon = icon, texCoords = texCoords }
+	PAPERDOLL_SIDEBARS[tabIndex] = { name = name, frame = frame, icon = icon, texCoords = texCoords }
 
 	local tabButton = CreateFrame(
 		"Button", "PaperDollSidebarTab" .. tabIndex, PaperDollSidebarTabs,
