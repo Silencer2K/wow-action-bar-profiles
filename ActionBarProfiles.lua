@@ -271,14 +271,14 @@ function addon:PreloadPets()
 end
 
 function addon:PreloadMacros()
-        local macros = { id = {} }
+        local macros = { id = {}, name = {} } -- id - "name|icon", name - "name"
 
 	local macroIndex
 	for macroIndex = 1, MAX_ACCOUNT_MACROS + MAX_CHARACTER_MACROS do
 		local name, icon = GetMacroInfo(macroIndex)
 
 		if name and name ~= "" then
-			self:UpdateCache(macros, macroIndex, name .. "|" .. icon)
+			self:UpdateCache(macros, macroIndex, name .. "|" .. icon, name)
 		end
 	end
 
@@ -410,7 +410,7 @@ end
 function addon:RestoreMacro(cache, profile, slot, checkOnly)
 	local name, icon = unpackByIndex(profile.actions[slot], 5, 6)
 
-	local macro = self:GetFromCache(cache.macros, name .. "|" .. icon)
+	local macro = self:GetFromCache(cache.macros, name .. "|" .. icon, name)
 
 	if macro then
 		if not checkOnly then
