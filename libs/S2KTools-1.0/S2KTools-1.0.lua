@@ -28,7 +28,7 @@ function lib:InjectPaperDollSidebarTab(name, frame, icon, texCoords)
 		"PaperDollSidebarTabTemplate", tabIndex
 	)
 
-	tabButton:SetPoint("BOTTOMRIGHT", (extraTabs > 2 and 0) or (extraTabs > 1 and -5) or -30, 0)
+	tabButton:SetPoint("BOTTOMRIGHT", (extraTabs < 2 and -30) or (extraTabs < 3 and -10) or 0, 0)
 
 	local prevTabButton = _G["PaperDollSidebarTab" .. (tabIndex - 1)]
 
