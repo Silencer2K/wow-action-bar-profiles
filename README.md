@@ -1,4 +1,4 @@
 Action Bar Profiles
 ===================
 
-Shows in a unit tooltip window a number of killed mobs of the same kind
+Allows you to setup and quickly switch between different profiles of your action bars
