@@ -4,8 +4,6 @@
 ## SavedVariables: ActionBarProfilesDB
 ## Version: 0.3-beta
 
-Mounts.lua
-
 ActionBarProfiles.xml
 
 locales\enUS.lua
@@ -23,8 +21,7 @@ locales\zhTW.lua
 
 ActionBarProfiles.lua
 
-ABPFrame.xml
-ABPFrame.lua
-
-ABPSaveDialog.xml
-ABPSaveDialog.lua
+GUI.xml
+GUI.lua
+GUISave.xml
+GUISave.lua

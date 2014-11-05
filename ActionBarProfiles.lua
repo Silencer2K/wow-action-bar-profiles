@@ -337,7 +337,7 @@ function addon:RestoreMount(cache, profile, slot, checkOnly)
 	local type, id = unpack(profile.actions[slot])
 
 	if type == "summonmount" then
-		id = MOUNT_INDEX_TO_SPELL_ID[id]
+		id = S2K.MOUNT_INDEX_TO_SPELL_ID[id]
 	end
 
 	local name = GetSpellInfo(id)
