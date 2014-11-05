@@ -322,7 +322,7 @@ function addon:RestoreItem(cache, profile, slot, checkOnly)
 end
 
 function addon:RestoreMissingItem(cache, profile, slot, checkOnly)
-	local id = unpackByIndex(profile.actions[slot], 2)
+	local id = profile.actions[slot][2]
 
 	if GetItemInfo(id) then
 		if not checkOnly then
@@ -503,7 +503,7 @@ function addon:UpdateProfileBars(name)
 
 			if type then
 				if type == "item" then
-					profile.actions[slot] = { type, id, subType, extraId, unpackByIndex({ GetItemInfo(id) }, 1) }
+					profile.actions[slot] = { type, id, subType, extraId, ({GetItemInfo(id)})[1] }
 
 				elseif type == "macro" then
 					if id > 0 then
@@ -511,7 +511,7 @@ function addon:UpdateProfileBars(name)
 					end
 
 				elseif type == "summonpet" then
-					profile.actions[slot] = { type, id, subType, extraId, unpackByIndex({ C_PetJournal.GetPetInfoByPetID(id) }, 11) }
+					profile.actions[slot] = { type, id, subType, extraId, ({C_PetJournal.GetPetInfoByPetID(id)})[11] }
 
 				else
 					profile.actions[slot] = { type, id, subType, extraId }
