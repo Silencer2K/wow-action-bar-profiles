@@ -1,4 +1,1 @@
-action-bar-profiles
-===================
-
-Action Bar Profiles (WoW addon)
+Action Bar Profiles
