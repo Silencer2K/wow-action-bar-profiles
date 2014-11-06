@@ -2,7 +2,7 @@
 ## Title: Action Bar Profiles
 ## Author: silencer2k@gmail.com
 ## SavedVariables: ActionBarProfilesDB
-## Version: 0.3-beta
+## Version: 0.3
 
 ActionBarProfiles.xml
 

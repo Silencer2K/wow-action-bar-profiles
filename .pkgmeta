@@ -2,6 +2,8 @@ package-as: ActionBarProfiles
 
 enable-nolib-creation: no
 
+manual-changelog: CHANGELOG
+
 externals:
     libs/LibStub: svn://svn.wowace.com/wow/ace3/mainline/trunk/LibStub
     libs/AceAddon-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceAddon-3.0
@@ -10,4 +12,4 @@ externals:
     libs/S2KTools-1.0: https://github.com/Silencer2K/wow-s2k-lib.git
 
 ignore:
-    - assets/src
+    - textures/src

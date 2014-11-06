@@ -17,7 +17,7 @@ function addon:OnInitialize()
 	S2K:InjectPaperDollSidebarTab(
 		L.charframe_tab,
 		"PaperDollActionBarProfilesPane",
-		"Interface\\AddOns\\ActionBarProfiles\\assets\\CharDollBtn",
+		"Interface\\AddOns\\ActionBarProfiles\\textures\\CharDollBtn",
 		{ 0, 0.515625, 0, 0.13671875 }
 	)
 
