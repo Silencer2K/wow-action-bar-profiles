@@ -1,7 +1,9 @@
 Action Bar Profiles
 ===================
 
-Addon that allows you to setup and quickly switch between different profiles of your action bars
+Addon that allows you to setup and quickly switch between different profiles of your action bars. Just open the character window and switch to the action bars tab.
+
+Also you can use the chat command to switch between profiles. For example, type */abp use Frost* to activate profile named Frost.
 
 The latest release is available on [http://www.curse.com/addons/wow/action-bar-profiles](http://www.curse.com/addons/wow/action-bar-profiles)
 
