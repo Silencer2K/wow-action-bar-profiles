@@ -333,18 +333,15 @@ function addon:RestoreItem(cache, profile, slot, checkOnly)
 		return true
 	end
 
-	local similarItems = S2K.SIMILAR_ITEMS[id]
-
-	if similarItems then
-		for _, itemId in pairs(similarItems) do
-			if cache.items.id[itemId] then
-				self:PlaceItemToSlot(slot, itemId, checkOnly)
-				return true
-			end
+	local similarItems = { S2K:GetSimilarItems(id) }
+	for _, itemId in pairs(similarItems) do
+		if cache.items.id[itemId] then
+			self:PlaceItemToSlot(slot, itemId, checkOnly)
+			return true
 		end
 	end
 
-	itemId = S2K.FACTIONAL_ITEMS[UnitFactionGroup("player")][id]
+	itemId = S2K:GetFactionalItem(({ UnitFactionGroup("player") })[1], id)
 
 	if itemId and cache.items.id[itemId] then
 		self:PlaceItemToSlot(slot, itemId, checkOnly)
@@ -355,7 +352,7 @@ end
 function addon:RestoreMissingItem(cache, profile, slot, checkOnly)
 	local id = profile.actions[slot][2]
 
-	id = S2K.FACTIONAL_ITEMS[UnitFactionGroup("player")][id] or id
+	id = S2K:GetFactionalItem(({ UnitFactionGroup("player") })[1], id)
 
 	if GetItemInfo(id) then
 		self:PlaceItemToSlot(slot, id, checkOnly)
@@ -367,7 +364,7 @@ function addon:RestoreMount(cache, profile, slot, checkOnly)
 	local type, id = unpack(profile.actions[slot])
 
 	if type == "summonmount" then
-		id = S2K.MOUNT_INDEX_TO_SPELL_ID[id]
+		id = S2K:GetMountSpell(id)
 	end
 
 	local name = GetSpellInfo(id)
