@@ -1,6 +1,6 @@
 local addonName, addon = ...
 
-LibStub("AceAddon-3.0"):NewAddon(addon, addonName)
+LibStub("AceAddon-3.0"):NewAddon(addon, addonName, "AceConsole-3.0")
 
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
@@ -21,6 +21,8 @@ function addon:OnInitialize()
 		{ 0, 0.515625, 0, 0.13671875 }
 	)
 
+	self:RegisterChatCommand("abp", "OnChatCommand")
+
 	PaperDollActionBarProfilesPane:OnInitialize()
 	PaperDollActionBarProfilesSaveDialog:OnInitialize()
 end
@@ -29,6 +31,15 @@ function addon:OnEnable()
 end
 
 function addon:OnDisable()
+end
+
+function addon:OnChatCommand(message)
+	local cmd, pos = self:GetArgs(message, 1, 1)
+	local param = message:sub(pos)
+
+	if cmd and cmd == "use" and param then
+		self:UseProfile(param)
+	end
 end
 
 function addon:GetSortedProfiles()
