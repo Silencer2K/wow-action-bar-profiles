@@ -5,6 +5,7 @@ LibStub("AceAddon-3.0"):NewAddon(addon, addonName, "AceConsole-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
 local S2K = LibStub("S2KTools-1.0")
+local S2KSimilar = LibStub("S2KSimilar-1.0")
 
 local MAX_SPELLBOOK_TABS = 10
 local MAX_ACTION_BUTTONS = 120
@@ -321,6 +322,19 @@ function addon:RestoreItem(cache, profile, slot, checkOnly)
 			self:PlaceToSlot(slot)
 		end
 		return true
+	end
+
+	local similarItems = S2KSimilar.SIMILAR_ITEMS[id]
+	if similarItems then
+		for _, itemId in pairs(similarItems) do
+			if cache.items.id[itemId] then
+				if not checkOnly then
+					PickupItem(itemId)
+					self:PlaceToSlot(slot)
+				end
+				return true
+			end
+		end
 	end
 
 	if PlayerHasToy(id) then

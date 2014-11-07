@@ -7,4 +7,5 @@
 	<Script file="libs\AceDB-3.0\AceDB-3.0.lua"/>
 	<Script file="libs\AceLocale-3.0\AceLocale-3.0.lua"/>
 	<Script file="libs\S2KTools-1.0\S2KTools-1.0.lua"/>
+	<Script file="libs\S2KTools-1.0\S2KSimilar-1.0.lua"/>
 </Ui>
