@@ -116,7 +116,7 @@ function frame:OnEditClick(button)
 end
 
 function frame:OnProfileDoubleClick(button)
-	local fail, total = addon:CheckUseProfile(button.name)
+	local fail, total = addon:UseProfile(button.name, true)
 	if fail > 0 then
 		local popup = StaticPopup_Show("CONFIRM_USE_ACTION_BAR_PROFILE", fail, total)
 		if popup then
@@ -146,7 +146,7 @@ function frame:OnProfileClick(button)
 end
 
 function frame:OnUseClick()
-	local fail, total = addon:CheckUseProfile(self.selectedName)
+	local fail, total = addon:UseProfile(self.selectedName, true)
 	if fail > 0 then
 		local popup = StaticPopup_Show("CONFIRM_USE_ACTION_BAR_PROFILE", fail, total)
 		if popup then
@@ -191,6 +191,8 @@ function frame:Update()
 	local selectedName = self.selectedName
 	self.selectedName = nil
 
+	local cache = addon:MakeCache()
+
 	local i
 	for i = 1, #self.buttons do
 		local button = self.buttons[i]
@@ -217,8 +219,10 @@ function frame:Update()
 				button.text:SetText(profile.name)
 				if profile.class ~= class then
 					button.text:SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
-				elseif addon:CheckUseProfile(profile.name) > 0 then
+
+				elseif addon:UseProfile(profile.name, true, cache) > 0 then
 					button.text:SetTextColor(RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b)
+
 				else
 					button.text:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
 				end

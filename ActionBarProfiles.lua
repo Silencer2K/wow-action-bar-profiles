@@ -417,16 +417,15 @@ function addon:RestoreEquipSet(cache, profile, slot, checkOnly)
 	end
 end
 
-function addon:CheckUseProfile(name)
-	return addon:UseProfile(name, true)
-end
-
-function addon:UseProfile(name, checkOnly)
+function addon:UseProfile(name, checkOnly, cache)
 	local profiles = self.db.global.profiles or {}
 	local profile = profiles[name]
 
+	if not cache then
+		cache = self:MakeCache()
+	end
+
 	local fail, total = 0, 0
-	local cache = self:MakeCache()
 
 	if profile then
 		local slot
