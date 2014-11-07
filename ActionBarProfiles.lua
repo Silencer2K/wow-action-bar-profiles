@@ -352,7 +352,7 @@ end
 function addon:RestoreMissingItem(cache, profile, slot, checkOnly)
 	local id = profile.actions[slot][2]
 
-	id = S2K:GetFactionalItem(({ UnitFactionGroup("player") })[1], id)
+	id = S2K:GetFactionalItem(({ UnitFactionGroup("player") })[1], id) or id
 
 	if GetItemInfo(id) then
 		self:PlaceItemToSlot(slot, id, checkOnly)
