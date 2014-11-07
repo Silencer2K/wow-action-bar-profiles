@@ -315,11 +315,7 @@ end
 
 function addon:RestoreItem(cache, profile, slot, checkOnly)
 	local id = profile.actions[slot][2]
-
-	local name = GetItemInfo(id)
-	if not name then
-		name = profile.actions[slot][5]
-	end
+	local name = GetItemInfo(id) or profile.actions[slot][5]
 
 	if PlayerHasToy(id) then
 		self:PlaceItemToSlot(slot, id, checkOnly)
@@ -328,34 +324,39 @@ function addon:RestoreItem(cache, profile, slot, checkOnly)
 
 	local itemId = self:GetFromCache(cache.items, id, name)
 
-	if (itemId) then
+	if itemId then
 		self:PlaceItemToSlot(slot, itemId, checkOnly)
 		return true
 	end
 
-	local similarItems = { S2K:GetSimilarItems(id) }
-	for _, itemId in pairs(similarItems) do
-		if cache.items.id[itemId] then
+	local factItemId = S2K:GetFactionalItem(({ UnitFactionGroup("player") })[1], id)
+
+	if factItemId then
+		local factItemName = GetItemInfo(factItemId)
+
+		itemId = self:GetFromCache(cache.items, factItemId, factItemName)
+
+		if itemId then
 			self:PlaceItemToSlot(slot, itemId, checkOnly)
 			return true
 		end
 	end
 
-	itemId = S2K:GetFactionalItem(({ UnitFactionGroup("player") })[1], id)
-
-	if itemId and cache.items.id[itemId] then
-		self:PlaceItemToSlot(slot, itemId, checkOnly)
-		return true
+	for _, itemId in pairs({ S2K:GetSimilarItems(id) }) do
+		if cache.items.id[itemId] then
+			self:PlaceItemToSlot(slot, itemId, checkOnly)
+			return true
+		end
 	end
 end
 
 function addon:RestoreMissingItem(cache, profile, slot, checkOnly)
 	local id = profile.actions[slot][2]
 
-	id = S2K:GetFactionalItem(({ UnitFactionGroup("player") })[1], id) or id
+	local itemId = S2K:GetFactionalItem(({ UnitFactionGroup("player") })[1], id) or id
 
-	if GetItemInfo(id) then
-		self:PlaceItemToSlot(slot, id, checkOnly)
+	if GetItemInfo(itemId) then
+		self:PlaceItemToSlot(slot, itemId, checkOnly)
 		return true
 	end
 end
