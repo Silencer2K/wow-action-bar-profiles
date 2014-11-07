@@ -117,8 +117,8 @@ function addon:UpdateCache(cache, value, id, name, stance)
 end
 
 function addon:PreloadSpells()
-        local spells = { id = {}, name = {} }
-        local flyouts = { id = {}, name = {} }
+	local spells = { id = {}, name = {} }
+	local flyouts = { id = {}, name = {} }
 
 	local bookIndex
 	for bookIndex = 1, MAX_SPELLBOOK_TABS do
@@ -144,7 +144,7 @@ function addon:PreloadSpells()
 end
 
 function addon:PreloadItems()
-        local items = { id = {}, name = {} }
+	local items = { id = {}, name = {} }
 
 	local slotIndex
 	for slotIndex = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
@@ -173,7 +173,7 @@ function addon:PreloadItems()
 end
 
 function addon:PreloadMounts()
-        local mounts = { id = {}, name = {} }
+	local mounts = { id = {}, name = {} }
 
 	local playerFaction = (UnitFactionGroup("player") == "Alliance" and 1) or 0
 
@@ -227,7 +227,11 @@ function addon:RestorePetJournalFilters(saved)
 	end
 end
 
-function addon:ClearPetJournalFilters()
+function addon:PreloadPets()
+	local pets = { id = {} }
+
+	local saved = self:SavePetJournalFilters()
+
 	C_PetJournal.ClearSearchFilter()
 
 	C_PetJournal.SetFlagFilter(LE_PET_JOURNAL_FLAG_COLLECTED, true)
@@ -236,13 +240,6 @@ function addon:ClearPetJournalFilters()
 
 	C_PetJournal.AddAllPetSourcesFilter()
 	C_PetJournal.AddAllPetTypesFilter()
-end
-
-function addon:PreloadPets()
-        local pets = { id = {} }
-
-	local saved = self:SavePetJournalFilters()
-	self:ClearPetJournalFilters()
 
 	local petIndex
 	for petIndex = 1, C_PetJournal:GetNumPets() do
@@ -256,7 +253,7 @@ function addon:PreloadPets()
 end
 
 function addon:PreloadMacros()
-        local macros = { id = {}, name = {} } -- id - "name|icon", name - "name"
+	local macros = { id = {}, name = {} } -- id - "name|icon", name - "name"
 
 	local macroIndex
 	for macroIndex = 1, MAX_ACCOUNT_MACROS + MAX_CHARACTER_MACROS do
