@@ -5,7 +5,6 @@ LibStub("AceAddon-3.0"):NewAddon(addon, addonName, "AceConsole-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
 local S2K = LibStub("S2KTools-1.0")
-local S2KSimilar = LibStub("S2KSimilar-1.0")
 
 local MAX_SPELLBOOK_TABS = 10
 local MAX_ACTION_BUTTONS = 120
@@ -88,6 +87,20 @@ function addon:PlaceToSlot(slot, checkOnly)
 	if not checkOnly then
 		PlaceAction(slot)
 		ClearCursor()
+	end
+end
+
+function addon:PlaceItemToSlot(slot, itemId, checkOnly)
+	if not checkOnly then
+		PickupItem(itemId)
+		self:PlaceToSlot(slot)
+	end
+end
+
+function addon:PlaceSpellToSlot(slot, spellId, checkOnly)
+	if not checkOnly then
+		PickupSpell(spellId)
+		self:PlaceToSlot(slot)
 	end
 end
 
@@ -283,10 +296,7 @@ function addon:RestoreSpell(cache, profile, slot, checkOnly)
 	local spellId = self:GetFromCache(cache.spells, id, name, stance)
 
 	if spellId then
-		if not checkOnly then
-			PickupSpell(spellId)
-			self:PlaceToSlot(slot)
-		end
+		self:PlaceSpellToSlot(slot, spellId, checkOnly)
 		return true
 	end
 end
@@ -314,34 +324,33 @@ function addon:RestoreItem(cache, profile, slot, checkOnly)
 		name = profile.actions[slot][5]
 	end
 
-	local itemId = self:GetFromCache(cache.items, id, name)
-
-	if (itemId) then
-		if not checkOnly then
-			PickupItem(itemId)
-			self:PlaceToSlot(slot)
-		end
+	if PlayerHasToy(id) then
+		self:PlaceItemToSlot(slot, id, checkOnly)
 		return true
 	end
 
-	local similarItems = S2KSimilar.SIMILAR_ITEMS[id]
+	local itemId = self:GetFromCache(cache.items, id, name)
+
+	if (itemId) then
+		self:PlaceItemToSlot(slot, itemId, checkOnly)
+		return true
+	end
+
+	local similarItems = S2K.SIMILAR_ITEMS[id]
+
 	if similarItems then
 		for _, itemId in pairs(similarItems) do
 			if cache.items.id[itemId] then
-				if not checkOnly then
-					PickupItem(itemId)
-					self:PlaceToSlot(slot)
-				end
+				self:PlaceItemToSlot(slot, itemId, checkOnly)
 				return true
 			end
 		end
 	end
 
-	if PlayerHasToy(id) then
-		if not checkOnly then
-			PickupItem(id)
-			self:PlaceToSlot(slot)
-		end
+	itemId = S2K.FACTIONAL_ITEMS[UnitFactionGroup("player")][id]
+
+	if itemId and cache.items.id[itemId] then
+		self:PlaceItemToSlot(slot, itemId, checkOnly)
 		return true
 	end
 end
@@ -349,11 +358,10 @@ end
 function addon:RestoreMissingItem(cache, profile, slot, checkOnly)
 	local id = profile.actions[slot][2]
 
+	id = S2K.FACTIONAL_ITEMS[UnitFactionGroup("player")][id] or id
+
 	if GetItemInfo(id) then
-		if not checkOnly then
-			PickupItem(id)
-			self:PlaceToSlot(slot)
-		end
+		self:PlaceItemToSlot(slot, id, checkOnly)
 		return true
 	end
 end
@@ -370,10 +378,7 @@ function addon:RestoreMount(cache, profile, slot, checkOnly)
 	local spellId = self:GetFromCache(cache.mounts, id, name)
 
 	if (spellId) then
-		if not checkOnly then
-			PickupSpell(spellId)
-			self:PlaceToSlot(slot)
-		end
+		self:PlaceSpellToSlot(slot, spellId, checkOnly)
 		return true
 	end
 end
