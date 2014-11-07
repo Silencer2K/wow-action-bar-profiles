@@ -5,6 +5,9 @@ Addon that allows you to setup and quickly switch between different profiles of 
 
 Also you can use the chat command to switch between profiles. For example, type **/abp use DK Frost** to activate profile named **DK Frost**.
 
+Links
+-----
+
 The latest release is available on [http://www.curse.com/addons/wow/action-bar-profiles](http://www.curse.com/addons/wow/action-bar-profiles)
 
 The latest alpha build is available on [http://www.wowace.com/addons/action-bar-profiles/files](http://www.wowace.com/addons/action-bar-profiles/files)
