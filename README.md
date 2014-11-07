@@ -1,9 +1,9 @@
 Action Bar Profiles
 ===================
 
-Addon that allows you to setup and quickly switch between different profiles of your action bars. Just open the character window and switch to the action bars tab.
+Addon that allows you to setup and quickly switch between different profiles of your action bars. Just open the character window and switch to the **Action Bars** tab.
 
-Also you can use the chat command to switch between profiles. For example, type **/abp use DK Frost** to activate the profile named **DK Frost**.
+Also, you can use the chat command to switch between profiles. For example, type **/abp use DK Frost** to activate the profile named **DK Frost**.
 
 Links
 -----
