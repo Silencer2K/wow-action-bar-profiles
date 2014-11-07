@@ -526,7 +526,7 @@ function addon:UpdateProfileBars(name)
 
 			if type then
 				if type == "item" then
-					profile.actions[slot] = { type, id, subType, extraId, ({GetItemInfo(id)})[1] }
+					profile.actions[slot] = { type, id, subType, extraId, ({ GetItemInfo(id) })[1] }
 
 				elseif type == "macro" then
 					if id > 0 then
@@ -534,7 +534,7 @@ function addon:UpdateProfileBars(name)
 					end
 
 				elseif type == "summonpet" then
-					profile.actions[slot] = { type, id, subType, extraId, ({C_PetJournal.GetPetInfoByPetID(id)})[11] }
+					profile.actions[slot] = { type, id, subType, extraId, ({ C_PetJournal.GetPetInfoByPetID(id) })[11] }
 
 				else
 					profile.actions[slot] = { type, id, subType, extraId }
