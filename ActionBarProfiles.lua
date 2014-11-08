@@ -303,6 +303,7 @@ function addon:PreloadPetSpells()
 
 	local numSpells = HasPetSpells()
 	if numSpells then
+		local spellIndex
 		for spellIndex = 1, numSpells do
 			local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE_PET)
 			self:UpdateCache(petSpells, spellIndex, icon)
