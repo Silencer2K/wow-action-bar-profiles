@@ -522,6 +522,7 @@ function addon:UpdateProfileBars(name)
 
 		profile.actions = {}
 
+		local slot
 		for slot = 1, MAX_ACTION_BUTTONS do
 			local type, id, subType, extraId = GetActionInfo(slot)
 
