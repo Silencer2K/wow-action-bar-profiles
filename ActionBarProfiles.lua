@@ -6,7 +6,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
 local S2K = LibStub("S2KTools-1.0")
 
-local MAX_SPELLBOOK_TABS = 12
 local MAX_ACTION_BUTTONS = 120
 
 local PET_JOURNAL_FLAGS = { LE_PET_JOURNAL_FLAG_COLLECTED, LE_PET_JOURNAL_FLAG_NOT_COLLECTED, LE_PET_JOURNAL_FLAG_FAVORITES }
@@ -120,22 +119,38 @@ function addon:PreloadSpells()
 	local spells = { id = {}, name = {} }
 	local flyouts = { id = {}, name = {} }
 
+	local books = {}
+
 	local bookIndex
-	for bookIndex = 1, MAX_SPELLBOOK_TABS do
+	for bookIndex = 1, GetNumSpellTabs() do
 		local bookOffset, numSpells, offSpecId = unpackByIndex({ GetSpellTabInfo(bookIndex) }, 3, 4, 6)
 
 		if bookOffset and offSpecId == 0 then
-			local spellIndex
-			for spellIndex = bookOffset + 1, bookOffset + numSpells do
-				local type, spellId = GetSpellBookItemInfo(spellIndex, BOOKTYPE_SPELL)
-				local name, stance = GetSpellBookItemName(spellIndex, BOOKTYPE_SPELL)
+			table.insert(books, { type = BOOKTYPE_SPELL, from = bookOffset + 1, to = bookOffset + numSpells })
+		end
+	end
 
-				if type == "SPELL" then
-					self:UpdateCache(spells, spellId, spellId, name, stance)
+	local profIndex
+	for _, profIndex in pairs({ GetProfessions() }) do
+		if profIndex then
+			local bookOffset, numSpells = unpackByIndex({ GetProfessionInfo(profIndex) }, 6, 5)
 
-				elseif type == "FLYOUT" then
-					self:UpdateCache(flyouts, spellIndex, spellId, name)
-				end
+			table.insert(books, { type = BOOKTYPE_PROFESSION, from = bookOffset + 1, to = bookOffset + numSpells })
+		end
+	end
+
+	local bookInfo
+	for _, bookInfo in pairs(books) do
+		local spellIndex
+		for spellIndex = bookInfo.from, bookInfo.to do
+			local type, spellId = GetSpellBookItemInfo(spellIndex, bookInfo.type)
+			local name, stance = GetSpellBookItemName(spellIndex, bookInfo.type)
+
+			if type == "SPELL" then
+				self:UpdateCache(spells, spellId, spellId, name, stance)
+
+			elseif type == "FLYOUT" then
+				self:UpdateCache(flyouts, spellIndex, spellId, name)
 			end
 		end
 	end
@@ -521,6 +536,7 @@ function addon:UpdateProfileBars(name)
 		profile.owner = string.format("%s-%s", GetUnitName("player"), GetRealmName())
 
 		profile.actions = {}
+		profile.petActions = {}
 
 		local slot
 		for slot = 1, MAX_ACTION_BUTTONS do
@@ -540,6 +556,15 @@ function addon:UpdateProfileBars(name)
 
 				else
 					profile.actions[slot] = { type, id, subType, extraId }
+				end
+			end
+		end
+
+		if HasPetSpells() then
+			for slot = 1, NUM_PET_ACTION_SLOTS do
+				local name, stance, icon, isToken = GetPetActionInfo(slot)
+				if name then
+					profile.petActions[slot] = { name, stance, icon, isToken }
 				end
 			end
 		end
