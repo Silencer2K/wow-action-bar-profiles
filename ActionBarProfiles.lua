@@ -135,14 +135,14 @@ function addon:PreloadSpells()
 	local spells = { id = {}, name = {} }
 	local flyouts = { id = {}, name = {} }
 
-	local books = {}
+	local bookTabs = {}
 
 	local bookIndex
 	for bookIndex = 1, GetNumSpellTabs() do
 		local bookOffset, numSpells, offSpecId = unpackByIndex({ GetSpellTabInfo(bookIndex) }, 3, 4, 6)
 
 		if bookOffset and offSpecId == 0 then
-			table.insert(books, { type = BOOKTYPE_SPELL, from = bookOffset + 1, to = bookOffset + numSpells })
+			table.insert(bookTabs, { type = BOOKTYPE_SPELL, from = bookOffset + 1, to = bookOffset + numSpells })
 		end
 	end
 
@@ -151,16 +151,16 @@ function addon:PreloadSpells()
 		if profIndex then
 			local bookOffset, numSpells = unpackByIndex({ GetProfessionInfo(profIndex) }, 6, 5)
 
-			table.insert(books, { type = BOOKTYPE_PROFESSION, from = bookOffset + 1, to = bookOffset + numSpells })
+			table.insert(bookTabs, { type = BOOKTYPE_PROFESSION, from = bookOffset + 1, to = bookOffset + numSpells })
 		end
 	end
 
-	local bookInfo
-	for _, bookInfo in pairs(books) do
+	local bookTab
+	for _, bookInfo in pairs(bookTabs) do
 		local spellIndex
-		for spellIndex = bookInfo.from, bookInfo.to do
-			local type, spellId = GetSpellBookItemInfo(spellIndex, bookInfo.type)
-			local name, stance = GetSpellBookItemName(spellIndex, bookInfo.type)
+		for spellIndex = bookTab.from, bookTab.to do
+			local type, spellId = GetSpellBookItemInfo(spellIndex, bookTab.type)
+			local name, stance = GetSpellBookItemName(spellIndex, bookTab.type)
 
 			if type == "SPELL" then
 				self:UpdateCache(spells, spellId, spellId, name, stance)
