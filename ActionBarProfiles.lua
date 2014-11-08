@@ -156,7 +156,7 @@ function addon:PreloadSpells()
 	end
 
 	local bookTab
-	for _, bookInfo in pairs(bookTabs) do
+	for _, bookTab in pairs(bookTabs) do
 		local spellIndex
 		for spellIndex = bookTab.from, bookTab.to do
 			local type, spellId = GetSpellBookItemInfo(spellIndex, bookTab.type)
