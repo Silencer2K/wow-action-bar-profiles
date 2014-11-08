@@ -552,8 +552,6 @@ function addon:UseProfile(name, checkOnly, cache)
 				if not profile.petActions[slot] then
 					self:ClearPetSlot(slot, checkOnly)
 				else
-					local name, stance, icon, isToken = unpack(profile.petActions[slot])
-
 					if not self:RestorePetSpell(cache, profile, slot, checkOnly) then
 						self:ClearPetSlot(slot, checkOnly)
 						fail = fail + 1
