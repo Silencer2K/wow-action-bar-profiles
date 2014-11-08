@@ -599,7 +599,7 @@ function addon:UpdateProfileBars(name)
 		profile.owner = string.format("%s-%s", GetUnitName("player"), GetRealmName())
 
 		profile.actions = {}
-		profile.petActions = {}
+		profile.petActions = nil
 
 		local slot
 		for slot = 1, MAX_ACTION_BUTTONS do
@@ -624,6 +624,8 @@ function addon:UpdateProfileBars(name)
 		end
 
 		if HasPetSpells() then
+			profile.petActions = {}
+
 			for slot = 1, NUM_PET_ACTION_SLOTS do
 				local name, stance, icon, isToken = GetPetActionInfo(slot)
 				if name then
