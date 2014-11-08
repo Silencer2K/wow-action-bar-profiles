@@ -77,6 +77,7 @@ end
 
 function addon:ClearSlot(slot, checkOnly)
 	if not checkOnly then
+		ClearCursor()
 		PickupAction(slot)
 		ClearCursor()
 	end
@@ -100,6 +101,21 @@ function addon:PlaceSpellToSlot(slot, spellId, checkOnly)
 	if not checkOnly then
 		PickupSpell(spellId)
 		self:PlaceToSlot(slot)
+	end
+end
+
+function addon:ClearPetSlot(slot, checkOnly)
+	if not checkOnly then
+		ClearCursor()
+		PickupPetAction(slot)
+		ClearCursor()
+	end
+end
+
+function addon:PlaceToPetSlot(slot, checkOnly)
+	if not checkOnly then
+		PickupPetAction(slot)
+		ClearCursor()
 	end
 end
 
@@ -282,15 +298,30 @@ function addon:PreloadMacros()
 	return macros
 end
 
+function addon:PreloadPetSpells()
+	local petSpells = { id = {} } -- id - "icon"
+
+	local numSpells = HasPetSpells()
+	if numSpells then
+		for spellIndex = 1, numSpells do
+			local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE_PET)
+			self:UpdateCache(petSpells, spellIndex, icon)
+		end
+	end
+
+	return petSpells
+end
+
 function addon:MakeCache()
 	local spells, flyouts = self:PreloadSpells()
 	local items = self:PreloadItems()
 	local mounts = self:PreloadMounts()
 	local pets = self:PreloadPets()
 	local macros = self:PreloadMacros()
+	local petSpells = self:PreloadPetSpells()
 
-	return { spells = spells, flyouts = flyouts, items = items,
-		mounts = mounts, pets = pets, macros = macros }
+	return { spells = spells, flyouts = flyouts, items = items, mounts = mounts,
+		pets = pets, macros = macros, petSpells = petSpells }
 end
 
 function addon:GetFromCache(cache, id, name, stance)
@@ -433,6 +464,22 @@ function addon:RestoreEquipSet(cache, profile, slot, checkOnly)
 	end
 end
 
+function addon:RestorePetSpell(cache, profile, slot, checkOnly)
+	local icon, isToken = unpackByIndex(profile.petActions[slot], 3, 4)
+
+	icon = (isToken and _G[icon]) or icon
+
+	local spellIndex = self:GetFromCache(cache.petSpells, icon)
+
+	if (spellIndex) then
+		if not checkOnly then
+			PickupSpellBookItem(spellIndex, BOOKTYPE_PET)
+			self:PlaceToPetSlot(slot)
+		end
+		return true
+	end
+end
+
 function addon:UseProfile(name, checkOnly, cache)
 	local profiles = self.db.global.profiles or {}
 	local profile = profiles[name]
@@ -497,6 +544,22 @@ function addon:UseProfile(name, checkOnly, cache)
 				end
 			end
 			total = total + 1
+		end
+
+		if HasPetSpells() and profile.petActions then
+			for slot = 1, NUM_PET_ACTION_SLOTS do
+				if not profile.petActions[slot] then
+					self:ClearPetSlot(slot, checkOnly)
+				else
+					local name, stance, icon, isToken = unpack(profile.petActions[slot])
+
+					if not self:RestorePetSpell(cache, profile, slot, checkOnly) then
+						self:ClearPetSlot(slot, checkOnly)
+						fail = fail + 1
+					end
+				end
+				total = total + 1
+			end
 		end
 	end
 
