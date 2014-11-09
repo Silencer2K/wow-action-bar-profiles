@@ -44,8 +44,8 @@
 				</Texture>
 			</Layer>
 			<Layer level="ARTWORK">
-				<FontString inherits="GameFontHighlightSmall" name="$parentSaveDialogTitleText"
-					parentKey="SaveDialogTitleText">
+				<FontString inherits="GameFontHighlightSmall" name="$parentProfileNameText"
+					parentKey="ProfileNameText">
 					<Anchors>
 						<Anchor point="TOPLEFT">
 							<Offset x="24" y="-21" />

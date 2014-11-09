@@ -30,7 +30,7 @@ function frame:OnInitialize()
     whileDead = 1,
   }
 
-  self.SaveDialogTitleText:SetText(L.save_dialog_title)
+  self.ProfileNameText:SetText(L.profile_name)
   self.ProfileOptionsText:SetText(L.profile_options)
 
   local v1, v2
