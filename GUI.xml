@@ -45,9 +45,9 @@
                         relativePoint="RIGHT" />
                 </Anchors>
                 <Scripts>
-                    <OnClick>
+                    <OnClick><![CDATA[
                         self:GetParent():OnSaveClick()
-                    </OnClick>
+                    ]]></OnClick>
                 </Scripts>
             </Button>
             <Slider name="$parentScrollBar" inherits="HybridScrollBarTemplate"
