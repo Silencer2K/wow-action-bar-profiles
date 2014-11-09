@@ -9,7 +9,7 @@
             <Button name="$parentUseProfile" text="USE" parentKey="UseProfile" inherits="UIPanelButtonTemplate">
                 <Size x="87" y="22" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" x="0" y="0" />
+                    <Anchor point="TOPLEFT" />
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
@@ -87,7 +87,7 @@
                 <Texture name="$parentStripe" parentKey="Stripe">
                     <Anchors>
                         <Anchor point="TOPLEFT" x="1" y="0" />
-                        <Anchor point="BOTTOMRIGHT" x="0" y="0" />
+                        <Anchor point="BOTTOMRIGHT" />
                     </Anchors>
                 </Texture>
             </Layer>
