@@ -4,7 +4,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
 local frame = PaperDollActionBarProfilesSaveDialog
 
-local function dialogOptions()
+function frame:dialogOptions()
   return tableIterator({
     { "EmptySlots", "empty_slots" },
     { "Spells", "spells" },
@@ -34,7 +34,7 @@ function frame:OnInitialize()
   self.ProfileOptionsText:SetText(L.profile_options)
 
   local optName1, optName2
-  for optName1, optName2 in dialogOptions() do
+  for optName1, optName2 in self:dialogOptions() do
     _G[self:GetName() .. "Option" .. optName1 .. "Text"]:SetText(" " .. L["option_" .. optName2])
   end
 end
@@ -45,7 +45,7 @@ function frame:OnOkayClick()
   local options = {}
 
   local optName1, optName2
-  for optName1, optName2 in dialogOptions() do
+  for optName1, optName2 in self:dialogOptions() do
     options["skip_" .. optName2] = not self["Option" .. optName1]:GetChecked() or nil
   end
 
@@ -99,7 +99,7 @@ function frame:SetProfile(name)
   self.EditBox:SetText("")
 
   local optName1, optName2
-  for optName1, optName2 in dialogOptions() do
+  for optName1, optName2 in self:dialogOptions() do
     self["Option" .. optName1]:SetChecked(true)
   end
 
@@ -118,7 +118,7 @@ function frame:SetProfile(name)
     local profile = addon:GetProfile(name)
 
     if profile then
-      for optName1, optName2 in dialogOptions() do
+      for optName1, optName2 in self:dialogOptions() do
         self["Option" .. optName1]:SetChecked(not profile["skip_" .. optName2])
       end
 
