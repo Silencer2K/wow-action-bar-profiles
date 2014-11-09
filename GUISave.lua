@@ -33,9 +33,9 @@ function frame:OnInitialize()
   self.SaveDialogTitleText:SetText(L.save_dialog_title)
   self.ProfileOptionsText:SetText(L.profile_options)
 
-  local optName1, optName2
-  for optName1, optName2 in self:dialogOptions() do
-    _G[self:GetName() .. "Option" .. optName1 .. "Text"]:SetText(" " .. L["option_" .. optName2])
+  local v1, v2
+  for v1, v2 in self:dialogOptions() do
+    _G[self:GetName() .. "Option" .. v1 .. "Text"]:SetText(" " .. L["option_" .. v2])
   end
 end
 
@@ -44,9 +44,9 @@ function frame:OnOkayClick()
 
   local options = {}
 
-  local optName1, optName2
-  for optName1, optName2 in self:dialogOptions() do
-    options["skip_" .. optName2] = not self["Option" .. optName1]:GetChecked() or nil
+  local v1, v2
+  for v1, v2 in self:dialogOptions() do
+    options["skip_" .. v2] = not self["Option" .. v1]:GetChecked() or nil
   end
 
   if self.name then
@@ -98,9 +98,9 @@ function frame:SetProfile(name)
   self.name = nil
   self.EditBox:SetText("")
 
-  local optName1, optName2
-  for optName1, optName2 in self:dialogOptions() do
-    self["Option" .. optName1]:SetChecked(true)
+  local v1, v2
+  for v1, v2 in self:dialogOptions() do
+    self["Option" .. v1]:SetChecked(true)
   end
 
   self.OptionPetSpells:Enable()
@@ -118,8 +118,8 @@ function frame:SetProfile(name)
     local profile = addon:GetProfile(name)
 
     if profile then
-      for optName1, optName2 in self:dialogOptions() do
-        self["Option" .. optName1]:SetChecked(not profile["skip_" .. optName2])
+      for v1, v2 in self:dialogOptions() do
+        self["Option" .. v1]:SetChecked(not profile["skip_" .. v2])
       end
 
       if not profile.petActions then
