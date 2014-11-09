@@ -1,210 +1,215 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
-	<Frame name="PaperDollActionBarProfilesSaveDialog" hidden="true"
-		parent="PaperDollFrame">
-		<Size x="297" y="254" />
-		<Anchors>
-			<Anchor point="LEFT" relativePoint="RIGHT" />
-		</Anchors>
-		<Layers>
-			<Layer level="BACKGROUND">
-				<Texture file="Interface\MacroFrame\MacroPopup-TopLeft">
-					<Size x="256" y="212" />
-					<Anchors>
-						<Anchor point="TOPLEFT" />
-					</Anchors>
-					<TexCoords left="0" right="1" top="0" bottom="0.828125" />
-				</Texture>
-				<Texture file="Interface\MacroFrame\MacroPopup-TopRight">
-					<Size x="64" y="212" />
-					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset x="256" y="0" />
-						</Anchor>
-					</Anchors>
-					<TexCoords left="0" right="1" top="0" bottom="0.828125" />
-				</Texture>
-				<Texture file="Interface\MacroFrame\MacroPopup-BotLeft">
-					<Size x="256" y="64" />
-					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset x="0" y="-212" />
-						</Anchor>
-					</Anchors>
-				</Texture>
-				<Texture file="Interface\MacroFrame\MacroPopup-BotRight">
-					<Size x="64" y="64" />
-					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset x="256" y="-212" />
-						</Anchor>
-					</Anchors>
-				</Texture>
-			</Layer>
-			<Layer level="ARTWORK">
-				<FontString inherits="GameFontHighlightSmall" name="$parentProfileNameText"
-					parentKey="ProfileNameText">
-					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset x="24" y="-21" />
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString inherits="GameFontHighlightSmall" name="$parentProfileOptionsText"
-					parentKey="ProfileOptionsText">
-					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset x="24" y="-76" />
-						</Anchor>
-					</Anchors>
-				</FontString>
-			</Layer>
-		</Layers>
-		<Frames>
-			<EditBox name="$parentEditBox" letters="16" historyLines="0"
-				autoFocus="true" parentKey="EditBox">
-				<Size x="182" y="20" />
-				<Anchors>
-					<Anchor point="TOPLEFT">
-						<Offset x="29" y="-35" />
-					</Anchor>
-				</Anchors>
-				<Layers>
-					<Layer level="BACKGROUND">
-						<Texture name="$parentLeft"
-							file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
-							<Size x="12" y="29" />
-							<Anchors>
-								<Anchor point="TOPLEFT">
-									<Offset x="-11" y="0" />
-								</Anchor>
-							</Anchors>
-							<TexCoords left="0" right="0.09375" top="0" bottom="1.0" />
-						</Texture>
-						<Texture name="$parentMiddle"
-							file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
-							<Size x="175" y="29" />
-							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parentLeft"
-									relativePoint="RIGHT" />
-							</Anchors>
-							<TexCoords left="0.09375" right="0.90625" top="0"
-								bottom="1.0" />
-						</Texture>
-						<Texture name="$parentRight"
-							file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
-							<Size x="12" y="29" />
-							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parentMiddle"
-									relativePoint="RIGHT" />
-							</Anchors>
-							<TexCoords left="0.90625" right="1.0" top="0" bottom="1.0" />
-						</Texture>
-					</Layer>
-				</Layers>
-				<FontString inherits="ChatFontNormal" />
-				<Scripts>
-					<OnEscapePressed>
-						self:GetParent():OnCancelClick()
-					</OnEscapePressed>
-					<OnEnterPressed>
-						if self:GetParent().Okay:IsEnabled() then
-						self:GetParent():OnOkayClick()
-						end
-					</OnEnterPressed>
-					<OnTextChanged>
-						self:GetParent():Update()
-					</OnTextChanged>
-				</Scripts>
-			</EditBox>
-			<CheckButton name="$parentOptionEmptySlots" parentKey="OptionEmptySlots"
-				inherits="UICheckButtonTemplate">
-				<Size x="16" y="16" />
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentProfileOptionsText"
-						relativePoint="BOTTOMLEFT">
-						<Offset x="0" y="-5" />
-					</Anchor>
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="$parentOptionSpells" parentKey="OptionSpells"
-				inherits="UICheckButtonTemplate">
-				<Size x="16" y="16" />
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentOptionEmptySlots"
-						relativePoint="BOTTOMLEFT" />
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="$parentOptionItems" parentKey="OptionItems"
-				inherits="UICheckButtonTemplate">
-				<Size x="16" y="16" />
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentOptionSpells"
-						relativePoint="BOTTOMLEFT" />
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="$parentOptionCompanions" parentKey="OptionCompanions"
-				inherits="UICheckButtonTemplate">
-				<Size x="16" y="16" />
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentOptionItems"
-						relativePoint="BOTTOMLEFT" />
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="$parentOptionMacros" parentKey="OptionMacros"
-				inherits="UICheckButtonTemplate">
-				<Size x="16" y="16" />
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentOptionCompanions"
-						relativePoint="BOTTOMLEFT" />
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="$parentOptionEquipSets" parentKey="OptionEquipSets"
-				inherits="UICheckButtonTemplate">
-				<Size x="16" y="16" />
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentOptionMacros"
-						relativePoint="BOTTOMLEFT" />
-				</Anchors>
-			</CheckButton>
-			<CheckButton name="$parentOptionPetSpells" parentKey="OptionPetSpells"
-				inherits="UICheckButtonTemplate">
-				<Size x="16" y="16" />
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentOptionEquipSets"
-						relativePoint="BOTTOMLEFT" />
-				</Anchors>
-			</CheckButton>
-			<Button name="$parentCancel" inherits="UIPanelButtonTemplate"
-				text="CANCEL">
-				<Size x="78" y="22" />
-				<Anchors>
-					<Anchor point="BOTTOMRIGHT">
-						<Offset x="-11" y="13" />
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnClick>
-						self:GetParent():OnCancelClick()
-					</OnClick>
-				</Scripts>
-			</Button>
-			<Button name="$parentOkay" inherits="UIPanelButtonTemplate"
-				text="OKAY" parentKey="Okay">
-				<Size x="78" y="22" />
-				<Anchors>
-					<Anchor point="BOTTOMRIGHT" relativeTo="$parentCancel"
-						relativePoint="BOTTOMLEFT">
-						<Offset x="-2" y="0" />
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnClick>
-						self:GetParent():OnOkayClick()
-					</OnClick>
-				</Scripts>
-			</Button>
-		</Frames>
-	</Frame>
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+    <Frame name="PaperDollActionBarProfilesSaveDialog" hidden="true"
+        parent="PaperDollFrame">
+        <Size x="297" y="254" />
+        <Anchors>
+            <Anchor point="LEFT" relativePoint="RIGHT" />
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture file="Interface\MacroFrame\MacroPopup-TopLeft">
+                    <Size x="256" y="212" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" />
+                    </Anchors>
+                    <TexCoords left="0" right="1" top="0"
+                        bottom="0.828125" />
+                </Texture>
+                <Texture file="Interface\MacroFrame\MacroPopup-TopRight">
+                    <Size x="64" y="212" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset x="256" y="0" />
+                        </Anchor>
+                    </Anchors>
+                    <TexCoords left="0" right="1" top="0"
+                        bottom="0.828125" />
+                </Texture>
+                <Texture file="Interface\MacroFrame\MacroPopup-BotLeft">
+                    <Size x="256" y="64" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset x="0" y="-212" />
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface\MacroFrame\MacroPopup-BotRight">
+                    <Size x="64" y="64" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset x="256" y="-212" />
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <FontString inherits="GameFontHighlightSmall"
+                    name="$parentProfileNameText" parentKey="ProfileNameText">
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset x="24" y="-21" />
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString inherits="GameFontHighlightSmall"
+                    name="$parentProfileOptionsText" parentKey="ProfileOptionsText">
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset x="24" y="-76" />
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <EditBox name="$parentEditBox" letters="16"
+                historyLines="0" autoFocus="true" parentKey="EditBox">
+                <Size x="182" y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset x="29" y="-35" />
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture name="$parentLeft"
+                            file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
+                            <Size x="12" y="29" />
+                            <Anchors>
+                                <Anchor point="TOPLEFT">
+                                    <Offset x="-11" y="0" />
+                                </Anchor>
+                            </Anchors>
+                            <TexCoords left="0" right="0.09375"
+                                top="0" bottom="1.0" />
+                        </Texture>
+                        <Texture name="$parentMiddle"
+                            file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
+                            <Size x="175" y="29" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeTo="$parentLeft"
+                                    relativePoint="RIGHT" />
+                            </Anchors>
+                            <TexCoords left="0.09375" right="0.90625"
+                                top="0" bottom="1.0" />
+                        </Texture>
+                        <Texture name="$parentRight"
+                            file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
+                            <Size x="12" y="29" />
+                            <Anchors>
+                                <Anchor point="LEFT" relativeTo="$parentMiddle"
+                                    relativePoint="RIGHT" />
+                            </Anchors>
+                            <TexCoords left="0.90625" right="1.0"
+                                top="0" bottom="1.0" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <FontString inherits="ChatFontNormal" />
+                <Scripts>
+                    <OnEscapePressed>
+                        self:GetParent():OnCancelClick()
+                    </OnEscapePressed>
+                    <OnEnterPressed>
+                        if self:GetParent().Okay:IsEnabled()
+                        then
+                        self:GetParent():OnOkayClick()
+                        end
+                    </OnEnterPressed>
+                    <OnTextChanged>
+                        self:GetParent():Update()
+                    </OnTextChanged>
+                </Scripts>
+            </EditBox>
+            <CheckButton name="$parentOptionEmptySlots"
+                parentKey="OptionEmptySlots" inherits="UICheckButtonTemplate">
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parentProfileOptionsText"
+                        relativePoint="BOTTOMLEFT">
+                        <Offset x="0" y="-5" />
+                    </Anchor>
+                </Anchors>
+            </CheckButton>
+            <CheckButton name="$parentOptionSpells"
+                parentKey="OptionSpells" inherits="UICheckButtonTemplate">
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parentOptionEmptySlots"
+                        relativePoint="BOTTOMLEFT" />
+                </Anchors>
+            </CheckButton>
+            <CheckButton name="$parentOptionItems"
+                parentKey="OptionItems" inherits="UICheckButtonTemplate">
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parentOptionSpells"
+                        relativePoint="BOTTOMLEFT" />
+                </Anchors>
+            </CheckButton>
+            <CheckButton name="$parentOptionCompanions"
+                parentKey="OptionCompanions" inherits="UICheckButtonTemplate">
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parentOptionItems"
+                        relativePoint="BOTTOMLEFT" />
+                </Anchors>
+            </CheckButton>
+            <CheckButton name="$parentOptionMacros"
+                parentKey="OptionMacros" inherits="UICheckButtonTemplate">
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parentOptionCompanions"
+                        relativePoint="BOTTOMLEFT" />
+                </Anchors>
+            </CheckButton>
+            <CheckButton name="$parentOptionEquipSets"
+                parentKey="OptionEquipSets" inherits="UICheckButtonTemplate">
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parentOptionMacros"
+                        relativePoint="BOTTOMLEFT" />
+                </Anchors>
+            </CheckButton>
+            <CheckButton name="$parentOptionPetSpells"
+                parentKey="OptionPetSpells" inherits="UICheckButtonTemplate">
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parentOptionEquipSets"
+                        relativePoint="BOTTOMLEFT" />
+                </Anchors>
+            </CheckButton>
+            <Button name="$parentCancel" inherits="UIPanelButtonTemplate"
+                text="CANCEL">
+                <Size x="78" y="22" />
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT">
+                        <Offset x="-11" y="13" />
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        self:GetParent():OnCancelClick()
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Button name="$parentOkay" inherits="UIPanelButtonTemplate"
+                text="OKAY" parentKey="Okay">
+                <Size x="78" y="22" />
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativeTo="$parentCancel"
+                        relativePoint="BOTTOMLEFT">
+                        <Offset x="-2" y="0" />
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        self:GetParent():OnOkayClick()
+                    </OnClick>
+                </Scripts>
+            </Button>
+        </Frames>
+    </Frame>
 </Ui>
