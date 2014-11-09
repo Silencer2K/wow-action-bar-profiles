@@ -4,7 +4,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
 local frame = PaperDollActionBarProfilesSaveDialog
 
-local function options()
+local function dialogOptions()
 	return tableIterator({
 		{ "EmptySlots", "empty_slots" },
 		{ "Spells", "spells" },
@@ -34,13 +34,20 @@ function frame:OnInitialize()
 	self.ProfileOptionsText:SetText(L.profile_options)
 
 	local optName1, optName2
-	for optName1, optName2 in options() do
+	for optName1, optName2 in dialogOptions() do
 		_G[self:GetName() .. "Option" .. optName1 .. "Text"]:SetText(" " .. L["option_" .. optName2])
 	end
 end
 
 function frame:OnOkayClick()
 	local name = self.EditBox:GetText()
+
+	local options = {}
+
+	local optName1, optName2
+	for optName1, optName2 in dialogOptions() do
+		options["skip_" .. optName2] = (not self["Option" .. optName1]:GetChecked()) or nil
+	end
 
 	if self.name then
 		if name ~= self.name then
@@ -49,18 +56,19 @@ function frame:OnOkayClick()
 				return
 			end
 		end
-		addon:UpdateProfileParams(self.name, name)
+		addon:UpdateProfileParams(self.name, name, options)
 	else
 		if addon:GetProfile(name) then
 			local popup = StaticPopup_Show("CONFIRM_OVERWRITE_ACTION_BAR_PROFILE", name)
 			if popup then
 				popup.name = name
+				popup.options = options
 			else
 				UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
 			end
 			return
 		end
-		addon:SaveProfile(name)
+		addon:SaveProfile(name, options)
 	end
 
 	PaperDollActionBarProfilesPane:Update()
@@ -68,7 +76,7 @@ function frame:OnOkayClick()
 end
 
 function frame:OnOverwriteConfirm(popup)
-	addon:SaveProfile(popup.name)
+	addon:SaveProfile(popup.name, popup.options)
 
 	PaperDollActionBarProfilesPane:Update()
 	self:Hide()
@@ -91,7 +99,7 @@ function frame:SetProfile(name)
 	self.EditBox:SetText("")
 
 	local optName1, optName2
-	for optName1, optName2 in options() do
+	for optName1, optName2 in dialogOptions() do
 		self["Option" .. optName1]:SetChecked(true)
 	end
 
@@ -110,11 +118,12 @@ function frame:SetProfile(name)
 		local profile = addon:GetProfile(name)
 
 		if profile then
-			for optName1, optName2 in options() do
+			for optName1, optName2 in dialogOptions() do
 				self["Option" .. optName1]:SetChecked(not profile["skip_" .. optName2])
 			end
 
 			if not profile.petActions then
+				self.OptionPetSpells:SetChecked(true)
 				self.OptionPetSpells:Disable()
 			end
 		end

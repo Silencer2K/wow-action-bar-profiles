@@ -567,17 +567,17 @@ function addon:UseProfile(name, checkOnly, cache)
 	return fail, total
 end
 
-function addon:SaveProfile(name)
+function addon:SaveProfile(name, options)
 	local profiles = self.db.global.profiles or {}
 	self.db.global.profiles = profiles
 
 	profiles[name] = { name = name }
 
-	self:UpdateProfileParams(name)
+	self:UpdateProfileParams(name, nil, options)
 	self:UpdateProfileBars(name)
 end
 
-function addon:UpdateProfileParams(name, newName)
+function addon:UpdateProfileParams(name, newName, options)
 	local profiles = self.db.global.profiles or {}
 	local profile = profiles[name]
 
@@ -587,6 +587,17 @@ function addon:UpdateProfileParams(name, newName)
 			profiles[newName] = profile
 
 			profile.name = newName
+		end
+
+		local key
+		for key in pairs(profile) do
+			if key:sub(1, 5) == "skip_" then
+				profile[key] = nil
+			end
+		end
+
+		for key in pairs(options) do
+			profile[key] = options[key]
 		end
 	end
 end
