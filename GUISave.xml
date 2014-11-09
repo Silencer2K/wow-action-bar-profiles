@@ -109,18 +109,17 @@
                 </Layers>
                 <FontString inherits="ChatFontNormal" />
                 <Scripts>
-                    <OnEscapePressed>
+                    <OnEscapePressed><![CDATA[
                         self:GetParent():OnCancelClick()
-                    </OnEscapePressed>
-                    <OnEnterPressed>
-                        if self:GetParent().Okay:IsEnabled()
-                        then
-                        self:GetParent():OnOkayClick()
+                    ]]></OnEscapePressed>
+                    <OnEnterPressed><![CDATA[
+                        if self:GetParent().Okay:IsEnabled() then
+                            self:GetParent():OnOkayClick()
                         end
-                    </OnEnterPressed>
-                    <OnTextChanged>
+                    ]]></OnEnterPressed>
+                    <OnTextChanged><![CDATA[
                         self:GetParent():Update()
-                    </OnTextChanged>
+                    ]]></OnTextChanged>
                 </Scripts>
             </EditBox>
             <CheckButton name="$parentOptionEmptySlots"
@@ -190,9 +189,9 @@
                     </Anchor>
                 </Anchors>
                 <Scripts>
-                    <OnClick>
+                    <OnClick><![CDATA[
                         self:GetParent():OnCancelClick()
-                    </OnClick>
+                    ]]></OnClick>
                 </Scripts>
             </Button>
             <Button name="$parentOkay" inherits="UIPanelButtonTemplate"
@@ -205,9 +204,9 @@
                     </Anchor>
                 </Anchors>
                 <Scripts>
-                    <OnClick>
+                    <OnClick><![CDATA[
                         self:GetParent():OnOkayClick()
-                    </OnClick>
+                    ]]></OnClick>
                 </Scripts>
             </Button>
         </Frames>
