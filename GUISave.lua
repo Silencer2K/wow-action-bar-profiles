@@ -46,7 +46,7 @@ function frame:OnOkayClick()
 
 	local optName1, optName2
 	for optName1, optName2 in dialogOptions() do
-		options["skip_" .. optName2] = (not self["Option" .. optName1]:GetChecked()) or nil
+		options["skip_" .. optName2] = not self["Option" .. optName1]:GetChecked() or nil
 	end
 
 	if self.name then
