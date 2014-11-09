@@ -4,6 +4,18 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
 local frame = PaperDollActionBarProfilesSaveDialog
 
+local function options()
+	return tableIterator({
+		{ "EmptySlots", "empty_slots" },
+		{ "Spells", "spells" },
+		{ "Items", "items" },
+		{ "Companions", "companions" },
+		{ "Macros", "macros" },
+		{ "EquipSets", "equip_sets" },
+		{ "PetSpells", "pet_spells" },
+	}, true)
+end
+
 function frame:OnInitialize()
 	StaticPopupDialogs.CONFIRM_OVERWRITE_ACTION_BAR_PROFILE = {
 		text = L.confirm_overwrite,
@@ -21,13 +33,10 @@ function frame:OnInitialize()
 	self.SaveDialogTitleText:SetText(L.save_dialog_title)
 	self.ProfileOptionsText:SetText(L.profile_options)
 
-	_G[self.OptionEmptySlots:GetName() .. "Text"]:SetText(" " .. L.option_empty_slots)
-	_G[self.OptionSpells:GetName()     .. "Text"]:SetText(" " .. L.option_spells)
-	_G[self.OptionItems:GetName()      .. "Text"]:SetText(" " .. L.option_items)
-	_G[self.OptionCompanions:GetName() .. "Text"]:SetText(" " .. L.option_companions)
-	_G[self.OptionMacros:GetName()     .. "Text"]:SetText(" " .. L.option_macros)
-	_G[self.OptionEquipSets:GetName()  .. "Text"]:SetText(" " .. L.option_equip_sets)
-	_G[self.OptionPetSpells:GetName()  .. "Text"]:SetText(" " .. L.option_pet_spells)
+	local optName1, optName2
+	for optName1, optName2 in options() do
+		_G[self:GetName() .. "Option" .. optName1 .. "Text"]:SetText(" " .. L["option_" .. optName2])
+	end
 end
 
 function frame:OnOkayClick()
@@ -81,11 +90,34 @@ function frame:SetProfile(name)
 	self.name = nil
 	self.EditBox:SetText("")
 
-	if name then
+	local optName1, optName2
+	for optName1, optName2 in options() do
+		self["Option" .. optName1]:SetChecked(true)
+	end
+
+	self.OptionPetSpells:Enable()
+
+	if not name then
+		if not HasPetSpells() then
+			self.OptionPetSpells:Disable()
+		end
+	else
 		self.name = name
 
 		self.EditBox:SetText(self.name)
 		self.EditBox:HighlightText(0)
+
+		local profile = addon:GetProfile(name)
+
+		if profile then
+			for optName1, optName2 in options() do
+				self["Option" .. optName1]:SetChecked(not profile["skip_" .. optName2])
+			end
+
+			if not profile.petActions then
+				self.OptionPetSpells:Disable()
+			end
+		end
 	end
 
 	self:Update()
