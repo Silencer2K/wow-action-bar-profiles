@@ -26,7 +26,7 @@ function frame:OnInitialize()
 	_G[self.SkipItems:GetName()      .. "Text"]:SetText(" " .. L.skip_items)
 	_G[self.SkipCompanions:GetName() .. "Text"]:SetText(" " .. L.skip_companions)
 	_G[self.SkipMacros:GetName()     .. "Text"]:SetText(" " .. L.skip_macros)
-	_G[self.SkipEquipSets:GetName()  .. "Text"]:SetText(" " .. L.skip_equip_sets)
+	_G[self.SkipEquipSets:GetName()  .. "Text"]:SetText(" " .. L.skip_equipsets)
 	_G[self.SkipPetSpells:GetName()  .. "Text"]:SetText(" " .. L.skip_pet_spells)
 end
 
