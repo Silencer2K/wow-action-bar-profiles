@@ -155,8 +155,7 @@
                 <Scripts>
                     <OnEnter>
                         self.texture:SetAlpha(1.0)
-                        GameTooltip:SetOwner(self,
-                        "ANCHOR_RIGHT")
+                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                         GameTooltip:SetText(DELETE)
                     </OnEnter>
                     <OnLeave>
