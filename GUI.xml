@@ -32,9 +32,9 @@
                     </Layer>
                 </Layers>
                 <Scripts>
-                    <OnClick>
+                    <OnClick><![CDATA[
                         self:GetParent():OnUseClick()
-                    </OnClick>
+                    ]]></OnClick>
                 </Scripts>
             </Button>
             <Button name="$parentSaveProfile" text="SAVE"
@@ -63,15 +63,15 @@
             </Slider>
         </Frames>
         <Scripts>
-            <OnShow>
+            <OnShow><![CDATA[
                 self:OnShow()
-            </OnShow>
-            <OnHide>
+            ]]></OnShow>
+            <OnHide><![CDATA[
                 self:OnHide()
-            </OnHide>
-            <OnUpdate>
+            ]]></OnHide>
+            <OnUpdate><![CDATA[
                 self:OnUpdate()
-            </OnUpdate>
+            ]]></OnUpdate>
         </Scripts>
     </ScrollFrame>
     <Button name="ActionBarProfileButtonTemplate" virtual="true">
@@ -153,24 +153,24 @@
                     </Layer>
                 </Layers>
                 <Scripts>
-                    <OnEnter>
+                    <OnEnter><![CDATA[
                         self.texture:SetAlpha(1.0)
                         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                         GameTooltip:SetText(DELETE)
-                    </OnEnter>
-                    <OnLeave>
+                    ]]></OnEnter>
+                    <OnLeave><![CDATA[
                         self.texture:SetAlpha(0.5)
                         GameTooltip_Hide()
-                    </OnLeave>
-                    <OnMouseDown>
+                    ]]></OnLeave>
+                    <OnMouseDown><![CDATA[
                         self.texture:SetPoint("TOPLEFT", 1, -1)
-                    </OnMouseDown>
-                    <OnMouseUp>
+                    ]]></OnMouseDown>
+                    <OnMouseUp><![CDATA[
                         self.texture:SetPoint("TOPLEFT", 0, 0)
-                    </OnMouseUp>
-                    <OnClick>
+                    ]]></OnMouseUp>
+                    <OnClick><![CDATA[
                         PaperDollActionBarProfilesPane:OnDeleteClick(self:GetParent())
-                    </OnClick>
+                    ]]></OnClick>
                 </Scripts>
             </Button>
             <Button name="$parentEditButton" parentKey="EditButton"
@@ -187,25 +187,24 @@
                     </Layer>
                 </Layers>
                 <Scripts>
-                    <OnEnter>
+                    <OnEnter><![CDATA[
                         self.texture:SetAlpha(1.0)
-                        GameTooltip:SetOwner(self,
-                        "ANCHOR_RIGHT")
+                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                         GameTooltip:SetText(EDIT)
-                    </OnEnter>
-                    <OnLeave>
+                    ]]></OnEnter>
+                    <OnLeave><![CDATA[
                         self.texture:SetAlpha(0.5)
                         GameTooltip_Hide()
-                    </OnLeave>
-                    <OnMouseDown>
+                    ]]></OnLeave>
+                    <OnMouseDown><![CDATA[
                         self.texture:SetPoint("TOPLEFT", 1, -1)
-                    </OnMouseDown>
-                    <OnMouseUp>
+                    ]]></OnMouseDown>
+                    <OnMouseUp><![CDATA[
                         self.texture:SetPoint("TOPLEFT", 0, 0)
-                    </OnMouseUp>
-                    <OnClick>
+                    ]]></OnMouseUp>
+                    <OnClick><![CDATA[
                         PaperDollActionBarProfilesPane:OnEditClick(self:GetParent())
-                    </OnClick>
+                    ]]></OnClick>
                 </Scripts>
             </Button>
         </Frames>
@@ -220,15 +219,15 @@
             </Anchors>
         </NormalTexture>
         <Scripts>
-            <OnLoad>
+            <OnLoad><![CDATA[
                 SetClampedTextureRotation(self.BgBottom, 180)
-            </OnLoad>
-            <OnDoubleClick>
+            ]]></OnLoad>
+            <OnDoubleClick><![CDATA[
                 PaperDollActionBarProfilesPane:OnProfileDoubleClick(self)
-            </OnDoubleClick>
-            <OnClick>
+            ]]></OnDoubleClick>
+            <OnClick><![CDATA[
                 PaperDollActionBarProfilesPane:OnProfileClick(self)
-            </OnClick>
+            ]]></OnClick>
         </Scripts>
     </Button>
 </Ui>
