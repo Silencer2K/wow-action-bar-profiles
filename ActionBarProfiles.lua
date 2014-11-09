@@ -299,14 +299,16 @@ function addon:PreloadMacros()
 end
 
 function addon:PreloadPetSpells()
-	local petSpells = { id = {} } -- id - "icon"
+	local petSpells = { id = {}, name = {} } -- id - "icon"
 
 	local numSpells = HasPetSpells()
 	if numSpells then
 		local spellIndex
 		for spellIndex = 1, numSpells do
+			local name, stance = GetSpellBookItemName(spellIndex, BOOKTYPE_PET)
 			local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE_PET)
-			self:UpdateCache(petSpells, spellIndex, icon)
+
+			self:UpdateCache(petSpells, spellIndex, icon, name, stance)
 		end
 	end
 
@@ -625,9 +627,18 @@ function addon:UpdateProfileBars(name)
 		if HasPetSpells() then
 			profile.petActions = {}
 
+			local petSpells = self:PreloadPetSpells()
+
 			for slot = 1, NUM_PET_ACTION_SLOTS do
 				local name, stance, icon, isToken = GetPetActionInfo(slot)
 				if name then
+					if not isToken and not self:GetFromCache(petSpells, icon) then
+						local spellIndex = self:GetFromCache(petSpells, icon, name, stance)
+						if spellIndex then
+							icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE_PET)
+						end
+					end
+
 					profile.petActions[slot] = { name, stance, icon, isToken }
 				end
 			end
