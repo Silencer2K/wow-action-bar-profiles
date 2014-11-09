@@ -42,10 +42,17 @@
 				</Texture>
 			</Layer>
 			<Layer level="ARTWORK">
-				<FontString inherits="GameFontHighlightSmall" name="$parentNameText" parentKey="NameText">
+				<FontString inherits="GameFontHighlightSmall" name="$parentSaveDialogTitleText" parentKey="SaveDialogTitleText">
 					<Anchors>
 						<Anchor point="TOPLEFT">
 							<Offset x="24" y="-21"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString inherits="GameFontHighlightSmall" name="$parentProfileOptionsText" parentKey="ProfileOptionsText">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="24" y="-76"/>
 						</Anchor>
 					</Anchors>
 				</FontString>
@@ -101,6 +108,50 @@
 					</OnTextChanged>
 				</Scripts>
 			</EditBox>
+			<CheckButton name="$parentSkipEmptySlots" parentKey="SkipEmptySlots" inherits="UICheckButtonTemplate">
+				<Size x="16" y="16"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentEditBox" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="-35"/>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="$parentSkipSpells" parentKey="SkipSpells" inherits="UICheckButtonTemplate">
+				<Size x="16" y="16"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentSkipEmptySlots" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="$parentSkipItems" parentKey="SkipItems" inherits="UICheckButtonTemplate">
+				<Size x="16" y="16"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentSkipSpells" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="$parentSkipCompanions" parentKey="SkipCompanions" inherits="UICheckButtonTemplate">
+				<Size x="16" y="16"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentSkipItems" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="$parentSkipMacros" parentKey="SkipMacros" inherits="UICheckButtonTemplate">
+				<Size x="16" y="16"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentSkipCompanions" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="$parentSkipEquipSets" parentKey="SkipEquipSets" inherits="UICheckButtonTemplate">
+				<Size x="16" y="16"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentSkipMacros" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="$parentSkipPetSpells" parentKey="SkipPetSpells" inherits="UICheckButtonTemplate">
+				<Size x="16" y="16"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentSkipEquipSets" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+			</CheckButton>
 			<Button name="$parentCancel" inherits="UIPanelButtonTemplate" text="CANCEL">
 				<Size x="78" y="22"/>
 				<Anchors>

@@ -18,7 +18,16 @@ function frame:OnInitialize()
 		whileDead = 1,
 	}
 
-	self.NameText:SetText(L.save_dialog_title)
+	self.SaveDialogTitleText:SetText(L.save_dialog_title)
+	self.ProfileOptionsText:SetText(L.profile_options)
+
+	_G[self.SkipEmptySlots:GetName() .. "Text"]:SetText(" " .. L.skip_empty_slots)
+	_G[self.SkipSpells:GetName()     .. "Text"]:SetText(" " .. L.skip_spells)
+	_G[self.SkipItems:GetName()      .. "Text"]:SetText(" " .. L.skip_items)
+	_G[self.SkipCompanions:GetName() .. "Text"]:SetText(" " .. L.skip_companions)
+	_G[self.SkipMacros:GetName()     .. "Text"]:SetText(" " .. L.skip_macros)
+	_G[self.SkipEquipSets:GetName()  .. "Text"]:SetText(" " .. L.skip_equip_sets)
+	_G[self.SkipPetSpells:GetName()  .. "Text"]:SetText(" " .. L.skip_pet_spells)
 end
 
 function frame:OnOkayClick()
