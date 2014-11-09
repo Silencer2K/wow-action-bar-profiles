@@ -496,25 +496,23 @@ function addon:UseProfile(name, checkOnly, cache)
 	if profile then
 		local slot
 		for slot = 1, MAX_ACTION_BUTTONS do
-			if not profile.actions[slot] then
-				if not profile.skip_empty_slots then
-					total = total + 1
-					self:ClearSlot(slot, checkOnly)
-				end
-			else
+			if not profile.skip_empty_slots then
+				self:ClearSlot(slot, checkOnly)
+			end
+
+			if profile.actions[slot] then
 				local type, id, subType, extraId = unpack(profile.actions[slot])
-				local ok = true
 
 				if type == "spell" then
 					if not profile.skip_spells then
 						total = total + 1
-						ok = self:RestoreSpell(cache, profile, slot, checkOnly)
+						fail = fail + ((self:RestoreSpell(cache, profile, slot, checkOnly) and 0) or 1)
 					end
 
 				elseif type == "flyout" then
 					if not profile.skip_spells then
 						total = total + 1
-						ok = self:RestoreFlyout(cache, profile, slot, checkOnly)
+						fail = fail + ((self:RestoreFlyout(cache, profile, slot, checkOnly) and 0) or 1)
 					end
 
 				elseif type == "item" then
@@ -523,77 +521,58 @@ function addon:UseProfile(name, checkOnly, cache)
 						ok = self:RestoreItem(cache, profile, slot, checkOnly)
 
 						if not ok then
-							ok = self:RestoreMissingItem(cache, profile, slot, checkOnly)
-							if ok then
-								fail = fail + 1
-							end
+							fail = fail + 1
+							self:RestoreMissingItem(cache, profile, slot, checkOnly)
 						end
 					end
 
 				elseif type == "companion" then
 					if not profile.skip_companions then
-						total = total + 1
 						if subType == "MOUNT" then
-							ok = self:RestoreMount(cache, profile, slot, checkOnly)
-						else
-							ok = false
+							total = total + 1
+							fail = fail + ((self:RestoreMount(cache, profile, slot, checkOnly) and 0) or 1)
 						end
 					end
 
 				elseif type == "summonmount" then
 					if not profile.skip_companions then
 						total = total + 1
-						ok = self:RestoreMount(cache, profile, slot, checkOnly)
+						fail = fail + ((self:RestoreMount(cache, profile, slot, checkOnly) and 0) or 1)
 					end
 
 				elseif type == "summonpet" then
 					if not profile.skip_companions then
 						total = total + 1
-						ok = self:RestorePet(cache, profile, slot, checkOnly)
+						fail = fail + ((self:RestorePet(cache, profile, slot, checkOnly) and 0) or 1)
 					end
 
 				elseif type == "macro" then
 					if id > 0 then
 						if not profile.skip_macros then
 							total = total + 1
-							ok = self:RestoreMacro(cache, profile, slot, checkOnly)
-						end
-					else
-						if not profile.skip_empty_slots then
-							total = total + 1
-							ok = true
-							self:ClearSlot(slot, checkOnly)
+							fail = fail + ((self:RestoreMacro(cache, profile, slot, checkOnly) and 0) or 1)
 						end
 					end
 
 				elseif type == "equipmentset" then
 					if not profile.skip_equip_sets then
 						total = total + 1
-						ok = self:RestoreEquipSet(cache, profile, slot, checkOnly)
+						fail = fail + ((self:RestoreEquipSet(cache, profile, slot, checkOnly) and 0) or 1)
 					end
-				else
-					total = total + 1
-					ok = false
-				end
-
-				if not ok then
-					self:ClearSlot(slot, checkOnly)
-					fail = fail + 1
 				end
 			end
 		end
 
 		if not profile.skip_pet_spells and HasPetSpells() and profile.petActions then
 			for slot = 1, NUM_PET_ACTION_SLOTS do
-				if not profile.petActions[slot] then
+				if not profile.skip_empty_slots then
 					self:ClearPetSlot(slot, checkOnly)
-				else
-					if not self:RestorePetSpell(cache, profile, slot, checkOnly) then
-						self:ClearPetSlot(slot, checkOnly)
-						fail = fail + 1
-					end
 				end
-				total = total + 1
+
+				if profile.petActions[slot] then
+					total = total + 1
+					fail = fail + ((self:RestorePetSpell(cache, profile, slot, checkOnly) and 0) or 1)
+				end
 			end
 		end
 	end
