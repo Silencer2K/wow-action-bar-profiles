@@ -108,10 +108,12 @@ function frame:SetProfile(name)
     end
 
     self.OptionPetSpells:Enable()
+    _G[self:GetName() .. "OptionPetSpellsText"]:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
 
     if not name then
         if not HasPetSpells() then
             self.OptionPetSpells:Disable()
+            _G[self:GetName() .. "OptionPetSpellsText"]:SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
         end
     else
         self.name = name
@@ -128,7 +130,9 @@ function frame:SetProfile(name)
 
             if not profile.petActions then
                 self.OptionPetSpells:SetChecked(true)
+
                 self.OptionPetSpells:Disable()
+                _G[self:GetName() .. "OptionPetSpellsText"]:SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
             end
         end
     end
