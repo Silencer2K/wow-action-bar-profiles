@@ -5,7 +5,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 local frame = PaperDollActionBarProfilesSaveDialog
 
 function frame:dialogOptions()
-    return tableIterator({
+    return valuesIterator({
         { "EmptySlots", "empty_slots" },
         { "Spells", "spells" },
         { "Items", "items" },
