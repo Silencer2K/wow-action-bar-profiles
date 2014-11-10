@@ -655,15 +655,15 @@ function addon:SavePetJournalFilters()
 
     local i
     for i in valuesIterator(PET_JOURNAL_FLAGS) do
-        saved.flag[i] = C_PetJournal.IsFlagFiltered(i)
+        saved.flag[i] = not C_PetJournal.IsFlagFiltered(i)
     end
 
     for i = 1, C_PetJournal.GetNumPetSources() do
-        saved.source[i] = C_PetJournal.IsPetSourceFiltered(i)
+        saved.source[i] = not C_PetJournal.IsPetSourceFiltered(i)
     end
 
     for i = 1, C_PetJournal.GetNumPetTypes() do
-        saved.type[i] = C_PetJournal.IsPetTypeFiltered(i)
+        saved.type[i] = not C_PetJournal.IsPetTypeFiltered(i)
     end
 
     return saved
