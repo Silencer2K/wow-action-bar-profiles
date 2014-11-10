@@ -399,14 +399,21 @@ end
 
 function addon:PreloadItems()
     local items = { id = {}, name = {} }
+    local levels = {}
 
     local slotIndex
     for slotIndex = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
         local itemId = GetInventoryItemID("player", slotIndex)
 
         if itemId then
-            local name = GetItemInfo(itemId)
-            self:UpdateCache(items, itemId, itemId, name)
+            local name, level = unpackByIndex({ GetItemInfo(itemId) }, 1, 4)
+
+            if not levels[name] or level > levels[name] then
+                self:UpdateCache(items, itemId, itemId, name)
+                levels[name] = level
+            else
+                self:UpdateCache(items, itemId, itemId)
+            end
         end
     end
 
@@ -417,8 +424,14 @@ function addon:PreloadItems()
             local itemId = GetContainerItemID(bagIndex, itemIndex)
 
             if itemId then
-                local name = GetItemInfo(itemId)
-                self:UpdateCache(items, itemId, itemId, name)
+                local name, level = unpackByIndex({ GetItemInfo(itemId) }, 1, 4)
+
+                if not levels[name] or level > levels[name] then
+                    self:UpdateCache(items, itemId, itemId, name)
+                    levels[name] = level
+                else
+                    self:UpdateCache(items, itemId, itemId)
+                end
             end
         end
     end
