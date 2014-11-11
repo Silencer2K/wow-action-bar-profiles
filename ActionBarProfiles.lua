@@ -38,6 +38,8 @@ function addon:GetSortedProfiles()
     local profiles = self.db.global.profiles or {}
 
     local sorted = {}
+
+    local k, v
     for k, v in pairs(profiles) do
         v.name = k
         table.insert(sorted, v)
