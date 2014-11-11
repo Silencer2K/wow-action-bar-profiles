@@ -364,30 +364,30 @@ function addon:PreloadSpells()
 
     local bookTabs = {}
 
-    local i
-    for i = 1, GetNumSpellTabs() do
-        local bookOffset, numSpells, offSpecId = unpackByIndex({ GetSpellTabInfo(i) }, 3, 4, 6)
+    local bookIndex
+    for bookIndex = 1, GetNumSpellTabs() do
+        local bookOffset, numSpells, offSpecId = unpackByIndex({ GetSpellTabInfo(bookIndex) }, 3, 4, 6)
 
         if bookOffset and offSpecId == 0 then
-            table.insert(bookTabs, { BOOKTYPE_SPELL, bookOffset + 1, bookOffset + numSpells })
+            table.insert(bookTabs, { type = BOOKTYPE_SPELL, from = bookOffset + 1, to = bookOffset + numSpells })
         end
     end
 
-    for i in valuesIterator({ GetProfessions() }) do
-        if i then
-            local bookOffset, numSpells = unpackByIndex({ GetProfessionInfo(i) }, 6, 5)
-            table.insert(bookTabs, { BOOKTYPE_PROFESSION, bookOffset + 1, bookOffset + numSpells })
+    local profIndex
+    for profIndex in valuesIterator({ GetProfessions() }) do
+        if profIndex then
+            local bookOffset, numSpells = unpackByIndex({ GetProfessionInfo(profIndex) }, 6, 5)
+
+            table.insert(bookTabs, { type = BOOKTYPE_PROFESSION, from = bookOffset + 1, to = bookOffset + numSpells })
         end
     end
 
-    local type, from, to
-    for type, from, to in valuesIterator(bookTabs, true) do
-
+    local bookTab
+    for bookTab in valuesIterator(bookTabs) do
         local spellIndex
-        for spellIndex = from, to do
-
-            local type, spellId = GetSpellBookItemInfo(spellIndex, type)
-            local name, stance = GetSpellBookItemName(spellIndex, type)
+        for spellIndex = bookTab.from, bookTab.to do
+            local type, spellId = GetSpellBookItemInfo(spellIndex, bookTab.type)
+            local name, stance = GetSpellBookItemName(spellIndex, bookTab.type)
 
             if type == "SPELL" then
                 self:UpdateCache(spells, spellId, spellId, name, stance)
