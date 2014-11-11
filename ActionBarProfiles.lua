@@ -30,7 +30,21 @@ function addon:OnChatCommand(message)
     local param = message:sub(pos)
 
     if cmd and cmd == "use" and param then
-        self:UseProfile(param)
+        param = strtrim(param)
+
+        local profiles = self:GetSortedProfiles()
+        if profiles[param] then
+            self:UseProfile(param)
+            return
+        end
+
+        local profile
+        for profile in valuesIterator(profiles) do
+            if profile.name:lower() == param:lower() then
+                self.UseProfile(profile.name)
+                return
+            end
+        end
     end
 end
 
