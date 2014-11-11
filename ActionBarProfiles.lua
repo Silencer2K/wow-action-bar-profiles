@@ -62,21 +62,12 @@ function addon:GetSortedProfiles()
 end
 
 function addon:GetProfile(name, ignoreCase)
-    local profiles = self.db.global.profiles or {}
+    local profiles = self:GetSortedProfiles()
 
-    local profile = profiles[name]
-    if profile then
-        profile.name = name
-        return profile
-    end
-
-    if ignoreCase then
-        local k
-        for k, profile in pairs(profiles) do
-            if k:lower() == name:lower() then
-                profile.name = k
-                return profile
-            end
+    local profile
+    for profile in valuesIterator(profiles) do
+        if profile.name == name or (ignoreCase and profile.name:lower() == name:lower()) then
+            return profile
         end
     end
 end
