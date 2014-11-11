@@ -203,15 +203,15 @@ function addon:UpdateProfileParams(name, newName, options)
             profile.name = newName
         end
 
-        local key
-        for key in pairs(profile) do
-            if key:sub(1, 5) == "skip_" then
-                profile[key] = nil
+        local k, v
+        for k in pairs(profile) do
+            if k:sub(1, 5) == "skip_" then
+                profile[k] = nil
             end
         end
 
-        for key in pairs(options) do
-            profile[key] = options[key]
+        for k, v in pairs(options) do
+            profile[k] = v
         end
     end
 end
