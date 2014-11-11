@@ -328,20 +328,22 @@ function addon:UpdateCache(cache, value, id, name, stance)
     cache.id[id] = value
 
     if name then
-        if stance and stance ~= "" then
-            cache.name[name .. "|" .. stance] = value
-        else
-            cache.name[name] = value
-        end
+        name = (stance and stance ~= "" and name .. "|" .. stance) or name
+        cache.name[name] = value
     end
 end
 
 function addon:GetFromCache(cache, id, name, stance)
-    if stance and stance ~= "" then
-        return cache.id[id] or (name and cache.name[name .. "|" .. stance])
+    if cache.id[id] then
+        return cache.id[id]
     end
 
-    return cache.id[id] or (name and cache.name[name])
+    if name then
+        name = (stance and stance ~= "" and name .. "|" .. stance) or name
+        if cache.name[name] then
+            return cache.name[name]
+        end
+    end
 end
 
 function addon:MakeCache()
