@@ -30,27 +30,16 @@ function addon:OnChatCommand(message)
     local param = message:sub(pos)
 
     if cmd and cmd == "use" and param then
-        param = strtrim(param)
+        local profile = self:GetProfile(strtrim(param), true)
 
-        local profiles = self:GetSortedProfiles()
-        if profiles[param] then
-            self:UseProfile(param)
-            return
-        end
-
-        local profile
-        for profile in valuesIterator(profiles) do
-            if profile.name:lower() == param:lower() then
-                self.UseProfile(profile.name)
-                return
-            end
+        if profile then
+            self:UseProfile(profile.name)
         end
     end
 end
 
 function addon:GetSortedProfiles()
     local profiles = self.db.global.profiles or {}
-
     local sorted = {}
 
     local k, v
@@ -59,29 +48,37 @@ function addon:GetSortedProfiles()
         table.insert(sorted, v)
     end
 
-    local class = select(2, UnitClass("player"))
+    local playerClass = select(2, UnitClass("player"))
 
     table.sort(sorted, function(a, b)
         if a.class == b.class then
             return a.name < b.name
         else
-            return a.class == class
+            return a.class == playerClass
         end
     end)
 
     return sorted
 end
 
-function addon:GetProfile(name)
+function addon:GetProfile(name, ignoreCase)
     local profiles = self.db.global.profiles or {}
-    local profile = profiles[name]
 
+    local profile = profiles[name]
     if profile then
         profile.name = name
         return profile
     end
 
-    return
+    if ignoreCase then
+        local k
+        for k, profile in pairs(profiles) do
+            if k:lower() == name:lower() then
+                profile.name = k
+                return profile
+            end
+        end
+    end
 end
 
 function addon:UseProfile(name, checkOnly, cache)

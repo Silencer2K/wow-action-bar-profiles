@@ -40,7 +40,7 @@ function frame:OnInitialize()
 end
 
 function frame:OnOkayClick()
-    local name = self.EditBox:GetText()
+    local name = strtrim(self.EditBox:GetText())
 
     local options = {}
 
@@ -91,7 +91,7 @@ function frame:OnCancelClick()
 end
 
 function frame:Update()
-    if self.EditBox:GetText() ~= "" then
+    if strtrim(self.EditBox:GetText()) ~= "" then
         self.Okay:Enable()
     else
         self.Okay:Disable()
