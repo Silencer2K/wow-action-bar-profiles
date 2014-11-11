@@ -73,7 +73,7 @@ end
 function frame:OnUpdate()
     local button
     for button in valuesIterator(self.buttons) do
-        if (button:IsMouseOver()) then
+        if button:IsMouseOver() then
             if button.name then
                 button.DeleteButton:Show()
                 button.EditButton:Show()
@@ -239,7 +239,7 @@ function frame:Update()
                 end
             end
 
-            if ((i + scrollOffset) == 1) then
+            if (i + scrollOffset) == 1 then
                 button.BgTop:Show()
                 button.BgMiddle:SetPoint("TOP", button.BgTop, "BOTTOM")
             else
@@ -247,7 +247,7 @@ function frame:Update()
                 button.BgMiddle:SetPoint("TOP")
             end
 
-            if ((i + scrollOffset) == numRows) then
+            if (i + scrollOffset) == numRows then
                 button.BgBottom:Show()
                 button.BgMiddle:SetPoint("BOTTOM", button.BgBottom, "TOP")
             else
@@ -255,7 +255,7 @@ function frame:Update()
                 button.BgMiddle:SetPoint("BOTTOM")
             end
 
-            if ((i + scrollOffset) % 2 == 0) then
+            if (i + scrollOffset) % 2 == 0 then
                 button.Stripe:SetTexture(STRIPE_COLOR.r, STRIPE_COLOR.g, STRIPE_COLOR.b)
                 button.Stripe:SetAlpha(0.1)
 

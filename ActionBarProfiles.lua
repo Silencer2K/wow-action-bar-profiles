@@ -534,7 +534,7 @@ function addon:RestoreFlyout(cache, profile, slot, checkOnly)
 
     local flyoutIndex = self:GetFromCache(cache.flyouts, id, name)
 
-    if (flyoutIndex) then
+    if flyoutIndex then
         if not checkOnly then
             PickupSpellBookItem(flyoutIndex, BOOKTYPE_SPELL)
             self:PlaceToSlot(slot)
@@ -595,14 +595,21 @@ function addon:RestoreMount(cache, profile, slot, checkOnly)
     local type, id = unpack(profile.actions[slot])
 
     if type == "summonmount" then
+        if id == 0xFFFFFFF then
+            if not checkOnly then
+                C_MountJournal.Pickup(0)
+                self:PlaceToSlot(slot)
+            end
+            return true
+        end
+
         id = S2K:GetMountSpell(id)
     end
 
     local name = GetSpellInfo(id)
-
     local spellId = self:GetFromCache(cache.mounts, id, name)
 
-    if (spellId) then
+    if spellId then
         self:PlaceSpellToSlot(slot, spellId, checkOnly)
         return true
     end
@@ -639,7 +646,7 @@ end
 function addon:RestoreEquipSet(cache, profile, slot, checkOnly)
     local name = profile.actions[slot][2]
 
-    if (GetEquipmentSetInfoByName(name)) then
+    if GetEquipmentSetInfoByName(name) then
         if not checkOnly then
             PickupEquipmentSetByName(name)
             self:PlaceToSlot(slot)
@@ -655,7 +662,7 @@ function addon:RestorePetSpell(cache, profile, slot, checkOnly)
 
     local spellIndex = self:GetFromCache(cache.petSpells, icon)
 
-    if (spellIndex) then
+    if spellIndex then
         if not checkOnly then
             PickupSpellBookItem(spellIndex, BOOKTYPE_PET)
             self:PlaceToPetSlot(slot)
