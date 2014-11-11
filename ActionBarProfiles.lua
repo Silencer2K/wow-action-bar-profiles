@@ -204,16 +204,16 @@ function addon:SaveProfile(name, options)
     self:UpdateProfileBars(name)
 end
 
-function addon:UpdateProfileParams(name, newName, options)
+function addon:UpdateProfileParams(name, rename, options)
     local profiles = self.db.global.profiles or {}
     local profile = profiles[name]
 
     if profile then
-        if newName and name ~= newName then
+        if rename and name ~= rename then
             profiles[name] = nil
-            profiles[newName] = profile
+            profiles[rename] = profile
 
-            profile.name = newName
+            profile.name = rename
         end
 
         local k, v
@@ -286,7 +286,6 @@ end
 
 function addon:DeleteProfile(name)
     local profiles = self.db.global.profiles or {}
-
     profiles[name] = nil
 end
 
