@@ -7,8 +7,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 local S2K = LibStub("S2KTools-1.0")
 
 local MAX_ACTION_BUTTONS = 120
-
-local PET_JOURNAL_FLAGS = { LE_PET_JOURNAL_FLAG_COLLECTED, LE_PET_JOURNAL_FLAG_NOT_COLLECTED, LE_PET_JOURNAL_FLAG_FAVORITES }
+local PET_JOURNAL_FLAGS = { LE_PET_JOURNAL_FLAG_COLLECTED, LE_PET_JOURNAL_FLAG_NOT_COLLECTED }
 
 function addon:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New(addonName .. "DB")
@@ -465,7 +464,6 @@ function addon:PreloadPets()
 
     C_PetJournal.SetFlagFilter(LE_PET_JOURNAL_FLAG_COLLECTED, true)
     C_PetJournal.SetFlagFilter(LE_PET_JOURNAL_FLAG_NOT_COLLECTED, false)
-    C_PetJournal.SetFlagFilter(LE_PET_JOURNAL_FLAG_FAVORITES, false)
 
     C_PetJournal.AddAllPetSourcesFilter()
     C_PetJournal.AddAllPetTypesFilter()
