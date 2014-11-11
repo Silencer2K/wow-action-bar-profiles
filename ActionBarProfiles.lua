@@ -636,11 +636,11 @@ end
 function addon:RestoreMacro(cache, profile, slot, checkOnly)
     local name, icon = unpackByIndex(profile.actions[slot], 5, 6)
 
-    local macro = self:GetFromCache(cache.macros, name .. "|" .. icon, name)
+    local macroIndex = self:GetFromCache(cache.macros, name .. "|" .. icon, name)
 
-    if macro then
+    if macroIndex then
         if not checkOnly then
-            PickupMacro(macro)
+            PickupMacro(macroIndex)
             self:PlaceToSlot(slot)
         end
         return true
