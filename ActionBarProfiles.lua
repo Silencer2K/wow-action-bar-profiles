@@ -491,7 +491,7 @@ function addon:PreloadMacros()
     for macroIndex = 1, MAX_ACCOUNT_MACROS + MAX_CHARACTER_MACROS do
         local name, icon = GetMacroInfo(macroIndex)
 
-        if name and name ~= "" then
+        if name and name ~= "" and icon then
             self:UpdateCache(macros, macroIndex, name .. "|" .. icon, name)
         end
     end
