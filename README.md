@@ -9,7 +9,7 @@ Chat commands
 -------------
 
 * /abp list - shows the list of available profiles
-* /abp use *profile name* - uses the profile named *profile name*
+* /abp use *profile name* - activates the profile named *profile name*
 * /abp save *profile name* - saves current action bars to the profile named *profile name*, the profile will be overwritten without confirmation
 * /abp del *profile name* - deletes the profile named *profile name*, the profile will be deleted without confirmation
 
