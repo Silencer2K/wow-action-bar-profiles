@@ -8,10 +8,10 @@ Also, you can still use the chat command to manage profiles, such as when you us
 Chat commands
 -------------
 
-* /abp list -
-* /abp use *profile name* - 
-* /abp save *profile name* -
-* /abp del *profile name* - 
+* **/abp list** - shows the list of available profiles for each class
+* **/abp use profile name** - 
+* **/abp save profile name** -
+* **/abp del profile name** - 
 
 Links
 -----
