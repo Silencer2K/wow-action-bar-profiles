@@ -81,7 +81,7 @@ function addon:OnChatCommand(message)
 
             for class, locClass in pairs(locClasses) do
                 if profilesByClass[class] then
-                    print(locClass .. ": " .. strjoin(", ", unpack(profilesByClass[class])))
+                    self:Printf("%s: %s", locClass, strjoin(", ", unpack(profilesByClass[class])))
                 end
             end
         end
