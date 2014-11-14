@@ -449,9 +449,7 @@ function addon:PreloadSpells()
     if UnitLevel("Player") >= 90 then
         local spellId
         for spellId in pairs(DRAENOR_ZONE_SPELL_ABILITY_TEXTURES_BASE) do
-            local name, stance, icon = GetSpellInfo(spellId)
-
-            self:UpdateCache(spells, DraenorZoneAbilitySpellID, spellId, name, stance)
+            self:UpdateCache(spells, DraenorZoneAbilitySpellID, spellId)
         end
     end
 
