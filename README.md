@@ -8,7 +8,7 @@ Also, you can still use the chat command to manage profiles, such as when you us
 Chat commands
 -------------
 
-* /abp list - shows the list of available profiles for each class
+* /abp list - shows the list of available profiles
 * /abp use *profile name* - uses the profile named *profile name*
 * /abp save *profile name* - saves current action bars to the profile named *profile name*, the profile will be overwritten without confirmation
 * /abp del *profile name* - deletes the profile named *profile name*, the profile will be deleted without confirmation
