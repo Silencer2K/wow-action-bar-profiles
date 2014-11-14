@@ -29,11 +29,61 @@ function addon:OnChatCommand(message)
     local cmd, pos = self:GetArgs(message, 1, 1)
     local param = message:sub(pos)
 
-    if cmd and cmd == "use" and param then
-        local profile = self:GetProfile(strtrim(param), true)
+    if cmd then
+        if cmd == "use" then
+            param = strtrim(param or "")
 
-        if profile then
-            self:UseProfile(profile.name)
+            if param ~= "" then
+                local profile = self:GetProfile(strtrim(param), true)
+
+                if profile then
+                    self:UseProfile(profile.name)
+                end
+            end
+        elseif cmd == "save" then
+            param = strtrim(param or "")
+
+            if param ~= "" then
+                local profile = self:GetProfile(strtrim(param), true)
+
+                if profile then
+                    self:UpdateProfileBars(profile.name)
+                else
+                    self:SaveProfile(param, {})
+                end
+
+                PaperDollActionBarProfilesPane:Update()
+            end
+        elseif cmd == "delete" or cmd == "del" then
+            param = strtrim(param or "")
+
+            if param ~= "" then
+                local profile = self:GetProfile(strtrim(param), true)
+
+                if profile then
+                    self:DeleteProfile(profile.name)
+                    PaperDollActionBarProfilesPane:Update()
+                end
+            end
+        elseif cmd == "list" then
+            local profilesByClass = {}
+
+            local profile
+            for profile in valuesIterator(self:GetSortedProfiles()) do
+                profilesByClass[profile.class] = profilesByClass[profile.class] or {}
+
+                table.insert(profilesByClass[profile.class], profile.name)
+            end
+
+            local locClasses = {}
+            FillLocalizedClassList(locClasses)
+            table.sort(locClasses)
+
+            for class, locClass in pairs(locClasses) do
+                if profilesByClass[class] then
+                    print(locClass .. ": " .. strjoin(", ", unpack(profilesByClass[class])))
+                end
+            end
         end
     end
 end
@@ -62,10 +112,8 @@ function addon:GetSortedProfiles()
 end
 
 function addon:GetProfile(name, ignoreCase)
-    local profiles = self:GetSortedProfiles()
-
     local profile
-    for profile in valuesIterator(profiles) do
+    for profile in valuesIterator(self:GetSortedProfiles()) do
         if profile.name == name or (ignoreCase and profile.name:lower() == name:lower()) then
             return profile
         end
