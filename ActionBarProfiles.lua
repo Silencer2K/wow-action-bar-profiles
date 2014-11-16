@@ -447,6 +447,8 @@ function addon:PreloadSpells()
     end
 
     if UnitLevel("player") >= 90 then
+        self:UpdateCache(spells, DraenorZoneAbilitySpellID, DraenorZoneAbilitySpellID)
+
         local spellId
         for spellId in pairs(DRAENOR_ZONE_SPELL_ABILITY_TEXTURES_BASE) do
             self:UpdateCache(spells, DraenorZoneAbilitySpellID, spellId)
