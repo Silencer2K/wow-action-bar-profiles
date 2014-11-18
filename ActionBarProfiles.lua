@@ -583,6 +583,13 @@ function addon:RestoreSpell(cache, profile, slot, checkOnly)
         self:PlaceSpellToSlot(slot, spellId, checkOnly)
         return true
     end
+
+    for spellId in valuesIterator({ S2K:GetSimilarSpells(id) }) do
+        if cache.spells.id[spellId] then
+            self:PlaceSpellToSlot(slot, spellId, checkOnly)
+            return true
+        end
+    end
 end
 
 function addon:RestoreFlyout(cache, profile, slot, checkOnly)
