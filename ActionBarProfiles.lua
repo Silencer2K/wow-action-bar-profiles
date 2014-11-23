@@ -156,13 +156,10 @@ function addon:UseProfile(name, checkOnly, cache)
 
                 elseif type == "item" then
                     if not profile.skip_items then
-                        ok = self:RestoreItem(cache, profile, slot, checkOnly)
-                        total = total + 1
+                        ok = self:RestoreItem(cache, profile, slot, checkOnly) or self:RestoreMissingItem(cache, profile, slot, checkOnly)
 
-                        if not ok then
-                            ok = self:RestoreMissingItem(cache, profile, slot, checkOnly)
-                            fail = fail + 1
-                        end
+                        total = total + 1
+                        fail = fail + ((ok and 0) or 1)
                     end
 
                 elseif type == "companion" then
