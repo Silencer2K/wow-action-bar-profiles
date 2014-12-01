@@ -244,6 +244,8 @@ function addon:UseProfile(name, checkOnly, cache)
                     SetBinding(key, cmd)
                 end
             end
+
+            SaveBindings(GetCurrentBindingSet())
         end
     end
 
