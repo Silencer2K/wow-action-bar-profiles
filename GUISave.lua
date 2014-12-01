@@ -13,6 +13,7 @@ function frame:dialogOptions()
         { "Macros", "macros" },
         { "EquipSets", "equip_sets" },
         { "PetSpells", "pet_spells" },
+        { "KeyBindings", "key_bindings" },
     }, true)
 end
 

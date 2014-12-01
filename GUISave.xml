@@ -42,7 +42,7 @@
                 </FontString>
                 <FontString inherits="GameFontHighlightSmall" name="$parentProfileOptionsText" parentKey="ProfileOptionsText">
                     <Anchors>
-                        <Anchor point="TOPLEFT" x="24" y="-76" />
+                        <Anchor point="TOPLEFT" x="24" y="-72" />
                     </Anchors>
                 </FontString>
             </Layer>
@@ -133,6 +133,12 @@
                 <Size x="16" y="16" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="$parentOptionEquipSets" relativePoint="BOTTOMLEFT" />
+                </Anchors>
+            </CheckButton>
+            <CheckButton name="$parentOptionKeyBindings" parentKey="OptionKeyBindings" inherits="UICheckButtonTemplate">
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parentOptionPetSpells" relativePoint="BOTTOMLEFT" />
                 </Anchors>
             </CheckButton>
             <Button name="$parentCancel" inherits="UIPanelButtonTemplate" text="CANCEL">
