@@ -226,7 +226,7 @@ function addon:UseProfile(name, checkOnly, cache)
             end
         end
 
-        if not (checkOnly or profile.skip_key_bindings) then
+        if not (checkOnly or profile.skip_key_bindings) and profile.keyBindings then
             for i = 1, GetNumBindings() do
                 local bind = { GetBinding(i) }
                 if bind[3] then
