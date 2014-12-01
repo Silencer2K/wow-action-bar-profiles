@@ -225,6 +225,26 @@ function addon:UseProfile(name, checkOnly, cache)
                 end
             end
         end
+
+        if not (checkOnly or profile.skip_key_bindings) then
+            for i = 1, GetNumBindings() do
+                local bind = { GetBinding(i) }
+                if bind[3] then
+                    local key
+                    for key in valuesIterator({ select(3, unpack(bind)) }) do
+                        SetBinding(key)
+                    end
+                end
+            end
+
+            local cmd, keys
+            for cmd, keys in pairs(profile.keyBindings) do
+                local key
+                for key in valuesIterator(keys) do
+                    SetBinding(key, cmd)
+                end
+            end
+        end
     end
 
     return fail, total
@@ -315,6 +335,16 @@ function addon:UpdateProfileBars(name)
 
                     profile.petActions[slot] = { name, stance, icon, isToken }
                 end
+            end
+        end
+
+        profile.keyBindings = {}
+
+        local i
+        for i = 1, GetNumBindings() do
+            local bind = { GetBinding(i) }
+            if bind[3] then
+                profile.keyBindings[bind[1]] = { select(3, unpack(bind)) }
             end
         end
     end
