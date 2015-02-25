@@ -1,4 +1,4 @@
-## Interface: 60000
+## Interface: 60100
 ## Title: Action Bar Profiles
 ## Author: silencer2k@gmail.com
 ## SavedVariables: ActionBarProfilesDB
@@ -25,4 +25,3 @@ GUI.xml
 GUI.lua
 GUISave.xml
 GUISave.lua
-
