@@ -1,4 +1,4 @@
-## Interface: 60100
+## Interface: 60200
 ## Title: Action Bar Profiles
 ## Author: silencer2k@gmail.com
 ## SavedVariables: ActionBarProfilesDB
