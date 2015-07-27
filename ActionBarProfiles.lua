@@ -5,6 +5,8 @@ LibStub("AceAddon-3.0"):NewAddon(addon, addonName, "AceConsole-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
 local S2K = LibStub("S2KTools-1.0")
+local S2KMounts = LibStub("LibS2kMounts-1.0")
+local S2KFI = LibStub("LibS2kFactionalItems-1.0")
 
 local MAX_ACTION_BUTTONS = 120
 local PET_JOURNAL_FLAGS = { LE_PET_JOURNAL_FLAG_COLLECTED, LE_PET_JOURNAL_FLAG_NOT_COLLECTED }
@@ -652,7 +654,7 @@ function addon:RestoreItem(cache, profile, slot, checkOnly)
         return true
     end
 
-    local factItemId = S2K:GetFactionalItem(({ UnitFactionGroup("player") })[1], id)
+    local factItemId = S2KFI:GetConvertedItemId(id)
 
     if factItemId then
         local factItemName = GetItemInfo(factItemId)
@@ -676,7 +678,7 @@ end
 function addon:RestoreMissingItem(cache, profile, slot, checkOnly)
     local id = profile.actions[slot][2]
 
-    local itemId = S2K:GetFactionalItem(({ UnitFactionGroup("player") })[1], id) or id
+    local itemId = S2KFI:GetConvertedItemId(id) or id
 
     if GetItemInfo(itemId) then
         self:PlaceItemToSlot(slot, itemId, checkOnly)
@@ -696,7 +698,7 @@ function addon:RestoreMount(cache, profile, slot, checkOnly)
             return true
         end
 
-        id = S2K:GetMountSpell(id)
+        id = S2KMounts:GetSpellIdByMountId(id)
     end
 
     local name = GetSpellInfo(id)

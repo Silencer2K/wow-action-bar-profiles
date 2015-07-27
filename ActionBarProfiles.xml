@@ -6,6 +6,6 @@
     <Script file="libs\AceDB-3.0\AceDB-3.0.lua" />
     <Script file="libs\AceLocale-3.0\AceLocale-3.0.lua" />
     <Script file="libs\S2KTools-1.0\S2KTools-1.0.lua" />
-    <Script file="libs\S2KTools-1.0\S2KFactionItems-1.0.lua" />
-    <Script file="libs\S2KTools-1.0\S2KMounts-1.0.lua" />
+    <Include file="libs\LibS2kMounts-1.0\lib.xml" />
+    <Include file="libs\LibS2kFactionalItems-1.0\lib.xml" />
 </Ui>
