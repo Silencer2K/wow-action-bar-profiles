@@ -71,7 +71,7 @@ function addon:OnChatCommand(message)
             local profilesByClass = {}
 
             local profile
-            for profile in valuesIterator(self:GetSortedProfiles()) do
+            for profile in table.values(self:GetSortedProfiles()) do
                 profilesByClass[profile.class] = profilesByClass[profile.class] or {}
 
                 table.insert(profilesByClass[profile.class], profile.name)
@@ -115,7 +115,7 @@ end
 
 function addon:GetProfile(name, ignoreCase)
     local profile
-    for profile in valuesIterator(self:GetSortedProfiles()) do
+    for profile in table.values(self:GetSortedProfiles()) do
         if profile.name == name or (ignoreCase and profile.name:lower() == name:lower()) then
             return profile
         end
@@ -233,7 +233,7 @@ function addon:UseProfile(name, checkOnly, cache)
                 local bind = { GetBinding(i) }
                 if bind[3] then
                     local key
-                    for key in valuesIterator({ select(3, unpack(bind)) }) do
+                    for key in table.values({ select(3, unpack(bind)) }) do
                         SetBinding(key)
                     end
                 end
@@ -242,7 +242,7 @@ function addon:UseProfile(name, checkOnly, cache)
             local cmd, keys
             for cmd, keys in pairs(profile.keyBindings) do
                 local key
-                for key in valuesIterator(keys) do
+                for key in table.values(keys) do
                     SetBinding(key, cmd)
                 end
             end
@@ -310,7 +310,7 @@ function addon:UpdateProfileBars(name)
 
                 elseif type == "macro" then
                     if id > 0 then
-                        profile.actions[slot] = { type, id, subType, extraId, unpackByIndex({ GetMacroInfo(id) }, 1, 2) }
+                        profile.actions[slot] = { type, id, subType, extraId, table.select({ GetMacroInfo(id) }, 1, 2) }
                     end
 
                 elseif type == "summonpet" then
@@ -445,7 +445,7 @@ function addon:PreloadSpells()
 
     local bookIndex
     for bookIndex = 1, GetNumSpellTabs() do
-        local bookOffset, numSpells, offSpecId = unpackByIndex({ GetSpellTabInfo(bookIndex) }, 3, 4, 6)
+        local bookOffset, numSpells, offSpecId = table.select({ GetSpellTabInfo(bookIndex) }, 3, 4, 6)
 
         if bookOffset and offSpecId == 0 then
             table.insert(bookTabs, { type = BOOKTYPE_SPELL, from = bookOffset + 1, to = bookOffset + numSpells })
@@ -453,16 +453,16 @@ function addon:PreloadSpells()
     end
 
     local profIndex
-    for profIndex in valuesIterator({ GetProfessions() }) do
+    for profIndex in table.values({ GetProfessions() }) do
         if profIndex then
-            local bookOffset, numSpells = unpackByIndex({ GetProfessionInfo(profIndex) }, 6, 5)
+            local bookOffset, numSpells = table.select({ GetProfessionInfo(profIndex) }, 6, 5)
 
             table.insert(bookTabs, { type = BOOKTYPE_PROFESSION, from = bookOffset + 1, to = bookOffset + numSpells })
         end
     end
 
     local bookTab
-    for bookTab in valuesIterator(bookTabs) do
+    for bookTab in table.values(bookTabs) do
         local spellIndex
         for spellIndex = bookTab.from, bookTab.to do
             local type, spellId = GetSpellBookItemInfo(spellIndex, bookTab.type)
@@ -498,7 +498,7 @@ function addon:PreloadItems()
         local itemId = GetInventoryItemID("player", slotIndex)
 
         if itemId then
-            local name, level = unpackByIndex({ GetItemInfo(itemId) }, 1, 4)
+            local name, level = table.select({ GetItemInfo(itemId) }, 1, 4)
 
             if not levels[name] or level > levels[name] then
                 self:UpdateCache(items, itemId, itemId, name)
@@ -516,7 +516,7 @@ function addon:PreloadItems()
             local itemId = GetContainerItemID(bagIndex, itemIndex)
 
             if itemId then
-                local name, level = unpackByIndex({ GetItemInfo(itemId) }, 1, 4)
+                local name, level = table.select({ GetItemInfo(itemId) }, 1, 4)
 
                 if not levels[name] or level > levels[name] then
                     self:UpdateCache(items, itemId, itemId, name)
@@ -538,7 +538,7 @@ function addon:PreloadMounts()
 
     local mountIndex
     for mountIndex = 1, C_MountJournal.GetNumMounts() do
-        local name, spellId, faction, isCollected = unpackByIndex({ C_MountJournal.GetMountInfo(mountIndex) }, 1, 2, 9, 11)
+        local name, spellId, faction, isCollected = table.select({ C_MountJournal.GetMountInfo(mountIndex) }, 1, 2, 9, 11)
 
         if isCollected and (not faction or faction == playerFaction) then
             self:UpdateCache(mounts, spellId, spellId, name)
@@ -563,7 +563,7 @@ function addon:PreloadPets()
 
     local petIndex
     for petIndex = 1, C_PetJournal:GetNumPets() do
-        local petId, creatureId = unpackByIndex({ C_PetJournal.GetPetInfoByIndex(petIndex) }, 1, 11)
+        local petId, creatureId = table.select({ C_PetJournal.GetPetInfoByIndex(petIndex) }, 1, 11)
         self:UpdateCache(pets, petId, creatureId)
     end
 
@@ -615,7 +615,7 @@ function addon:RestoreSpell(cache, profile, slot, checkOnly)
         return true
     end
 
-    for spellId in valuesIterator({ S2K:GetSimilarSpells(id) }) do
+    for spellId in table.values({ S2K:GetSimilarSpells(id) }) do
         if cache.spells.id[spellId] then
             self:PlaceSpellToSlot(slot, spellId, checkOnly)
             return true
@@ -667,7 +667,7 @@ function addon:RestoreItem(cache, profile, slot, checkOnly)
         end
     end
 
-    for itemId in valuesIterator({ S2K:GetSimilarItems(id) }) do
+    for itemId in table.values({ S2K:GetSimilarItems(id) }) do
         if cache.items.id[itemId] then
             self:PlaceItemToSlot(slot, itemId, checkOnly)
             return true
@@ -725,7 +725,7 @@ function addon:RestorePet(cache, profile, slot, checkOnly)
 end
 
 function addon:RestoreMacro(cache, profile, slot, checkOnly)
-    local name, icon = unpackByIndex(profile.actions[slot], 5, 6)
+    local name, icon = table.select(profile.actions[slot], 5, 6)
 
     local macroIndex = self:GetFromCache(cache.macros, name .. "|" .. icon, name)
 
@@ -751,7 +751,7 @@ function addon:RestoreEquipSet(cache, profile, slot, checkOnly)
 end
 
 function addon:RestorePetSpell(cache, profile, slot, checkOnly)
-    local icon, isToken = unpackByIndex(profile.petActions[slot], 3, 4)
+    local icon, isToken = table.select(profile.petActions[slot], 3, 4)
 
     icon = (isToken and _G[icon]) or icon
 
@@ -772,7 +772,7 @@ function addon:SavePetJournalFilters()
     saved.text = C_PetJournal.GetSearchFilter()
 
     local i
-    for i in valuesIterator(PET_JOURNAL_FLAGS) do
+    for i in table.values(PET_JOURNAL_FLAGS) do
         saved.flag[i] = not C_PetJournal.IsFlagFiltered(i)
     end
 
@@ -791,7 +791,7 @@ function addon:RestorePetJournalFilters(saved)
     C_PetJournal.SetSearchFilter(saved.text)
 
     local i
-    for i in valuesIterator(PET_JOURNAL_FLAGS) do
+    for i in table.values(PET_JOURNAL_FLAGS) do
         C_PetJournal.SetFlagFilter(i, saved.flag[i])
     end
 

@@ -8,4 +8,5 @@
     <Script file="libs\S2KTools-1.0\S2KTools-1.0.lua" />
     <Include file="libs\LibS2kMounts-1.0\lib.xml" />
     <Include file="libs\LibS2kFactionalItems-1.0\lib.xml" />
+    <Include file="libs\LibS2kMisc-1.0\lib.xml" />
 </Ui>

@@ -13,6 +13,7 @@ externals:
     libs/S2KTools-1.0: https://github.com/Silencer2K/wow-s2k-lib.git
     libs/LibS2kMounts-1.0: https://github.com/Silencer2K/wow-lib-s2k-mounts.git
     libs/LibS2kFactionalItems-1.0: https://github.com/Silencer2K/wow-lib-s2k-factional-items.git
+    libs/LibS2kMisc-1.0: https://github.com/Silencer2K/wow-lib-s2k-misc.git
 
 ignore:
     - textures/src

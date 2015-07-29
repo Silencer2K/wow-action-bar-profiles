@@ -72,7 +72,7 @@ end
 
 function frame:OnUpdate()
     local button
-    for button in valuesIterator(self.buttons) do
+    for button in table.values(self.buttons) do
         if button:IsMouseOver() then
             if button.name then
                 button.DeleteButton:Show()
