@@ -4,17 +4,31 @@ LibStub("AceAddon-3.0"):NewAddon(addon, addonName, "AceConsole-3.0")
 
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
-local S2K = LibStub("S2KTools-1.0")
 local S2KMounts = LibStub("LibS2kMounts-1.0")
 local S2KFI = LibStub("LibS2kFactionalItems-1.0")
 
 local MAX_ACTION_BUTTONS = 120
 local PET_JOURNAL_FLAGS = { LE_PET_JOURNAL_FLAG_COLLECTED, LE_PET_JOURNAL_FLAG_NOT_COLLECTED }
 
+local DEFAULT_PAPERDOLL_NUM_TABS = 3
+
+local SIMILAR_ITEMS = {
+    [6948]   = { 64488 },   -- Hearthstone
+    [64488]  = { 6948 },    -- The Innkeeper's Daughter
+    [118922] = { 86569, 75525 },    -- Oralius' Whispering Crystal
+    [86569]  = { 118922, 75525 },   -- Crystal of Insanity
+    [75525]  = { 118922, 86569 },   -- Alchemist's Flask
+}
+
+local SIMILAR_SPELLS = {
+    [152280] = { 43265 },   -- Defile
+    [108194] = { 47476 },   -- Asphyxiate
+}
+
 function addon:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New(addonName .. "DB")
 
-    S2K:InjectPaperDollSidebarTab(
+    self:InjectPaperDollSidebarTab(
         L.charframe_tab,
         "PaperDollActionBarProfilesPane",
         "Interface\\AddOns\\ActionBarProfiles\\textures\\CharDollBtn",
@@ -87,6 +101,20 @@ function addon:OnChatCommand(message)
                 end
             end
         end
+    end
+end
+
+function addon:GetSimilarItems(itemId)
+    local ret = SIMILAR_ITEMS[itemId]
+    if ret then
+        return unpack(ret)
+    end
+end
+
+function addon:GetSimilarSpells(spellId)
+    local ret = SIMILAR_SPELLS[spellId]
+    if ret then
+        return unpack(ret)
     end
 end
 
@@ -615,7 +643,7 @@ function addon:RestoreSpell(cache, profile, slot, checkOnly)
         return true
     end
 
-    for spellId in table.values({ S2K:GetSimilarSpells(id) }) do
+    for spellId in table.values({ self:GetSimilarSpells(id) }) do
         if cache.spells.id[spellId] then
             self:PlaceSpellToSlot(slot, spellId, checkOnly)
             return true
@@ -667,7 +695,7 @@ function addon:RestoreItem(cache, profile, slot, checkOnly)
         end
     end
 
-    for itemId in table.values({ S2K:GetSimilarItems(id) }) do
+    for itemId in table.values({ self:GetSimilarItems(id) }) do
         if cache.items.id[itemId] then
             self:PlaceItemToSlot(slot, itemId, checkOnly)
             return true
@@ -801,5 +829,98 @@ function addon:RestorePetJournalFilters(saved)
 
     for i = 1, C_PetJournal.GetNumPetTypes() do
         C_PetJournal.SetPetTypeFilter(i, saved.type[i])
+    end
+end
+
+function addon:InjectPaperDollSidebarTab(name, frame, icon, texCoords)
+    self:Fix3rdPartyAddons()
+
+    local tabIndex = #PAPERDOLL_SIDEBARS + 1
+    local extraTabs = tabIndex - DEFAULT_PAPERDOLL_NUM_TABS
+
+    PAPERDOLL_SIDEBARS[tabIndex] = { name = name, frame = frame, icon = icon, texCoords = texCoords }
+
+    CreateFrame(
+        "Button", "PaperDollSidebarTab" .. tabIndex, PaperDollSidebarTabs,
+        "PaperDollSidebarTabTemplate", tabIndex
+    )
+
+    self:LineUpPaperDollSidebarTabs()
+
+    if not self.prevSetLevel then
+        self.prevSetLevel = PaperDollFrame_SetLevel
+
+        PaperDollFrame_SetLevel = function(...)
+            self.prevSetLevel(...)
+
+            local extraTabs = #PAPERDOLL_SIDEBARS - DEFAULT_PAPERDOLL_NUM_TABS
+
+            if CharacterFrameInsetRight:IsVisible() then
+                local i
+                for i = 1, CharacterLevelText:GetNumPoints() do
+                    point, relativeTo, relativePoint, xOffset, yOffset = CharacterLevelText:GetPoint(i)
+
+                    if point == "CENTER" then
+                        CharacterLevelText:SetPoint(
+                            point, relativeTo, relativePoint,
+                            xOffset - (20 + 10 * extraTabs), yOffset
+                        )
+                    end
+                end
+            end
+        end
+    end
+
+    if not self.prevOnUpdate then
+        self.prevOnUpdate = PaperDollSidebarTabs:GetScript("OnUpdate") or function() end
+
+        PaperDollSidebarTabs:SetScript("OnUpdate", function(...)
+            self.prevOnUpdate(...)
+            self:Fix3rdPartyAddons()
+        end)
+    end
+end
+
+function addon:LineUpPaperDollSidebarTabs()
+    local extraTabs = #PAPERDOLL_SIDEBARS - DEFAULT_PAPERDOLL_NUM_TABS
+
+    local i, prevTab
+
+    for i = 1, #PAPERDOLL_SIDEBARS do
+        local tab = _G["PaperDollSidebarTab" .. i]
+        if tab then
+            tab:ClearAllPoints()
+            tab:SetPoint("BOTTOMRIGHT", (extraTabs < 2 and -30) or (extraTabs < 3 and -10) or 0, 0)
+
+            if prevTab then
+                prevTab:ClearAllPoints()
+                prevTab:SetPoint("RIGHT", tab, "LEFT", -4, 0)
+            end
+
+            prevTab = tab
+        end
+    end
+end
+
+function addon:Fix3rdPartyAddons()
+    self:FixZygorGuideViewer()
+end
+
+function addon:FixZygorGuideViewer()
+    if ZGVCharacterGearFinderButton and not self.fixedZGV then
+        local i
+        for i = 1, #PAPERDOLL_SIDEBARS do
+            if PAPERDOLL_SIDEBARS[i].frame == "ZygorGearFinderFrame" then
+                ZGVCharacterGearFinderButton:SetID(i)
+
+                ZGVCharacterGearFinderButton.Icon:SetTexture(PAPERDOLL_SIDEBARS[i].icon)
+                ZGVCharacterGearFinderButton.Icon:SetTexCoord(unpack(PAPERDOLL_SIDEBARS[i].texCoords))
+
+                _G["PaperDollSidebarTab" .. i] = ZGVCharacterGearFinderButton
+            end
+        end
+
+        self:LineUpPaperDollSidebarTabs()
+        self.fixedZGV = true
     end
 end
