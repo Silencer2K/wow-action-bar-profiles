@@ -26,7 +26,13 @@ local SIMILAR_SPELLS = {
 }
 
 function addon:OnInitialize()
-    self.db = LibStub("AceDB-3.0"):New(addonName .. "DB")
+    self.db = LibStub("AceDB-3.0"):New(addonName .. "DB", {
+        profile = {
+            minimap = {
+                hide = false,
+            },
+        },
+    }, true)
 
     self:InjectPaperDollSidebarTab(
         L.charframe_tab,
@@ -35,7 +41,30 @@ function addon:OnInitialize()
         { 0, 0.515625, 0, 0.13671875 }
     )
 
+    self.ldb = LibStub('LibDataBroker-1.1'):NewDataObject(addonName, {
+        type = 'launcher',
+        --icon = 'Interface\\AddOns\\ActionBarProfiles\\textures\\CharDollBtnIcon',
+        icon = 'Interface\\ICONS\\INV_Misc_Book_09',
+        label = "Action Bar Profiles",
+        OnEnter = function(...)
+        end,
+        OnLeave = function()
+        end,
+        OnClick = function(obj, button)
+            if button == 'RightButton' then
+                InterfaceOptionsFrame_OpenToCategory(addonName)
+            else
+            end
+        end,
+    })
+
+    self.icon = LibStub('LibDBIcon-1.0')
+    self.icon:Register(addonName, self.ldb, self.db.profile.minimap)
+
     self:RegisterChatCommand("abp", "OnChatCommand")
+
+    LibStub('AceConfig-3.0'):RegisterOptionsTable(addonName, self:GetOptions())
+    LibStub('AceConfigDialog-3.0'):AddToBlizOptions(addonName, addonName, nil)
 
     PaperDollActionBarProfilesPane:OnInitialize()
     PaperDollActionBarProfilesSaveDialog:OnInitialize()

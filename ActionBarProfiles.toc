@@ -20,6 +20,7 @@ locales\zhCN.lua
 locales\zhTW.lua
 
 ActionBarProfiles.lua
+Config.lua
 
 GUI.xml
 GUI.lua
