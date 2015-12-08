@@ -4,6 +4,8 @@ LibStub("AceAddon-3.0"):NewAddon(addon, addonName, "AceConsole-3.0")
 
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
+local qtip = LibStub('LibQTip-1.0')
+
 local S2KMounts = LibStub("LibS2kMounts-1.0")
 local S2KFI = LibStub("LibS2kFactionalItems-1.0")
 
@@ -47,6 +49,7 @@ function addon:OnInitialize()
         icon = 'Interface\\ICONS\\INV_Misc_Book_09',
         label = "Action Bar Profiles",
         OnEnter = function(...)
+            self:UpdateTooltip(...)
         end,
         OnLeave = function()
         end,
@@ -54,6 +57,7 @@ function addon:OnInitialize()
             if button == 'RightButton' then
                 InterfaceOptionsFrame_OpenToCategory(addonName)
             else
+                ToggleCharacter('PaperDollFrame')
             end
         end,
     })
@@ -68,6 +72,72 @@ function addon:OnInitialize()
 
     PaperDollActionBarProfilesPane:OnInitialize()
     PaperDollActionBarProfilesSaveDialog:OnInitialize()
+end
+
+function addon:UpdateTooltip(anchor)
+    if not InCombatLockdown() then
+        if qtip:IsAcquired('ActionBarProfiles') and self.tooltip then
+            self.tooltip:Clear()
+        else
+            self.tooltip = qtip:Acquire('ActionBarProfiles', 2, 'LEFT', 'RIGHT')
+        end
+
+        self:UpdateTooltipData(self.tooltip)
+
+        if anchor then
+            self.tooltip:SmartAnchorTo(anchor)
+            self.tooltip:SetAutoHideDelay(0.05, anchor)
+        end
+
+        self.tooltip:UpdateScrolling()
+        self.tooltip:Show()
+    end
+end
+
+function addon:UpdateTooltipData(tooltip)
+    local playerClass = select(2, UnitClass("player"))
+    local cache = addon:MakeCache()
+
+    local profile
+    for profile in table.s2k_values(self:GetSortedProfiles()) do
+        local lineNo = tooltip:AddLine()
+        local coords = CLASS_ICON_TCOORDS[profile.class]
+
+        tooltip:SetCell(lineNo, 1, string.format(
+            '|TInterface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes:16:16:0:0:256:256:%d:%d:%d:%d|t %s',
+            coords[1] * 256, coords[2] * 256, coords[3] * 256, coords[4] * 256,
+            profile.name
+        ))
+
+        if profile.class == playerClass then
+            if self:UseProfile(profile.name, true, cache) > 0 then
+                tooltip:SetCellTextColor(lineNo, 1, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b)
+            else
+                tooltip:SetCellTextColor(lineNo, 1, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+            end
+        else
+            tooltip:SetCellTextColor(lineNo, 1, GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
+        end
+
+        tooltip:SetLineScript(lineNo, 'OnMouseUp', function()
+            tooltip:Hide()
+
+            local fail, total = addon:UseProfile(profile.name, true)
+
+            if fail > 0 then
+                local popup = StaticPopup_Show("CONFIRM_USE_ACTION_BAR_PROFILE", fail, total)
+                if popup then
+                    popup.name = profile.name
+                else
+                    UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
+                end
+            else
+                self:UseProfile(profile.name)
+            end
+        end)
+    end
+
+    tooltip:AddLine()
 end
 
 function addon:OnChatCommand(message)

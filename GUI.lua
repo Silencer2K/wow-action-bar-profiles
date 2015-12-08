@@ -118,7 +118,7 @@ function frame:OnProfileDoubleClick(button)
     if fail > 0 then
         local popup = StaticPopup_Show("CONFIRM_USE_ACTION_BAR_PROFILE", fail, total)
         if popup then
-            popup.name = self.selectedName
+            popup.name = button.name
         else
             UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
         end
