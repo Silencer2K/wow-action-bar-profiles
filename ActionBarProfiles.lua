@@ -98,13 +98,19 @@ function addon:UpdateTooltipData(tooltip)
     local playerClass = select(2, UnitClass("player"))
     local cache = addon:MakeCache()
 
+    local hasProfiles, lineNo
+
     local profile
     for profile in table.s2k_values(self:GetSortedProfiles()) do
-        local lineNo = tooltip:AddLine()
+        if not hasProfiles then
+            tooltip:AddLine(L.tooltip_profiles)
+            hasProfiles = true
+        end
+
         local coords = CLASS_ICON_TCOORDS[profile.class]
 
-        tooltip:SetCell(lineNo, 1, string.format(
-            '|TInterface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes:16:16:0:0:256:256:%d:%d:%d:%d|t %s',
+        lineNo = tooltip:AddLine(string.format(
+            '    |TInterface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes:14:14:0:0:256:256:%d:%d:%d:%d|t %s',
             coords[1] * 256, coords[2] * 256, coords[3] * 256, coords[4] * 256,
             profile.name
         ))
