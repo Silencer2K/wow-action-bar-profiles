@@ -98,19 +98,14 @@ function addon:UpdateTooltipData(tooltip)
     local playerClass = select(2, UnitClass("player"))
     local cache = addon:MakeCache()
 
-    local hasProfiles, lineNo
+    local lineNo
 
     local profile
     for profile in table.s2k_values(self:GetSortedProfiles()) do
-        if not hasProfiles then
-            tooltip:AddLine(L.tooltip_profiles)
-            hasProfiles = true
-        end
-
         local coords = CLASS_ICON_TCOORDS[profile.class]
 
         lineNo = tooltip:AddLine(string.format(
-            '    |TInterface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes:14:14:0:0:256:256:%d:%d:%d:%d|t %s',
+            '|TInterface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes:14:14:0:0:256:256:%d:%d:%d:%d|t %-20s',
             coords[1] * 256, coords[2] * 256, coords[3] * 256, coords[4] * 256,
             profile.name
         ))
@@ -141,6 +136,11 @@ function addon:UpdateTooltipData(tooltip)
                 self:UseProfile(profile.name)
             end
         end)
+    end
+
+    if tooltip:GetLineCount() < 1 then
+        lineNo = tooltip:AddLine(L.no_profiles)
+        tooltip:SetCellTextColor(lineNo, 1, GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
     end
 
     tooltip:AddLine()
