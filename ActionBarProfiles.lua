@@ -1011,7 +1011,7 @@ function addon:LineUpPaperDollSidebarTabs()
         local tab = _G["PaperDollSidebarTab" .. i]
         if tab then
             tab:ClearAllPoints()
-            tab:SetPoint("BOTTOMRIGHT", (extraTabs < 2 and -30) or (extraTabs < 3 and -10) or 0, 0)
+            tab:SetPoint("BOTTOMRIGHT", (extraTabs < 2 and -20) or (extraTabs < 3 and -10) or 0, 0)
 
             if prevTab then
                 prevTab:ClearAllPoints()
