@@ -256,7 +256,7 @@ function frame:Update()
             end
 
             if (i + scrollOffset) % 2 == 0 then
-                button.Stripe:SetTexture(STRIPE_COLOR.r, STRIPE_COLOR.g, STRIPE_COLOR.b)
+                button.Stripe:SetColorTexture(STRIPE_COLOR.r, STRIPE_COLOR.g, STRIPE_COLOR.b)
                 button.Stripe:SetAlpha(0.1)
 
                 button.Stripe:Show()
