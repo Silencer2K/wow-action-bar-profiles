@@ -6,7 +6,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
 local qtip = LibStub('LibQTip-1.0')
 
-local S2KMounts = LibStub("LibS2kMounts-1.0")
 local S2KFI = LibStub("LibS2kFactionalItems-1.0")
 
 local MAX_ACTION_BUTTONS = 120
@@ -22,9 +21,25 @@ local SIMILAR_ITEMS = {
     [75525]  = { 118922, 86569 },   -- Alchemist's Flask
 }
 
-local SIMILAR_SPELLS = {
-    [152280] = { 43265 },   -- Defile
-    [108194] = { 47476 },   -- Asphyxiate
+local SIMILAR_SPELLS = {}
+
+local DraenorZoneAbilitySpellID = 161691
+
+local DRAENOR_ZONE_SPELL_ABILITY_TEXTURES_BASE = {
+	[161676] = "Interface\\ExtraButton\\GarrZoneAbility-BarracksAlliance",
+	[161332] = "Interface\\ExtraButton\\GarrZoneAbility-BarracksHorde",
+	[162075] = "Interface\\ExtraButton\\GarrZoneAbility-Armory",
+	[161767] = "Interface\\ExtraButton\\GarrZoneAbility-MageTower",
+	[170097] = "Interface\\ExtraButton\\GarrZoneAbility-TradingPost",
+	[170108] = "Interface\\ExtraButton\\GarrZoneAbility-TradingPost",
+	[168487] = "Interface\\ExtraButton\\GarrZoneAbility-Inn",
+	[168499] = "Interface\\ExtraButton\\GarrZoneAbility-Inn",
+	[164012] = "Interface\\ExtraButton\\GarrZoneAbility-TrainingPit",
+	[164050] = "Interface\\ExtraButton\\GarrZoneAbility-LumberMill",
+	[165803] = "Interface\\ExtraButton\\GarrZoneAbility-Stables",
+	[164222] = "Interface\\ExtraButton\\GarrZoneAbility-Stables",
+	[160240] = "Interface\\ExtraButton\\GarrZoneAbility-Workshop",
+	[160241] = "Interface\\ExtraButton\\GarrZoneAbility-Workshop",
 }
 
 function addon:OnInitialize()
@@ -75,7 +90,7 @@ function addon:OnInitialize()
 end
 
 function addon:UpdateTooltip(anchor)
-    if not InCombatLockdown() then
+    if not InCombatLockdown() and not (self.tooltip and self.tooltip:IsShown()) then
         if qtip:IsAcquired('ActionBarProfiles') and self.tooltip then
             self.tooltip:Clear()
         else
@@ -668,10 +683,11 @@ function addon:PreloadMounts()
     local mounts = { id = {}, name = {} }
 
     local playerFaction = (UnitFactionGroup("player") == "Alliance" and 1) or 0
+    local allMounts = C_MountJournal.GetMountIDs()
 
-    local mountIndex
-    for mountIndex = 1, C_MountJournal.GetNumMounts() do
-        local name, spellId, faction, isCollected = table.s2k_select({ C_MountJournal.GetMountInfo(mountIndex) }, 1, 2, 9, 11)
+    local mountId
+    for _, mountId in pairs(allMounts) do
+        local name, spellId, faction, isCollected = table.s2k_select({ C_MountJournal.GetMountInfoByID(mountId) }, 1, 2, 9, 11)
 
         if isCollected and (not faction or faction == playerFaction) then
             self:UpdateCache(mounts, spellId, spellId, name)
@@ -688,11 +704,11 @@ function addon:PreloadPets()
 
     C_PetJournal.ClearSearchFilter()
 
-    C_PetJournal.SetFlagFilter(LE_PET_JOURNAL_FLAG_COLLECTED, true)
-    C_PetJournal.SetFlagFilter(LE_PET_JOURNAL_FLAG_NOT_COLLECTED, false)
+    C_PetJournal.SetFilterChecked(LE_PET_JOURNAL_FILTER_COLLECTED, true)
+    C_PetJournal.SetFilterChecked(LE_PET_JOURNAL_FILTER_NOT_COLLECTED, true)
 
-    C_PetJournal.AddAllPetSourcesFilter()
-    C_PetJournal.AddAllPetTypesFilter()
+    C_PetJournal.SetAllPetSourcesChecked(true)
+    C_PetJournal.SetAllPetTypesChecked(true)
 
     local petIndex
     for petIndex = 1, C_PetJournal:GetNumPets() do
@@ -831,7 +847,7 @@ function addon:RestoreMount(cache, profile, slot, checkOnly)
             return true
         end
 
-        id = S2KMounts:GetSpellIdByMountId(id)
+        _, id = C_MountJournal.GetMountInfoByID(id)
     end
 
     local name = GetSpellInfo(id)
@@ -906,15 +922,15 @@ function addon:SavePetJournalFilters()
 
     local i
     for i in table.s2k_values(PET_JOURNAL_FLAGS) do
-        saved.flag[i] = not C_PetJournal.IsFlagFiltered(i)
+        saved.flag[i] = C_PetJournal.IsFilterChecked(i)
     end
 
     for i = 1, C_PetJournal.GetNumPetSources() do
-        saved.source[i] = not C_PetJournal.IsPetSourceFiltered(i)
+        saved.source[i] = C_PetJournal.IsPetSourceChecked(i)
     end
 
     for i = 1, C_PetJournal.GetNumPetTypes() do
-        saved.type[i] = not C_PetJournal.IsPetTypeFiltered(i)
+        saved.type[i] = C_PetJournal.IsPetTypeChecked(i)
     end
 
     return saved
@@ -925,11 +941,11 @@ function addon:RestorePetJournalFilters(saved)
 
     local i
     for i in table.s2k_values(PET_JOURNAL_FLAGS) do
-        C_PetJournal.SetFlagFilter(i, saved.flag[i])
+        C_PetJournal.SetFilterChecked(i, saved.flag[i])
     end
 
     for i = 1, C_PetJournal.GetNumPetSources() do
-        C_PetJournal.SetPetSourceFilter(i, saved.source[i])
+        C_PetJournal.SetPetSourceChecked(i, saved.source[i])
     end
 
     for i = 1, C_PetJournal.GetNumPetTypes() do
