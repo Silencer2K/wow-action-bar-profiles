@@ -132,13 +132,27 @@
             <CheckButton name="$parentOptionPetSpells" parentKey="OptionPetSpells" inherits="UICheckButtonTemplate">
                 <Size x="16" y="16" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentOptionEquipSets" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPLEFT" relativeTo="$parentOptionEquipSets" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-4" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </CheckButton>
+            <CheckButton name="$parentOptionTalents" parentKey="OptionTalents" inherits="UICheckButtonTemplate">
+                <Size x="16" y="16" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parentOptionPetSpells" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-4" />
+                        </Offset>
+                    </Anchor>
                 </Anchors>
             </CheckButton>
             <CheckButton name="$parentOptionKeyBindings" parentKey="OptionKeyBindings" inherits="UICheckButtonTemplate">
                 <Size x="16" y="16" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentOptionPetSpells" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPLEFT" relativeTo="$parentOptionTalents" relativePoint="BOTTOMLEFT" />
                 </Anchors>
             </CheckButton>
             <Button name="$parentCancel" inherits="UIPanelButtonTemplate" text="CANCEL">
