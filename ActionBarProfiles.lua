@@ -1,6 +1,6 @@
 local addonName, addon = ...
 
-LibStub("AceAddon-3.0"):NewAddon(addon, addonName, "AceConsole-3.0")
+LibStub("AceAddon-3.0"):NewAddon(addon, addonName, "AceConsole-3.0", "AceTimer-3.0")
 
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
@@ -308,13 +308,18 @@ function addon:UseProfile(name, checkOnly, cache)
             local ok
 
             if profile.actions[slot] then
-                local type, id, subType, extraId, name = unpack(profile.actions[slot])
+                local type, id, subType, extraId = unpack(profile.actions[slot])
 
                 if type == "spell" then
                     if not profile.skip_spells then
                         if subType == "talent" then
                             if talents[extraId] then
-                                self:PlaceTalentToSlot(slot, extraId, checkOnly)
+                                if not checkOnly then
+                                    self:ScheduleTimer(function()
+                                        self:PlaceTalentToSlot(slot, extraId)
+                                    end, 0.5)
+                                end
+
                                 ok = true
                             end
                         end
