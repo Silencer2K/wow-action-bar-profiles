@@ -30,12 +30,17 @@ local SPECIAL_SPELLS = {
         altSpellIds = { 161676, 161332, 162075, 161767, 170097, 170108, 168487, 168499, 164012, 164050, 165803, 164222, 160240, 160241 },
     },
     -- hunter pets
-    [883]   = { class = 'hunter' },
-    [67777] = { class = 'hunter' },
-    [83242] = { class = 'hunter' },
-    [83243] = { class = 'hunter' },
-    [83244] = { class = 'hunter' },
-    [83245] = { class = 'hunter' },
+    [883]    = { class = 'hunter' },                    -- Call Pet 1
+    [83242]  = { class = 'hunter', minLevel = 10 },     -- Call Pet 2
+    [83243]  = { class = 'hunter', minLevel = 34 },     -- Call Pet 3
+    [83244]  = { class = 'hunter', minLevel = 62 },     -- Call Pet 4
+    [83245]  = { class = 'hunter', minLevel = 82 },     -- Call Pet 5
+    -- warlock daemons
+    [688]    = { class = 'warlock' },                   -- Summon Imp
+    [697]    = { class = 'warlock', minLevel = 8 },     -- Summon Voidwalker
+    [712]    = { class = 'warlock', minLevel = 28 },    -- Summon Succubus
+    [691]    = { class = 'warlock', minLevel = 35 },    -- Summon Felhunter
+    [30146]  = { class = 'warlock', minLevel = 40 },    -- Summon Felguard
 }
 
 function addon:OnInitialize()
