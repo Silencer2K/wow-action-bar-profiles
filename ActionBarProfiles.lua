@@ -321,16 +321,12 @@ function addon:UseProfile(name, checkOnly, cache)
 
                 if type == "spell" then
                     if not profile.skip_spells then
-                        if subType == "talent" then
-                            if talents[extraId] then
-                                self:PlaceSpellToSlot(slot, id, checkOnly)
-                                ok = true
-                            else
-                                ok = false
-                            end
-                        else
-                            ok = self:RestoreSpell(cache, profile, slot, checkOnly)
+                        if subType == "talent" and talents[extraId] then
+                            self:PlaceSpellToSlot(slot, id, checkOnly)
+                            ok = true
                         end
+
+                        ok = ok or self:RestoreSpell(cache, profile, slot, checkOnly)
 
                         total = total + 1
                         fail = fail + ((ok and 0) or 1)
