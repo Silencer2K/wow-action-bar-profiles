@@ -82,8 +82,12 @@ function addon:OnInitialize()
 
     self:RegisterChatCommand("abp", "OnChatCommand")
 
-    LibStub('AceConfig-3.0'):RegisterOptionsTable(addonName, self:GetOptions())
-    LibStub('AceConfigDialog-3.0'):AddToBlizOptions(addonName, addonName, nil)
+    local options = self:GetOptions()
+
+    LibStub('AceConfig-3.0'):RegisterOptionsTable(addonName, options)
+
+    LibStub('AceConfigDialog-3.0'):AddToBlizOptions(addonName, nil, nil, "general")
+    LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonName, options.args.profiles.name, addonName, "profiles")
 
     PaperDollActionBarProfilesPane:OnInitialize()
     PaperDollActionBarProfilesSaveDialog:OnInitialize()
