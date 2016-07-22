@@ -271,6 +271,8 @@ function addon:UseProfile(name, checkOnly, cache)
     local fail, total = 0, 0
 
     if profile then
+        local talents = {}
+
         local slot
         if not profile.skip_talents and profile.talents then
             for slot = 1, MAX_TALENT_TIERS do
@@ -283,12 +285,14 @@ function addon:UseProfile(name, checkOnly, cache)
                         local column, foundId, foundName
                         for column = 1, NUM_TALENT_COLUMNS do
                             local id, name = GetTalentInfo(slot, column, 1)
+
                             if id == profile.talents[slot][1] then
                                 foundId = id
-                                break
                             elseif name == profile.talents[slot][2] then
                                 foundName = id
                             end
+
+                            talents[id] = true
                         end
 
                         if foundId or foundName then
@@ -317,7 +321,16 @@ function addon:UseProfile(name, checkOnly, cache)
 
                 if type == "spell" then
                     if not profile.skip_spells then
-                        ok = self:RestoreSpell(cache, profile, slot, checkOnly)
+                        if subType == "talent" then
+                            if talents[extraId] then
+                                self:PlaceSpellToSlot(slot, id, checkOnly)
+                                ok = true
+                            else
+                                ok = false
+                            end
+                        else
+                            ok = self:RestoreSpell(cache, profile, slot, checkOnly)
+                        end
 
                         total = total + 1
                         fail = fail + ((ok and 0) or 1)
