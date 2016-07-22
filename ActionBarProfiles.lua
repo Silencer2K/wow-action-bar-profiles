@@ -328,7 +328,11 @@ function addon:UseProfile(name, checkOnly, cache)
                 if type == "spell" then
                     if not profile.skip_spells then
                         if subType == "talent" and talents[extraId] then
-                            self:PlaceSpellToSlot(slot, id, checkOnly)
+                            if not checkOnly then
+                                PickupTalent(extraId)
+                                self:PlaceToSlot(slot)
+                            end
+
                             ok = true
                         end
 
