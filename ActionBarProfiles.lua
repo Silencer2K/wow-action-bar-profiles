@@ -30,17 +30,22 @@ local SPECIAL_SPELLS = {
         altSpellIds = { 161676, 161332, 162075, 161767, 170097, 170108, 168487, 168499, 164012, 164050, 165803, 164222, 160240, 160241 },
     },
     -- hunter pets
-    [883]    = { class = 'hunter' },                    -- Call Pet 1
-    [83242]  = { class = 'hunter', minLevel = 10 },     -- Call Pet 2
-    [83243]  = { class = 'hunter', minLevel = 34 },     -- Call Pet 3
-    [83244]  = { class = 'hunter', minLevel = 62 },     -- Call Pet 4
-    [83245]  = { class = 'hunter', minLevel = 82 },     -- Call Pet 5
+    [883]    = { class = 'HUNTER' },                    -- Call Pet 1
+    [83242]  = { class = 'HUNTER', minLevel = 10 },     -- Call Pet 2
+    [83243]  = { class = 'HUNTER', minLevel = 34 },     -- Call Pet 3
+    [83244]  = { class = 'HUNTER', minLevel = 62 },     -- Call Pet 4
+    [83245]  = { class = 'HUNTER', minLevel = 82 },     -- Call Pet 5
+    [1462]   = { class = 'HUNTER', minLevel = 12 },     -- Beast Lore
+    [2641]   = { class = 'HUNTER', minLevel = 10 },     -- Dismiss Pet
+    [6991]   = { class = 'HUNTER', minLevel = 11 },     -- Feed Pet
+    [982]    = { class = 'HUNTER' },                    -- Revive Pet
+    [1515]   = { class = 'HUNTER', minLevel = 10 },     -- Tame Beast
     -- warlock daemons
-    [688]    = { class = 'warlock' },                   -- Summon Imp
-    [697]    = { class = 'warlock', minLevel = 8 },     -- Summon Voidwalker
-    [712]    = { class = 'warlock', minLevel = 28 },    -- Summon Succubus
-    [691]    = { class = 'warlock', minLevel = 35 },    -- Summon Felhunter
-    [30146]  = { class = 'warlock', minLevel = 40 },    -- Summon Felguard
+    [688]    = { class = 'WARLOCK' },                   -- Summon Imp
+    [697]    = { class = 'WARLOCK', minLevel = 8 },     -- Summon Voidwalker
+    [712]    = { class = 'WARLOCK', minLevel = 28 },    -- Summon Succubus
+    [691]    = { class = 'WARLOCK', minLevel = 35 },    -- Summon FelHUNTER
+    [30146]  = { class = 'WARLOCK', minLevel = 40 },    -- Summon Felguard
 }
 
 function addon:OnInitialize()
@@ -747,11 +752,13 @@ function addon:PreloadSpells()
     local playerLevel = UnitLevel("player")
     local playerClass = select(2, UnitClass("player"))
 
+    print(playerClass, playerLevel)
+
     local spellId, altSpellId
     for spellId, info in pairs(SPECIAL_SPELLS) do
         if
-            (not info.minLevel or playerLevel >= info.minLevel) or
-            (not info.class and playerClass == info.class)
+            (not info.minLevel or playerLevel >= info.minLevel) and
+            (not info.class or playerClass == info.class)
         then
             self:UpdateCache(spells, spellId, spellId)
 
