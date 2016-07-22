@@ -472,10 +472,26 @@ function addon:UpdateProfileBars(name)
         profile.class = select(2, UnitClass("player"))
         profile.owner = string.format("%s-%s", GetUnitName("player"), GetRealmName())
 
-        profile.actions = {}
-        profile.petActions = nil
+        local talents = {}
+
+        profile.talents = {}
 
         local slot
+        for slot = 1, MAX_TALENT_TIERS do
+            local column
+            for column = 1, NUM_TALENT_COLUMNS do
+                local id, name, selected = table.s2k_select({ GetTalentInfo(slot, column, 1) }, 1, 2, 4)
+
+                talents[name] = id
+
+                if selected then
+                    profile.talents[slot] = { id, name }
+                end
+            end
+        end
+
+        profile.actions = {}
+
         for slot = 1, MAX_ACTION_BUTTONS do
             local type, id, subType, extraId = GetActionInfo(slot)
 
@@ -491,6 +507,14 @@ function addon:UpdateProfileBars(name)
                 elseif type == "summonpet" then
                     profile.actions[slot] = { type, id, subType, extraId, ({ C_PetJournal.GetPetInfoByPetID(id) })[11] }
 
+                elseif type == "spell" then
+                    local name = GetSpellInfo(id)
+
+                    if talents[name] then
+                        subType, extraId = "talent", talents[name]
+                    end
+
+                    profile.actions[slot] = { type, id, subType, extraId, name }
                 else
                     profile.actions[slot] = { type, id, subType, extraId }
                 end
@@ -515,16 +539,8 @@ function addon:UpdateProfileBars(name)
                     profile.petActions[slot] = { name, stance, icon, isToken }
                 end
             end
-        end
-
-        profile.talents = {}
-
-        for slot = 1, MAX_TALENT_TIERS do
-            local avail, column = GetTalentTierInfo(slot, 1)
-            if avail and column > 0 then
-                local id, name = GetTalentInfo(slot, column, 1)
-                profile.talents[slot] = { id, name, icon }
-            end
+        else
+            profile.petActions = nil
         end
 
         profile.keyBindings = {}
