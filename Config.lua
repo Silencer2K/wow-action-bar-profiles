@@ -7,7 +7,7 @@ function addon:GetOptions()
         type = 'group',
         args = {
             general = {
-                name = 'general',
+                name = L.settings,
                 type = 'group',
                 args = {
                     minimap = {
