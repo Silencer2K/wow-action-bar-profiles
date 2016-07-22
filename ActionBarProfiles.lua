@@ -268,14 +268,47 @@ function addon:UseProfile(name, checkOnly, cache)
     local profiles = self.db.profile.profiles or {}
     local profile = profiles[name]
 
-    if not cache then
-        cache = self:MakeCache()
-    end
-
     local fail, total = 0, 0
 
     if profile then
         local slot
+        if not profile.skip_talents and profile.talents then
+            for slot = 1, MAX_TALENT_TIERS do
+                if not profile.talents[slot] then
+                else
+                    local avail = GetTalentTierInfo(slot, 1)
+                    if not avail then
+                        fail = fail + 1
+                    else
+                        local column, foundId, foundName
+                        for column = 1, NUM_TALENT_COLUMNS do
+                            local id, name = GetTalentInfo(slot, column, 1)
+                            if id == profile.talents[slot][1] then
+                                foundId = id
+                                break
+                            elseif name == profile.talents[slot][2] then
+                                foundName = id
+                            end
+                        end
+
+                        if foundId or foundName then
+                            if not checkOnly then
+                                LearnTalent(foundId or foundName)
+                            end
+                        else
+                            fail = fail + 1
+                        end
+                    end
+                end
+
+                total = total + 1
+            end
+        end
+
+        if not cache then
+            cache = self:MakeCache()
+        end
+
         for slot = 1, MAX_ACTION_BUTTONS do
             local ok
 
@@ -486,12 +519,11 @@ function addon:UpdateProfileBars(name)
 
         profile.talents = {}
 
-        local tier
-        for tier = 1, MAX_TALENT_TIERS do
-            local avail, column = GetTalentTierInfo(tier, 1)
+        for slot = 1, MAX_TALENT_TIERS do
+            local avail, column = GetTalentTierInfo(slot, 1)
             if avail and column > 0 then
-                local talentId, name, icon = GetTalentInfo(tier, column, 1)
-                profile.talents[tier] = { talentId, name, icon }
+                local id, name = GetTalentInfo(slot, column, 1)
+                profile.talents[slot] = { id, name, icon }
             end
         end
 
