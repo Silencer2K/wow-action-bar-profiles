@@ -243,7 +243,7 @@ function addon:GetSimilarSpells(spellId)
 end
 
 function addon:GetSortedProfiles()
-    local profiles = self.db.global.profiles or {}
+    local profiles = self.db.profile.profiles or {}
     local sorted = {}
 
     local k, v
@@ -275,7 +275,7 @@ function addon:GetProfile(name, ignoreCase)
 end
 
 function addon:UseProfile(name, checkOnly, cache)
-    local profiles = self.db.global.profiles or {}
+    local profiles = self.db.profile.profiles or {}
     local profile = profiles[name]
 
     if not cache then
@@ -407,8 +407,8 @@ function addon:UseProfile(name, checkOnly, cache)
 end
 
 function addon:SaveProfile(name, options)
-    local profiles = self.db.global.profiles or {}
-    self.db.global.profiles = profiles
+    local profiles = self.db.profile.profiles or {}
+    self.db.profile.profiles = profiles
 
     profiles[name] = { name = name }
 
@@ -417,7 +417,7 @@ function addon:SaveProfile(name, options)
 end
 
 function addon:UpdateProfileParams(name, rename, options)
-    local profiles = self.db.global.profiles or {}
+    local profiles = self.db.profile.profiles or {}
     local profile = profiles[name]
 
     if profile then
@@ -442,7 +442,7 @@ function addon:UpdateProfileParams(name, rename, options)
 end
 
 function addon:UpdateProfileBars(name)
-    local profiles = self.db.global.profiles or {}
+    local profiles = self.db.profile.profiles or {}
     local profile = profiles[name]
 
     if profile then
@@ -507,7 +507,7 @@ function addon:UpdateProfileBars(name)
 end
 
 function addon:DeleteProfile(name)
-    local profiles = self.db.global.profiles or {}
+    local profiles = self.db.profile.profiles or {}
     profiles[name] = nil
 end
 
