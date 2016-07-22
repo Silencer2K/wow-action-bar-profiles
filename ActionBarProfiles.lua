@@ -51,6 +51,11 @@ function addon:OnInitialize()
         },
     }, true)
 
+    if self.db.global.profiles then
+        self.db.profile.profiles = self.db.global.profiles
+        self.db.global.profiles = nil
+    end
+
     self:InjectPaperDollSidebarTab(
         L.charframe_tab,
         "PaperDollActionBarProfilesPane",
