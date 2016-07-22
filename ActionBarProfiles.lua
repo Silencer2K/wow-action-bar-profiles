@@ -24,7 +24,18 @@ local SIMILAR_ITEMS = {
 local SIMILAR_SPELLS = {}
 
 local SPECIAL_SPELLS = {
-    [161691] = { 161676, 161332, 162075, 161767, 170097, 170108, 168487, 168499, 164012, 164050, 165803, 164222, 160240, 160241 },
+    -- draenor zone ability
+    [161691] = {
+        minLevel = 90,
+        altSpellIds = { 161676, 161332, 162075, 161767, 170097, 170108, 168487, 168499, 164012, 164050, 165803, 164222, 160240, 160241 },
+    },
+    -- hunter pets
+    [883]   = { class = 'hunter' },
+    [67777] = { class = 'hunter' },
+    [83242] = { class = 'hunter' },
+    [83243] = { class = 'hunter' },
+    [83244] = { class = 'hunter' },
+    [83245] = { class = 'hunter' },
 }
 
 function addon:OnInitialize()
@@ -728,12 +739,22 @@ function addon:PreloadSpells()
         end
     end
 
-    local spellId, altSpellId
-    for spellId in pairs(SPECIAL_SPELLS) do
-        self:UpdateCache(spells, spellId, spellId)
+    local playerLevel = UnitLevel("player")
+    local playerClass = select(2, UnitClass("player"))
 
-        for altSpellId in table.s2k_values(SPECIAL_SPELLS[spellId]) do
-            self:UpdateCache(spells, spellId, altSpellId)
+    local spellId, altSpellId
+    for spellId, info in pairs(SPECIAL_SPELLS) do
+        if
+            (not info.minLevel or playerLevel >= info.minLevel) or
+            (not info.class and playerClass == info.class)
+        then
+            self:UpdateCache(spells, spellId, spellId)
+
+            if info.altSpellIds then
+                for altSpellId in table.s2k_values(info.altSpellIds) do
+                    self:UpdateCache(spells, spellId, altSpellId)
+                end
+            end
         end
     end
 
