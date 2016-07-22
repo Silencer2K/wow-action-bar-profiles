@@ -21,31 +21,71 @@ local SIMILAR_ITEMS = {
     [75525]  = { 118922, 86569 },   -- Alchemist's Flask
 }
 
-local SIMILAR_SPELLS = {}
+local SIMILAR_SPELLS = {
+    [10059]  = { 11417 },   -- Portal: Stormwind
+    [11416]  = { 11418 },   -- Portal: Ironforge
+    [11419]  = { 11420 },   -- Portal: Darnassus
+    [32266]  = { 32267 },   -- Portal: Exodar
+    [49360]  = { 49361 },   -- Portal: Theramore
+    [33691]  = { 35717 },   -- Portal: Shattrath
+    [88345]  = { 88346 },   -- Portal: Tol Barad
+    [132620] = { 132626 },  -- Portal: Vale of Eternal Blossoms
+    [176246] = { 176244 },  -- Portal: Stormshield
+    [11417]  = { 10059 },   -- Portal: Orgrimmar
+    [11418]  = { 11416 },   -- Portal: Undercity
+    [11420]  = { 11419 },   -- Portal: Thunder Bluff
+    [32267]  = { 32266 },   -- Portal: Silvermoon
+    [49361]  = { 49360 },   -- Portal: Stonard
+    [35717]  = { 33691 },   -- Portal: Shattrath
+    [88346]  = { 88345 },   -- Portal: Tol Barad
+    [132626] = { 132620 },  -- Portal: Vale of Eternal Blossoms
+    [176244] = { 176246 },  -- Portal: Warspear
+}
 
 local SPECIAL_SPELLS = {
     -- draenor zone ability
     [161691] = {
-        minLevel = 90,
+        level = 90,
         altSpellIds = { 161676, 161332, 162075, 161767, 170097, 170108, 168487, 168499, 164012, 164050, 165803, 164222, 160240, 160241 },
     },
     -- hunter pets
     [883]    = { class = 'HUNTER' },                    -- Call Pet 1
-    [83242]  = { class = 'HUNTER', minLevel = 10 },     -- Call Pet 2
-    [83243]  = { class = 'HUNTER', minLevel = 34 },     -- Call Pet 3
-    [83244]  = { class = 'HUNTER', minLevel = 62 },     -- Call Pet 4
-    [83245]  = { class = 'HUNTER', minLevel = 82 },     -- Call Pet 5
-    [1462]   = { class = 'HUNTER', minLevel = 12 },     -- Beast Lore
-    [2641]   = { class = 'HUNTER', minLevel = 10 },     -- Dismiss Pet
-    [6991]   = { class = 'HUNTER', minLevel = 11 },     -- Feed Pet
+    [83242]  = { class = 'HUNTER', level = 10 },        -- Call Pet 2
+    [83243]  = { class = 'HUNTER', level = 34 },        -- Call Pet 3
+    [83244]  = { class = 'HUNTER', level = 62 },        -- Call Pet 4
+    [83245]  = { class = 'HUNTER', level = 82 },        -- Call Pet 5
+    [1462]   = { class = 'HUNTER', level = 12 },        -- Beast Lore
+    [2641]   = { class = 'HUNTER', level = 10 },        -- Dismiss Pet
+    [6991]   = { class = 'HUNTER', level = 11 },        -- Feed Pet
     [982]    = { class = 'HUNTER' },                    -- Revive Pet
-    [1515]   = { class = 'HUNTER', minLevel = 10 },     -- Tame Beast
+    [1515]   = { class = 'HUNTER', level = 10 },        -- Tame Beast
     -- warlock daemons
     [688]    = { class = 'WARLOCK' },                   -- Summon Imp
-    [697]    = { class = 'WARLOCK', minLevel = 8 },     -- Summon Voidwalker
-    [712]    = { class = 'WARLOCK', minLevel = 28 },    -- Summon Succubus
-    [691]    = { class = 'WARLOCK', minLevel = 35 },    -- Summon FelHUNTER
-    [30146]  = { class = 'WARLOCK', minLevel = 40 },    -- Summon Felguard
+    [697]    = { class = 'WARLOCK', level = 8 },        -- Summon Voidwalker
+    [712]    = { class = 'WARLOCK', level = 28 },       -- Summon Succubus
+    [691]    = { class = 'WARLOCK', level = 35 },       -- Summon FelHUNTER
+    [30146]  = { class = 'WARLOCK', level = 40 },       -- Summon Felguard
+    -- mage portals
+    [224871] = { class = 'MAGE', level = 74 },          -- Portal: Dalaran - Broken Isles
+    [53142]  = { class = 'MAGE', level = 74 },          -- Portal: Dalaran - Northrend
+    [10059]  = { class = 'MAGE', level = 42, faction = 'Alliance' },    -- Portal: Stormwind
+    [11416]  = { class = 'MAGE', level = 42, faction = 'Alliance' },    -- Portal: Ironforge
+    [11419]  = { class = 'MAGE', level = 42, faction = 'Alliance' },    -- Portal: Darnassus
+    [32266]  = { class = 'MAGE', level = 42, faction = 'Alliance' },    -- Portal: Exodar
+    [49360]  = { class = 'MAGE', level = 42, faction = 'Alliance' },    -- Portal: Theramore
+    [33691]  = { class = 'MAGE', level = 66, faction = 'Alliance' },    -- Portal: Shattrath
+    [88345]  = { class = 'MAGE', level = 85, faction = 'Alliance' },    -- Portal: Tol Barad
+    [132620] = { class = 'MAGE', level = 90, faction = 'Alliance' },    -- Portal: Vale of Eternal Blossoms
+    [176246] = { class = 'MAGE', level = 92, faction = 'Alliance' },    -- Portal: Stormshield
+    [11417]  = { class = 'MAGE', level = 42, faction = 'Horde' },   -- Portal: Orgrimmar
+    [11418]  = { class = 'MAGE', level = 42, faction = 'Horde' },   -- Portal: Undercity
+    [11420]  = { class = 'MAGE', level = 42, faction = 'Horde' },   -- Portal: Thunder Bluff
+    [32267]  = { class = 'MAGE', level = 42, faction = 'Horde' },   -- Portal: Silvermoon
+    [49361]  = { class = 'MAGE', level = 52, faction = 'Horde' },   -- Portal: Stonard
+    [35717]  = { class = 'MAGE', level = 66, faction = 'Horde' },   -- Portal: Shattrath
+    [88346]  = { class = 'MAGE', level = 85, faction = 'Horde' },   -- Portal: Tol Barad
+    [132626] = { class = 'MAGE', level = 90, faction = 'Horde' },   -- Portal: Vale of Eternal Blossoms
+    [176244] = { class = 'MAGE', level = 92, faction = 'Horde' },   -- Portal: Warspear
 }
 
 function addon:OnInitialize()
@@ -749,16 +789,18 @@ function addon:PreloadSpells()
         end
     end
 
-    local playerLevel = UnitLevel("player")
-    local playerClass = select(2, UnitClass("player"))
+    local playerLevel   = UnitLevel("player")
+    local playerClass   = select(2, UnitClass("player"))
+    local playerFaction = UnitFactionGroup("player")
 
-    print(playerClass, playerLevel)
+    print(playerClass, playerLevel, playerFaction)
 
     local spellId, altSpellId
     for spellId, info in pairs(SPECIAL_SPELLS) do
         if
-            (not info.minLevel or playerLevel >= info.minLevel) and
-            (not info.class or playerClass == info.class)
+            (not info.level or playerLevel >= info.level) and
+            (not info.class or playerClass == info.class) and
+            (not info.faction or playerFaction == info.faction)
         then
             self:UpdateCache(spells, spellId, spellId)
 
