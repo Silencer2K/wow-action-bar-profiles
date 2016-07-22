@@ -271,69 +271,52 @@ function addon:UseProfile(name, checkOnly, cache)
     local fail, total = 0, 0
 
     if profile then
+        if not cache then
+            cache = self:MakeCache()
+        end
+
         local talents = {}
 
         local slot
-        for slot = 1, MAX_TALENT_TIERS do
-            if not profile.talents[slot] then
-            else
-                local avail = GetTalentTierInfo(slot, 1)
-                if not avail then
-                    if not profile.skip_talents and profile.talents then
-                        fail = fail + 1
-                    end
-                else
-                    local column, foundId, foundName
-                    for column = 1, NUM_TALENT_COLUMNS do
-                        local id, name = GetTalentInfo(slot, column, 1)
 
-                        talents[id] = true
+        if not profile.skip_talents and profile.talents then
+            for slot = 1, MAX_TALENT_TIERS do
+                if profile.talents[slot] then
+                    local id, name = unpack(profile.talents[slot])
 
-                        if not profile.skip_talents and profile.talents then
-                            if id == profile.talents[slot][1] then
-                                foundId = id
-                            elseif name == profile.talents[slot][2] then
-                                foundName = id
-                            end
-                        end
-                    end
+                    local talentId = self:GetFromCache(cache.talents, id, name)
+                    if talentId then
+                        talents[talentId] = true
 
-                    if foundId or foundName then
                         if not checkOnly then
-                            LearnTalent(foundId or foundName)
+                            LearnTalent(talentId)
                         end
                     else
-                        if not profile.skip_talents and profile.talents then
-                            fail = fail + 1
-                        end
+                        fail = fail + 1
                     end
-                end
-            end
 
-            if not profile.skip_talents and profile.talents then
-                total = total + 1
+                    total = total + 1
+                end
             end
         end
 
-        if not cache then
-            cache = self:MakeCache()
+        if not checkOnly then
+            cache.spells = self:PreloadSpells()
         end
 
         for slot = 1, MAX_ACTION_BUTTONS do
             local ok
 
             if profile.actions[slot] then
-                local type, id, subType, extraId = unpack(profile.actions[slot])
+                local type, id, subType, extraId, name = unpack(profile.actions[slot])
 
                 if type == "spell" then
                     if not profile.skip_spells then
-                        if subType == "talent" and talents[extraId] then
-                            if not checkOnly then
-                                PickupTalent(extraId)
-                                self:PlaceToSlot(slot)
+                        if subType == "talent" then
+                            if talents[extraId] then
+                                self:PlaceTalentToSlot(slot, extraId, checkOnly)
+                                ok = true
                             end
-
-                            ok = true
                         end
 
                         ok = ok or self:RestoreSpell(cache, profile, slot, checkOnly)
@@ -608,6 +591,13 @@ function addon:PlaceSpellToSlot(slot, spellId, checkOnly)
     end
 end
 
+function addon:PlaceTalentToSlot(slot, talentId, checkOnly)
+    if not checkOnly then
+        PickupTalent(talentId)
+        self:PlaceToSlot(slot)
+    end
+end
+
 function addon:ClearPetSlot(slot, checkOnly)
     if not checkOnly then
         ClearCursor()
@@ -646,6 +636,7 @@ function addon:GetFromCache(cache, id, name, stance)
 end
 
 function addon:MakeCache()
+    local talents = self:PreloadTalents()
     local spells, flyouts = self:PreloadSpells()
     local items = self:PreloadItems()
     local mounts = self:PreloadMounts()
@@ -653,8 +644,29 @@ function addon:MakeCache()
     local macros = self:PreloadMacros()
     local petSpells = self:PreloadPetSpells()
 
-    return { spells = spells, flyouts = flyouts, items = items, mounts = mounts,
-        pets = pets, macros = macros, petSpells = petSpells }
+    return {
+        talents = talents, spells = spells, flyouts = flyouts, items = items,
+        mounts = mounts, pets = pets, macros = macros, petSpells = petSpells,
+    }
+end
+
+function addon:PreloadTalents()
+    local talents = { id = {}, name = {} }
+
+    local tier
+    for tier = 1, MAX_TALENT_TIERS do
+        local avail = GetTalentTierInfo(tier, 1)
+        if avail then
+            local column
+            for column = 1, NUM_TALENT_COLUMNS do
+                local talentId, name = GetTalentInfo(tier, column, 1)
+
+                self:UpdateCache(talents, talentId, talentId, name)
+            end
+        end
+    end
+
+    return talents
 end
 
 function addon:PreloadSpells()
