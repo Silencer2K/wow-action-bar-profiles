@@ -516,16 +516,16 @@ function addon:UpdateProfileBars(name)
                     end
 
                 elseif type == "summonpet" then
-                    profile.actions[slot] = { type, id, subType, extraId, ({ C_PetJournal.GetPetInfoByPetID(id) })[11] }
+                    profile.actions[slot] = { type, id, subType, extraId, table.s2k_select({ C_PetJournal.GetPetInfoByPetID(id) }, 11, 8) }
 
                 elseif type == "spell" then
-                    local name = GetSpellInfo(id)
+                    local name, stance = GetSpellInfo(id)
 
                     if talents[name] then
                         subType, extraId = "talent", talents[name]
                     end
 
-                    profile.actions[slot] = { type, id, subType, extraId, name }
+                    profile.actions[slot] = { type, id, subType, extraId, name, stance }
                 else
                     profile.actions[slot] = { type, id, subType, extraId }
                 end
