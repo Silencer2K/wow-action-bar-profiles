@@ -484,6 +484,17 @@ function addon:UpdateProfileBars(name)
             end
         end
 
+        profile.talents = {}
+
+        local tier
+        for tier = 1, MAX_TALENT_TIERS do
+            local avail, column = GetTalentTierInfo(tier, 1)
+            if avail and column > 0 then
+                local talentId, name, icon = GetTalentInfo(tier, column, 1)
+                profile.talents[tier] = { talentId, name, icon }
+            end
+        end
+
         profile.keyBindings = {}
 
         local i
