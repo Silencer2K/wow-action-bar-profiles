@@ -312,7 +312,9 @@ function addon:UseProfile(name, checkOnly, cache)
 
                 if type == "spell" then
                     if not profile.skip_spells then
-                        if subType == "talent" then
+                        ok = self:RestoreSpell(cache, profile, slot, checkOnly)
+
+                        if not ok and subType == "talent" then
                             if talents[extraId] then
                                 if not checkOnly then
                                     self:ScheduleTimer(function()
@@ -323,8 +325,6 @@ function addon:UseProfile(name, checkOnly, cache)
                                 ok = true
                             end
                         end
-
-                        ok = ok or self:RestoreSpell(cache, profile, slot, checkOnly)
 
                         total = total + 1
                         fail = fail + ((ok and 0) or 1)
