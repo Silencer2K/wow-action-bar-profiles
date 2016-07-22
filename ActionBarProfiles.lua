@@ -23,23 +23,8 @@ local SIMILAR_ITEMS = {
 
 local SIMILAR_SPELLS = {}
 
-local DraenorZoneAbilitySpellID = 161691
-
-local DRAENOR_ZONE_SPELL_ABILITY_TEXTURES_BASE = {
-	[161676] = "Interface\\ExtraButton\\GarrZoneAbility-BarracksAlliance",
-	[161332] = "Interface\\ExtraButton\\GarrZoneAbility-BarracksHorde",
-	[162075] = "Interface\\ExtraButton\\GarrZoneAbility-Armory",
-	[161767] = "Interface\\ExtraButton\\GarrZoneAbility-MageTower",
-	[170097] = "Interface\\ExtraButton\\GarrZoneAbility-TradingPost",
-	[170108] = "Interface\\ExtraButton\\GarrZoneAbility-TradingPost",
-	[168487] = "Interface\\ExtraButton\\GarrZoneAbility-Inn",
-	[168499] = "Interface\\ExtraButton\\GarrZoneAbility-Inn",
-	[164012] = "Interface\\ExtraButton\\GarrZoneAbility-TrainingPit",
-	[164050] = "Interface\\ExtraButton\\GarrZoneAbility-LumberMill",
-	[165803] = "Interface\\ExtraButton\\GarrZoneAbility-Stables",
-	[164222] = "Interface\\ExtraButton\\GarrZoneAbility-Stables",
-	[160240] = "Interface\\ExtraButton\\GarrZoneAbility-Workshop",
-	[160241] = "Interface\\ExtraButton\\GarrZoneAbility-Workshop",
+local SPECIAL_SPELLS = {
+    [161691] = { 161676, 161332, 162075, 161767, 170097, 170108, 168487, 168499, 164012, 164050, 165803, 164222, 160240, 160241 },
 }
 
 function addon:OnInitialize()
@@ -634,12 +619,12 @@ function addon:PreloadSpells()
         end
     end
 
-    if UnitLevel("player") >= 90 then
-        self:UpdateCache(spells, DraenorZoneAbilitySpellID, DraenorZoneAbilitySpellID)
+    local spellId, altSpellId
+    for spellId in pairs(SPECIAL_SPELLS) do
+        self:UpdateCache(spells, spellId, spellId)
 
-        local spellId
-        for spellId in pairs(DRAENOR_ZONE_SPELL_ABILITY_TEXTURES_BASE) do
-            self:UpdateCache(spells, DraenorZoneAbilitySpellID, spellId)
+        for altSpellId in table.s2k_values(SPECIAL_SPELLS[spellId]) do
+            self:UpdateCache(spells, spellId, altSpellId)
         end
     end
 
@@ -695,7 +680,7 @@ function addon:PreloadMounts()
     local allMounts = C_MountJournal.GetMountIDs()
 
     local mountId
-    for _, mountId in pairs(allMounts) do
+    for mountId in table.s2k_values(allMounts) do
         local name, spellId, faction, isCollected = table.s2k_select({ C_MountJournal.GetMountInfoByID(mountId) }, 1, 2, 9, 11)
 
         if isCollected and (not faction or faction == playerFaction) then
@@ -856,7 +841,7 @@ function addon:RestoreMount(cache, profile, slot, checkOnly)
             return true
         end
 
-        _, id = C_MountJournal.GetMountInfoByID(id)
+        id = select(2, C_MountJournal.GetMountInfoByID(id))
     end
 
     local name = GetSpellInfo(id)
