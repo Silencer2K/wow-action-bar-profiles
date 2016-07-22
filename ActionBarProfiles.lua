@@ -88,7 +88,11 @@ function addon:UpdateTooltip(anchor)
         if qtip:IsAcquired('ActionBarProfiles') and self.tooltip then
             self.tooltip:Clear()
         else
-            self.tooltip = qtip:Acquire('ActionBarProfiles', 2, 'LEFT', 'RIGHT')
+            self.tooltip = qtip:Acquire('ActionBarProfiles', 2, 'LEFT')
+
+            self.tooltip.OnRelease = function()
+                self.tooltip = nil
+            end
         end
 
         self:UpdateTooltipData(self.tooltip)
