@@ -626,7 +626,11 @@ function addon:UpdateCache(cache, value, id, name, stance)
     cache.id[id] = value
 
     if name then
-        name = (stance and stance ~= "" and name .. "|" .. stance) or name
+        if stance and stance ~= "" then
+            local stName = name .. "|" .. stance
+            cache.name[stName] = value
+        end
+
         cache.name[name] = value
     end
 end
@@ -637,7 +641,13 @@ function addon:GetFromCache(cache, id, name, stance)
     end
 
     if name then
-        name = (stance and stance ~= "" and name .. "|" .. stance) or name
+        if stance and stance ~= "" then
+            local stName = name .. "|" .. stance
+            if cache.name[stName] then
+                return cache.name[stName]
+            end
+        end
+
         if cache.name[name] then
             return cache.name[name]
         end
