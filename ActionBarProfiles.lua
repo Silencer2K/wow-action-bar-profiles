@@ -274,37 +274,43 @@ function addon:UseProfile(name, checkOnly, cache)
         local talents = {}
 
         local slot
-        if not profile.skip_talents and profile.talents then
-            for slot = 1, MAX_TALENT_TIERS do
-                if not profile.talents[slot] then
-                else
-                    local avail = GetTalentTierInfo(slot, 1)
-                    if not avail then
+        for slot = 1, MAX_TALENT_TIERS do
+            if not profile.talents[slot] then
+            else
+                local avail = GetTalentTierInfo(slot, 1)
+                if not avail then
+                    if not profile.skip_talents and profile.talents then
                         fail = fail + 1
-                    else
-                        local column, foundId, foundName
-                        for column = 1, NUM_TALENT_COLUMNS do
-                            local id, name = GetTalentInfo(slot, column, 1)
+                    end
+                else
+                    local column, foundId, foundName
+                    for column = 1, NUM_TALENT_COLUMNS do
+                        local id, name = GetTalentInfo(slot, column, 1)
 
+                        talents[id] = true
+
+                        if not profile.skip_talents and profile.talents then
                             if id == profile.talents[slot][1] then
                                 foundId = id
                             elseif name == profile.talents[slot][2] then
                                 foundName = id
                             end
-
-                            talents[id] = true
                         end
+                    end
 
-                        if foundId or foundName then
-                            if not checkOnly then
-                                LearnTalent(foundId or foundName)
-                            end
-                        else
+                    if foundId or foundName then
+                        if not checkOnly then
+                            LearnTalent(foundId or foundName)
+                        end
+                    else
+                        if not profile.skip_talents and profile.talents then
                             fail = fail + 1
                         end
                     end
                 end
+            end
 
+            if not profile.skip_talents and profile.talents then
                 total = total + 1
             end
         end
