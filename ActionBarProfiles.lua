@@ -130,6 +130,12 @@ local SPECIAL_SPELLS = {
     [88344]  = { class = 'MAGE', level = 85, faction = 'Horde' },       -- Teleport: Tol Barad
     [132627] = { class = 'MAGE', level = 90, faction = 'Horde' },       -- Teleport: Vale of Eternal Blossoms
     [176242] = { class = 'MAGE', level = 92, faction = 'Horde' },       -- Teleport: Warspear
+    -- rogue poisons
+    [2823]   = { class = 'ROGUE', spec = 259, level = 2 },              -- Deadly Poison
+    [3408]   = { class = 'ROGUE', spec = 259, level = 19 },             -- Crippling Poison
+    [8679]   = { class = 'ROGUE', spec = 259, level = 25 },             -- Wound Poison
+    [108211] = { class = 'ROGUE', spec = 259, level = 60 },             -- Leeching Poison
+    [200802] = { class = 'ROGUE', spec = 259, level = 90 },             -- Agonizing Poison
 }
 
 function addon:OnInitialize()
@@ -836,13 +842,15 @@ function addon:PreloadSpells()
     local playerLevel   = UnitLevel("player")
     local playerClass   = select(2, UnitClass("player"))
     local playerFaction = UnitFactionGroup("player")
+    local playerSpec    = GetSpecializationInfo(GetSpecialization())
 
     local spellId, altSpellId
     for spellId, info in pairs(SPECIAL_SPELLS) do
         if
             (not info.level or playerLevel >= info.level) and
             (not info.class or playerClass == info.class) and
-            (not info.faction or playerFaction == info.faction)
+            (not info.faction or playerFaction == info.faction) and
+            (not info.spec or playerSpec == info.spec)
         then
             self:UpdateCache(spells, spellId, spellId)
 
