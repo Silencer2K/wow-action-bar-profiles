@@ -533,6 +533,7 @@ function addon:UseProfile(name, checkOnly, cache)
         end
 
         if not (checkOnly or profile.skip_key_bindings) and profile.keyBindings then
+            local i
             for i = 1, GetNumBindings() do
                 local bind = { GetBinding(i) }
                 if bind[3] then
@@ -552,6 +553,21 @@ function addon:UseProfile(name, checkOnly, cache)
             end
 
             SaveBindings(GetCurrentBindingSet())
+
+            if LibStub('AceAddon-3.0'):GetAddon('Dominos', true) and profile.keyBindingsDominos then
+                for i = 13, 60 do
+                    local key
+                    for key in table.s2k_values({ GetBindingKey(string.format("CLICK DominosActionButton%d:LeftButton", i)) }) do
+                        SetBinding(key)
+                    end
+
+                    if profile.keyBindingsDominos[i] then
+                        for key in table.s2k_values(profile.keyBindingsDominos[i]) do
+                            SetBindingClick(key, string.format("DominosActionButton%d", i), "LeftButton")
+                        end
+                    end
+                end
+            end
         end
     end
 
@@ -680,6 +696,17 @@ function addon:UpdateProfileBars(name)
             local bind = { GetBinding(i) }
             if bind[3] then
                 profile.keyBindings[bind[1]] = { select(3, unpack(bind)) }
+            end
+        end
+
+        if LibStub('AceAddon-3.0'):GetAddon('Dominos', true) then
+            profile.keyBindingsDominos = {}
+
+            for i = 13, 60 do
+                local bind = { GetBindingKey(string.format("CLICK DominosActionButton%d:LeftButton", i)) }
+                if #bind > 0 then
+                    profile.keyBindingsDominos[i] = bind
+                end
             end
         end
     end
