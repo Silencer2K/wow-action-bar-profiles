@@ -228,11 +228,18 @@ function addon:UpdateTooltipData(tooltip)
     for profile in table.s2k_values(self:GetSortedProfiles()) do
         local coords = CLASS_ICON_TCOORDS[profile.class]
 
-        lineNo = tooltip:AddLine(string.format(
-            '|TInterface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes:14:14:0:0:256:256:%d:%d:%d:%d|t %-20s',
-            coords[1] * 256, coords[2] * 256, coords[3] * 256, coords[4] * 256,
-            profile.name
-        ))
+        if profile.icon then
+            lineNo = tooltip:AddLine(string.format(
+                '|T%s:14:14:0:0:32:32:0:32:0:32|t %-20s',
+                profile.icon, profile.name
+            ))
+        else
+            lineNo = tooltip:AddLine(string.format(
+                '|TInterface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes:14:14:0:0:256:256:%d:%d:%d:%d|t %-20s',
+                coords[1] * 256, coords[2] * 256, coords[3] * 256, coords[4] * 256,
+                profile.name
+            ))
+        end
 
         if profile.class == playerClass then
             if self:UseProfile(profile.name, true, cache) > 0 then
