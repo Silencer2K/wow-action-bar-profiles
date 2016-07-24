@@ -592,6 +592,7 @@ function addon:UpdateProfileBars(name)
 
     if profile then
         profile.class = select(2, UnitClass("player"))
+        profile.icon  = select(4, GetSpecializationInfo(GetSpecialization()))
         profile.owner = string.format("%s-%s", GetUnitName("player"), GetRealmName())
 
         local talents = {}

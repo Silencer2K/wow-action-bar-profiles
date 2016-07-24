@@ -225,8 +225,13 @@ function frame:Update()
                     button.text:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
                 end
 
-                button.icon:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
-                button.icon:SetTexCoord(unpack(CLASS_ICON_TCOORDS[profile.class]))
+                if profile.icon then
+                    button.icon:SetTexture(profile.icon)
+                    button.icon:SetTexCoord(0, 1, 0, 1)
+                else
+                    button.icon:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
+                    button.icon:SetTexCoord(unpack(CLASS_ICON_TCOORDS[profile.class]))
+                end
 
                 button.icon:SetSize(36, 36)
                 button.icon:SetPoint("LEFT", 4, 0)
