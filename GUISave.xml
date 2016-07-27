@@ -93,66 +93,34 @@
                     ]]></OnTextChanged>
                 </Scripts>
             </EditBox>
-            <CheckButton name="$parentOptionEmptySlots" parentKey="OptionEmptySlots" inherits="UICheckButtonTemplate">
+            <CheckButton name="$parentOptionActions" parentKey="OptionActions" inherits="UICheckButtonTemplate">
                 <Size x="16" y="16" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="$parentProfileOptionsText" relativePoint="BOTTOMLEFT" x="0" y="-5" />
                 </Anchors>
             </CheckButton>
-            <CheckButton name="$parentOptionSpells" parentKey="OptionSpells" inherits="UICheckButtonTemplate">
+            <CheckButton name="$parentOptionTalents" parentKey="OptionTalents" inherits="UICheckButtonTemplate">
                 <Size x="16" y="16" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentOptionEmptySlots" relativePoint="BOTTOMLEFT" />
-                </Anchors>
-            </CheckButton>
-            <CheckButton name="$parentOptionItems" parentKey="OptionItems" inherits="UICheckButtonTemplate">
-                <Size x="16" y="16" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentOptionSpells" relativePoint="BOTTOMLEFT" />
-                </Anchors>
-            </CheckButton>
-            <CheckButton name="$parentOptionCompanions" parentKey="OptionCompanions" inherits="UICheckButtonTemplate">
-                <Size x="16" y="16" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentOptionItems" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPLEFT" relativeTo="$parentOptionActions" relativePoint="BOTTOMLEFT" />
                 </Anchors>
             </CheckButton>
             <CheckButton name="$parentOptionMacros" parentKey="OptionMacros" inherits="UICheckButtonTemplate">
                 <Size x="16" y="16" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentOptionCompanions" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPLEFT" relativeTo="$parentOptionTalents" relativePoint="BOTTOMLEFT" />
                 </Anchors>
             </CheckButton>
-            <CheckButton name="$parentOptionEquipSets" parentKey="OptionEquipSets" inherits="UICheckButtonTemplate">
+            <CheckButton name="$parentOptionPetActions" parentKey="OptionPetActions" inherits="UICheckButtonTemplate">
                 <Size x="16" y="16" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="$parentOptionMacros" relativePoint="BOTTOMLEFT" />
                 </Anchors>
             </CheckButton>
-            <CheckButton name="$parentOptionPetSpells" parentKey="OptionPetSpells" inherits="UICheckButtonTemplate">
+            <CheckButton name="$parentOptionBindings" parentKey="OptionBindings" inherits="UICheckButtonTemplate">
                 <Size x="16" y="16" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentOptionEquipSets" relativePoint="BOTTOMLEFT">
-                        <Offset>
-                            <AbsDimension x="0" y="-4" />
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-            </CheckButton>
-            <CheckButton name="$parentOptionTalents" parentKey="OptionTalents" inherits="UICheckButtonTemplate">
-                <Size x="16" y="16" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentOptionPetSpells" relativePoint="BOTTOMLEFT">
-                        <Offset>
-                            <AbsDimension x="0" y="-4" />
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-            </CheckButton>
-            <CheckButton name="$parentOptionKeyBindings" parentKey="OptionKeyBindings" inherits="UICheckButtonTemplate">
-                <Size x="16" y="16" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeTo="$parentOptionTalents" relativePoint="BOTTOMLEFT" />
+                    <Anchor point="TOPLEFT" relativeTo="$parentOptionPetActions" relativePoint="BOTTOMLEFT" />
                 </Anchors>
             </CheckButton>
             <Button name="$parentCancel" inherits="UIPanelButtonTemplate" text="CANCEL">
