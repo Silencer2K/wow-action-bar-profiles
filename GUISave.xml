@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
     <Frame name="PaperDollActionBarProfilesSaveDialog" hidden="true" parent="PaperDollFrame">
-        <Size x="297" y="286" />
+        <Size x="297" y="254" />
         <Anchors>
             <Anchor point="LEFT" relativePoint="RIGHT" />
         </Anchors>
@@ -21,30 +21,16 @@
                     </Anchors>
                     <TexCoords left="0" right="1" top="0" bottom="0.828125" />
                 </Texture>
-                <Texture file="Interface\MacroFrame\MacroPopup-TopLeft">
-                    <Size x="256" y="32" />
-                    <Anchors>
-                        <Anchor point="TOPLEFT" x="0" y="-212" />
-                    </Anchors>
-                    <TexCoords left="0" right="1" top="0.703125" bottom="0.828125" />
-                </Texture>
-                <Texture file="Interface\MacroFrame\MacroPopup-TopRight">
-                    <Size x="64" y="32" />
-                    <Anchors>
-                        <Anchor point="TOPLEFT" x="256" y="-212" />
-                    </Anchors>
-                    <TexCoords left="0" right="1" top="0.703125" bottom="0.828125" />
-                </Texture>
                 <Texture file="Interface\MacroFrame\MacroPopup-BotLeft">
                     <Size x="256" y="64" />
                     <Anchors>
-                        <Anchor point="TOPLEFT" x="0" y="-244" />
+                        <Anchor point="TOPLEFT" x="0" y="-212" />
                     </Anchors>
                 </Texture>
                 <Texture file="Interface\MacroFrame\MacroPopup-BotRight">
                     <Size x="64" y="64" />
                     <Anchors>
-                        <Anchor point="TOPLEFT" x="256" y="-244" />
+                        <Anchor point="TOPLEFT" x="256" y="-212" />
                     </Anchors>
                 </Texture>
             </Layer>

@@ -2,51 +2,11 @@ local addonName, addon = ...
 
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
-local STRIPE_COLOR = { r = 0.9, g = 0.9, b = 1 }
-local ACTION_BAR_PROFILE_BUTTON_HEIGHT = 44
-
 local frame = PaperDollActionBarProfilesPane
 
+local ACTION_BAR_PROFILE_BUTTON_HEIGHT = 44
+
 function frame:OnInitialize()
-    StaticPopupDialogs.CONFIRM_DELETE_ACTION_BAR_PROFILE = {
-        text = L.confirm_delete,
-        button1 = YES,
-        button2 = NO,
-        OnAccept = function(popup) self:OnDeleteConfirm(popup) end,
-        OnCancel = function(popup) end,
-        OnHide = function(popup) end,
-        hideOnEscape = 1,
-        timeout = 0,
-        exclusive = 1,
-        whileDead = 1,
-    }
-
-    StaticPopupDialogs.CONFIRM_SAVE_ACTION_BAR_PROFILE = {
-        text = L.confirm_save,
-        button1 = YES,
-        button2 = NO,
-        OnAccept = function(popup) self:OnSaveConfirm(popup) end,
-        OnCancel = function(popup) end,
-        OnHide = function(popup) end,
-        hideOnEscape = 1,
-        timeout = 0,
-        exclusive = 1,
-        whileDead = 1,
-    }
-
-    StaticPopupDialogs.CONFIRM_USE_ACTION_BAR_PROFILE = {
-        text = L.confirm_use,
-        button1 = YES,
-        button2 = NO,
-        OnAccept = function(popup) self:OnUseConfirm(popup) end,
-        OnCancel = function(popup) end,
-        OnHide = function(popup) end,
-        hideOnEscape = 1,
-        timeout = 0,
-        exclusive = 1,
-        whileDead = 1,
-    }
-
     self.scrollBar.doNotHide = 1
 
     self:SetFrameLevel(CharacterFrameInsetRight:GetFrameLevel() + 1)
@@ -92,18 +52,51 @@ function frame:OnUpdate()
     end
 end
 
-function frame:OnDeleteClick(button)
-    local popup = StaticPopup_Show("CONFIRM_DELETE_ACTION_BAR_PROFILE", button.name)
-    if popup then
-        popup.name = button.name
+function frame:OnProfileClick(button)
+    if button.name then
+        self.selected = button.name
+        self:Update()
+
+        PaperDollActionBarProfilesSaveDialog:Hide()
     else
+        self.selected = nil
+        self:Update()
+
+        PaperDollActionBarProfilesSaveDialog:SetProfile(nil)
+        PaperDollActionBarProfilesSaveDialog:Show()
+    end
+end
+
+function frame:OnProfileDoubleClick(button)
+    if button.name then
+        self:OnProfileClick(button)
+        self:OnUseClick()
+    end
+end
+
+function frame:OnUseClick()
+    local cache = addon:MakeCache()
+    local fail, total = addon:UseProfile(self.selected, true, cache)
+
+    if fail > 0 then
+        if not addon:ShowPopup("CONFIRM_USE_ACTION_BAR_PROFILE", fail, total, { name = self.selected }) then
+            UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
+        end
+    else
+        addon:UseProfile(self.selected, false, cache)
+    end
+end
+
+function frame:OnDeleteClick(button)
+    if not addon:ShowPopup("CONFIRM_DELETE_ACTION_BAR_PROFILE", button.name, nil, { name = button.name }) then
         UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
     end
 end
 
-function frame:OnDeleteConfirm(popup)
-    addon:DeleteProfile(popup.name)
-    self:Update()
+function frame:OnSaveClick()
+    if not addon:ShowPopup("CONFIRM_SAVE_ACTION_BAR_PROFILE", self.selected, nil, { name = self.selected }) then
+        UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
+    end
 end
 
 function frame:OnEditClick(button)
@@ -113,93 +106,29 @@ function frame:OnEditClick(button)
     PaperDollActionBarProfilesSaveDialog:Show()
 end
 
-function frame:OnProfileDoubleClick(button)
-    local fail, total = addon:UseProfile(button.name, true)
-    if fail > 0 then
-        local popup = StaticPopup_Show("CONFIRM_USE_ACTION_BAR_PROFILE", fail, total)
-        if popup then
-            popup.name = button.name
-        else
-            UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
-        end
-    else
-        addon:UseProfile(button.name)
-        self:Update()
-    end
-end
-
-function frame:OnProfileClick(button)
-    if button.name and button.name ~= "" then
-        self.selectedName = button.name
-        self:Update()
-
-        PaperDollActionBarProfilesSaveDialog:Hide()
-    else
-        self.selectedName = nil
-        self:Update()
-
-        PaperDollActionBarProfilesSaveDialog:SetProfile()
-        PaperDollActionBarProfilesSaveDialog:Show()
-    end
-end
-
-function frame:OnUseClick()
-    local fail, total = addon:UseProfile(self.selectedName, true)
-    if fail > 0 then
-        local popup = StaticPopup_Show("CONFIRM_USE_ACTION_BAR_PROFILE", fail, total)
-        if popup then
-            popup.name = self.selectedName
-        else
-            UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
-        end
-    else
-        addon:UseProfile(self.selectedName)
-        self:Update()
-    end
-end
-
-function frame:OnUseConfirm(popup)
-    addon:UseProfile(popup.name)
-    self:Update()
-end
-
-function frame:OnSaveClick()
-    local popup = StaticPopup_Show("CONFIRM_SAVE_ACTION_BAR_PROFILE", self.selectedName)
-    if popup then
-        popup.name = self.selectedName
-    else
-        UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
-    end
-end
-
-function frame:OnSaveConfirm(popup)
-    addon:UpdateProfileBars(popup.name)
-    self:Update()
-end
-
 function frame:Update()
-    local profiles = addon:GetSortedProfiles()
-    local numRows = #profiles + 1
+    local profiles = { addon:GetProfiles() }
+    local rows = #profiles + 1
 
-    HybridScrollFrame_Update(self, numRows * ACTION_BAR_PROFILE_BUTTON_HEIGHT + self.UseProfile:GetHeight() + 20, self:GetHeight())
+    HybridScrollFrame_Update(self, rows * ACTION_BAR_PROFILE_BUTTON_HEIGHT + self.UseProfile:GetHeight() + 20, self:GetHeight())
 
-    local scrollOffset = HybridScrollFrame_GetOffset(self)
+    local offset = HybridScrollFrame_GetOffset(self)
     local class = select(2, UnitClass("player"))
 
-    local selectedName = self.selectedName
-    self.selectedName = nil
-
     local cache = addon:MakeCache()
+
+    local selected = self.selected
+    self.selected = nil
 
     local i
     for i = 1, #self.buttons do
         local button = self.buttons[i]
 
-        if scrollOffset + i <= numRows then
-            if scrollOffset + i ==  1 then
+        if i + offset <= rows then
+            if i + offset ==  1 then
                 button.name = nil
 
-                button.text:SetText(L.new_profile)
+                button.text:SetText(L.gui_new_profile)
                 button.text:SetTextColor(GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b)
 
                 button.icon:SetTexture("Interface\\PaperDollInfoFrame\\Character-Plus")
@@ -210,20 +139,25 @@ function frame:Update()
 
                 button.SelectedBar:Hide()
             else
-                local profile = profiles[scrollOffset + i - 1]
+                local profile = profiles[i + offset - 1]
 
                 button.name = profile.name
 
-                button.text:SetText(profile.name)
+                local name = profile.name
+                local color = NORMAL_FONT_COLOR
+
                 if profile.class ~= class then
-                    button.text:SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
-
-                elseif addon:UseProfile(profile.name, true, cache) > 0 then
-                    button.text:SetTextColor(RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b)
-
+                    color = GRAY_FONT_COLOR
                 else
-                    button.text:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+                    local fail, total = addon:UseProfile(profile, true, cache)
+                    if fail > 0 then
+                        color = RED_FONT_COLOR
+                        name = name .. string.format(" (%d/%d)", fail, total)
+                    end
                 end
+
+                button.text:SetText(name)
+                button.text:SetTextColor(color.r, color.g, color.b)
 
                 if profile.icon then
                     button.icon:SetTexture(profile.icon)
@@ -236,15 +170,15 @@ function frame:Update()
                 button.icon:SetSize(36, 36)
                 button.icon:SetPoint("LEFT", 4, 0)
 
-                if selectedName and selectedName == profile.name then
+                if selected and selected == profile.name then
                     button.SelectedBar:Show()
-                    self.selectedName = selectedName
+                    self.selected = profile.name
                 else
                     button.SelectedBar:Hide()
                 end
             end
 
-            if (i + scrollOffset) == 1 then
+            if (i + offset) == 1 then
                 button.BgTop:Show()
                 button.BgMiddle:SetPoint("TOP", button.BgTop, "BOTTOM")
             else
@@ -252,7 +186,7 @@ function frame:Update()
                 button.BgMiddle:SetPoint("TOP")
             end
 
-            if (i + scrollOffset) == numRows then
+            if (i + offset) == rows then
                 button.BgBottom:Show()
                 button.BgMiddle:SetPoint("BOTTOM", button.BgBottom, "TOP")
             else
@@ -260,8 +194,8 @@ function frame:Update()
                 button.BgMiddle:SetPoint("BOTTOM")
             end
 
-            if (i + scrollOffset) % 2 == 0 then
-                button.Stripe:SetColorTexture(STRIPE_COLOR.r, STRIPE_COLOR.g, STRIPE_COLOR.b)
+            if (i + offset) % 2 == 0 then
+                button.Stripe:SetColorTexture(0.9, 0.9, 1)
                 button.Stripe:SetAlpha(0.1)
 
                 button.Stripe:Show()
@@ -276,10 +210,12 @@ function frame:Update()
         end
     end
 
-    if self.selectedName then
+    if self.selected then
         self.UseProfile:Enable()
         self.SaveProfile:Enable()
     else
+        PaperDollActionBarProfilesSaveDialog:Hide()
+
         self.UseProfile:Disable()
         self.SaveProfile:Disable()
     end

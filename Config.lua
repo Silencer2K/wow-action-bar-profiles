@@ -3,16 +3,15 @@ local addonName, addon = ...
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
 function addon:GetOptions()
-    return {
+    self.options = self.options or {
         type = 'group',
         args = {
             general = {
-                name = L.settings,
+                name = L.cfg_settings,
                 type = 'group',
                 args = {
                     minimap = {
-                        name = L.minimap_icon,
-                        -- desc = L.minimap_icon_desc,
+                        name = L.cfg_minimap_icon,
                         type = 'toggle',
                         set = function(info, value)
                             self.db.profile.minimap.hide = not value
@@ -31,4 +30,5 @@ function addon:GetOptions()
             profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db),
         },
     }
+    return self.options
 end

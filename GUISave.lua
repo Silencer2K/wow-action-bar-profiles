@@ -4,70 +4,52 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
 local frame = PaperDollActionBarProfilesSaveDialog
 
-function frame:dialogOptions()
+function frame:SaveDialogOptions()
     return table.s2k_values({
-        { "EmptySlots", "empty_slots" },
-        { "Spells", "spells" },
-        { "Items", "items" },
-        { "Companions", "companions" },
-        { "Macros", "macros" },
-        { "EquipSets", "equip_sets" },
-        { "PetSpells", "pet_spells" },
+        { "Actions", "actions" },
         { "Talents", "talents" },
-        { "KeyBindings", "key_bindings" },
+        { "Macros", "macros" },
+        { "PetActions", "pet_actions" },
+        { "Bindings", "bindings" },
     }, true)
 end
 
 function frame:OnInitialize()
-    StaticPopupDialogs.CONFIRM_OVERWRITE_ACTION_BAR_PROFILE = {
-        text = L.confirm_overwrite,
-        button1 = YES,
-        button2 = NO,
-        OnAccept = function(popup) self:OnOverwriteConfirm(popup) end,
-        OnCancel = function(popup) end,
-        OnHide = function(popup) end,
-        hideOnEscape = 1,
-        timeout = 0,
-        exclusive = 1,
-        whileDead = 1,
-    }
+    self.ProfileNameText:SetText(L.gui_profile_name)
+    self.ProfileOptionsText:SetText(L.gui_profile_options)
 
-    self.ProfileNameText:SetText(L.profile_name)
-    self.ProfileOptionsText:SetText(L.profile_options)
-
-    local v1, v2
-    for v1, v2 in self:dialogOptions() do
-        _G[self:GetName() .. "Option" .. v1 .. "Text"]:SetText(" " .. L["option_" .. v2])
+    local option, lang
+    for option, lang in self:SaveDialogOptions() do
+        _G[self:GetName() .. "Option" .. option .. "Text"]:SetText(" " .. L["option_" .. lang])
     end
 end
 
 function frame:OnOkayClick()
     local name = strtrim(self.EditBox:GetText())
-
     local options = {}
 
-    local v1, v2
-    for v1, v2 in self:dialogOptions() do
-        options["skip_" .. v2] = not self["Option" .. v1]:GetChecked() or nil
+    local option
+    for option in self:SaveDialogOptions() do
+        options["skip" .. option] = not self["Option" .. option]:GetChecked() or nil
     end
 
     if self.name then
         if name ~= self.name then
-            if addon:GetProfile(name) then
+            if addon:GetProfiles(name) then
                 UIErrorsFrame:AddMessage(L.error_exists, 1.0, 0.1, 0.1, 1.0)
                 return
             end
+
+            addon:RenameProfile(self.name, name, true)
+
+            -- hack: update selection
+            PaperDollActionBarProfilesPane.selected = name
         end
 
-        addon:UpdateProfileParams(self.name, name, options)
+        addon:UpdateProfileOptions(name, options)
     else
-        if addon:GetProfile(name) then
-            local popup = StaticPopup_Show("CONFIRM_OVERWRITE_ACTION_BAR_PROFILE", name)
-
-            if popup then
-                popup.name = name
-                popup.options = options
-            else
+        if addon:GetProfiles(name) then
+            if not addon:ShowPopup("CONFIRM_OVERWRITE_ACTION_BAR_PROFILE", name, nil, { name = name, options = options, hide = self }) then
                 UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
             end
 
@@ -77,14 +59,6 @@ function frame:OnOkayClick()
         addon:SaveProfile(name, options)
     end
 
-    PaperDollActionBarProfilesPane:Update()
-    self:Hide()
-end
-
-function frame:OnOverwriteConfirm(popup)
-    addon:SaveProfile(popup.name, popup.options)
-
-    PaperDollActionBarProfilesPane:Update()
     self:Hide()
 end
 
@@ -104,37 +78,34 @@ function frame:SetProfile(name)
     self.name = nil
     self.EditBox:SetText("")
 
-    local v1, v2
-    for v1, v2 in self:dialogOptions() do
-        self["Option" .. v1]:SetChecked(true)
-    end
+    local option
+    for option in self:SaveDialogOptions() do
+        self["Option" .. option]:SetChecked(true)
+        self["Option" .. option]:Enable()
 
-    self.OptionPetSpells:Enable()
-    _G[self:GetName() .. "OptionPetSpellsText"]:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+        _G[self:GetName() .. "Option" .. option .. "Text"]:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+    end
 
     if not name then
         if not HasPetSpells() then
-            self.OptionPetSpells:Disable()
-            _G[self:GetName() .. "OptionPetSpellsText"]:SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
+            self.OptionPetActions:Disable()
+            _G[self:GetName() .. "OptionPetActionsText"]:SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
         end
     else
         self.name = name
 
-        self.EditBox:SetText(self.name)
+        self.EditBox:SetText(name)
         self.EditBox:HighlightText(0)
 
-        local profile = addon:GetProfile(name)
-
+        local profile = addon:GetProfiles(name)
         if profile then
-            for v1, v2 in self:dialogOptions() do
-                self["Option" .. v1]:SetChecked(not profile["skip_" .. v2])
+            for option in self:SaveDialogOptions() do
+                self["Option" .. option]:SetChecked(not profile["skip" .. option])
             end
 
             if not profile.petActions then
-                self.OptionPetSpells:SetChecked(true)
-
-                self.OptionPetSpells:Disable()
-                _G[self:GetName() .. "OptionPetSpellsText"]:SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
+                self.OptionPetActions:Disable()
+                _G[self:GetName() .. "OptionPetActionsText"]:SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
             end
         end
     end

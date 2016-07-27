@@ -1,7 +1,7 @@
 ## Interface: 70000
 ## Title: Action Bar Profiles
 ## Author: silencer2k@gmail.com
-## SavedVariables: ActionBarProfilesDB
+## SavedVariables: ActionBarProfilesDBv2
 ## Version: 1.0
 
 ActionBarProfiles.xml
@@ -20,7 +20,11 @@ locales\zhCN.lua
 locales\zhTW.lua
 
 ActionBarProfiles.lua
+Const.lua
 Config.lua
+Dialogs.lua
+Save.lua
+Restore.lua
 
 GUI.xml
 GUI.lua
