@@ -265,7 +265,7 @@ function addon:SaveBindings(profile)
 
     local bindingsDominos = nil
 
-    if LibStub('AceAddon-3.0'):GetAddon('Dominos', true) then
+    if LibStub("AceAddon-3.0"):GetAddon("Dominos", true) then
         bindingsDominos = {}
 
         for index = 13, 60 do

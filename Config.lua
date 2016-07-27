@@ -4,15 +4,15 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
 function addon:GetOptions()
     self.options = self.options or {
-        type = 'group',
+        type = "group",
         args = {
             general = {
                 name = L.cfg_settings,
-                type = 'group',
+                type = "group",
                 args = {
                     minimap = {
                         name = L.cfg_minimap_icon,
-                        type = 'toggle',
+                        type = "toggle",
                         set = function(info, value)
                             self.db.profile.minimap.hide = not value
                             if value then

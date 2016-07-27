@@ -64,75 +64,75 @@ ABP_SPECIAL_SPELLS = {
     },
 
     -- hunter pets
-    [883]    = { class = 'HUNTER' },                    -- Call Pet 1
-    [83242]  = { class = 'HUNTER', level = 10 },        -- Call Pet 2
-    [83243]  = { class = 'HUNTER', level = 34 },        -- Call Pet 3
-    [83244]  = { class = 'HUNTER', level = 62 },        -- Call Pet 4
-    [83245]  = { class = 'HUNTER', level = 82 },        -- Call Pet 5
-    [1462]   = { class = 'HUNTER', level = 12 },        -- Beast Lore
-    [2641]   = { class = 'HUNTER', level = 10 },        -- Dismiss Pet
-    [6991]   = { class = 'HUNTER', level = 11 },        -- Feed Pet
-    [982]    = { class = 'HUNTER' },                    -- Revive Pet
-    [1515]   = { class = 'HUNTER', level = 10 },        -- Tame Beast
+    [883]    = { class = "HUNTER" },                    -- Call Pet 1
+    [83242]  = { class = "HUNTER", level = 10 },        -- Call Pet 2
+    [83243]  = { class = "HUNTER", level = 34 },        -- Call Pet 3
+    [83244]  = { class = "HUNTER", level = 62 },        -- Call Pet 4
+    [83245]  = { class = "HUNTER", level = 82 },        -- Call Pet 5
+    [1462]   = { class = "HUNTER", level = 12 },        -- Beast Lore
+    [2641]   = { class = "HUNTER", level = 10 },        -- Dismiss Pet
+    [6991]   = { class = "HUNTER", level = 11 },        -- Feed Pet
+    [982]    = { class = "HUNTER" },                    -- Revive Pet
+    [1515]   = { class = "HUNTER", level = 10 },        -- Tame Beast
 
     -- warlock daemons
-    [688]    = { class = 'WARLOCK' },                   -- Summon Imp
-    [697]    = { class = 'WARLOCK', level = 8 },        -- Summon Voidwalker
-    [712]    = { class = 'WARLOCK', level = 28 },       -- Summon Succubus
-    [691]    = { class = 'WARLOCK', level = 35 },       -- Summon FelHUNTER
-    [30146]  = { class = 'WARLOCK', level = 40 },       -- Summon Felguard
+    [688]    = { class = "WARLOCK" },                   -- Summon Imp
+    [697]    = { class = "WARLOCK", level = 8 },        -- Summon Voidwalker
+    [712]    = { class = "WARLOCK", level = 28 },       -- Summon Succubus
+    [691]    = { class = "WARLOCK", level = 35 },       -- Summon FelHUNTER
+    [30146]  = { class = "WARLOCK", level = 40 },       -- Summon Felguard
 
     -- mage portals
-    [53142]  = { class = 'MAGE', level = 74 },                          -- Portal: Dalaran - Northrend
-    [224871] = { class = 'MAGE', level = 74 },                          -- Portal: Dalaran - Broken Isles
-    [120146] = { class = 'MAGE', level = 74 },                          -- Ancient Portal: Dalaran
-    [10059]  = { class = 'MAGE', level = 42, faction = 'Alliance' },    -- Portal: Stormwind
-    [11416]  = { class = 'MAGE', level = 42, faction = 'Alliance' },    -- Portal: Ironforge
-    [11419]  = { class = 'MAGE', level = 42, faction = 'Alliance' },    -- Portal: Darnassus
-    [32266]  = { class = 'MAGE', level = 42, faction = 'Alliance' },    -- Portal: Exodar
-    [49360]  = { class = 'MAGE', level = 42, faction = 'Alliance' },    -- Portal: Theramore
-    [33691]  = { class = 'MAGE', level = 66, faction = 'Alliance' },    -- Portal: Shattrath
-    [88345]  = { class = 'MAGE', level = 85, faction = 'Alliance' },    -- Portal: Tol Barad
-    [132620] = { class = 'MAGE', level = 90, faction = 'Alliance' },    -- Portal: Vale of Eternal Blossoms
-    [176246] = { class = 'MAGE', level = 92, faction = 'Alliance' },    -- Portal: Stormshield
-    [11417]  = { class = 'MAGE', level = 42, faction = 'Horde' },       -- Portal: Orgrimmar
-    [11418]  = { class = 'MAGE', level = 42, faction = 'Horde' },       -- Portal: Undercity
-    [11420]  = { class = 'MAGE', level = 42, faction = 'Horde' },       -- Portal: Thunder Bluff
-    [32267]  = { class = 'MAGE', level = 42, faction = 'Horde' },       -- Portal: Silvermoon
-    [49361]  = { class = 'MAGE', level = 52, faction = 'Horde' },       -- Portal: Stonard
-    [35717]  = { class = 'MAGE', level = 66, faction = 'Horde' },       -- Portal: Shattrath
-    [88346]  = { class = 'MAGE', level = 85, faction = 'Horde' },       -- Portal: Tol Barad
-    [132626] = { class = 'MAGE', level = 90, faction = 'Horde' },       -- Portal: Vale of Eternal Blossoms
-    [176244] = { class = 'MAGE', level = 92, faction = 'Horde' },       -- Portal: Warspear
+    [53142]  = { class = "MAGE", level = 74 },                          -- Portal: Dalaran - Northrend
+    [224871] = { class = "MAGE", level = 74 },                          -- Portal: Dalaran - Broken Isles
+    [120146] = { class = "MAGE", level = 74 },                          -- Ancient Portal: Dalaran
+    [10059]  = { class = "MAGE", level = 42, faction = "Alliance" },    -- Portal: Stormwind
+    [11416]  = { class = "MAGE", level = 42, faction = "Alliance" },    -- Portal: Ironforge
+    [11419]  = { class = "MAGE", level = 42, faction = "Alliance" },    -- Portal: Darnassus
+    [32266]  = { class = "MAGE", level = 42, faction = "Alliance" },    -- Portal: Exodar
+    [49360]  = { class = "MAGE", level = 42, faction = "Alliance" },    -- Portal: Theramore
+    [33691]  = { class = "MAGE", level = 66, faction = "Alliance" },    -- Portal: Shattrath
+    [88345]  = { class = "MAGE", level = 85, faction = "Alliance" },    -- Portal: Tol Barad
+    [132620] = { class = "MAGE", level = 90, faction = "Alliance" },    -- Portal: Vale of Eternal Blossoms
+    [176246] = { class = "MAGE", level = 92, faction = "Alliance" },    -- Portal: Stormshield
+    [11417]  = { class = "MAGE", level = 42, faction = "Horde" },       -- Portal: Orgrimmar
+    [11418]  = { class = "MAGE", level = 42, faction = "Horde" },       -- Portal: Undercity
+    [11420]  = { class = "MAGE", level = 42, faction = "Horde" },       -- Portal: Thunder Bluff
+    [32267]  = { class = "MAGE", level = 42, faction = "Horde" },       -- Portal: Silvermoon
+    [49361]  = { class = "MAGE", level = 52, faction = "Horde" },       -- Portal: Stonard
+    [35717]  = { class = "MAGE", level = 66, faction = "Horde" },       -- Portal: Shattrath
+    [88346]  = { class = "MAGE", level = 85, faction = "Horde" },       -- Portal: Tol Barad
+    [132626] = { class = "MAGE", level = 90, faction = "Horde" },       -- Portal: Vale of Eternal Blossoms
+    [176244] = { class = "MAGE", level = 92, faction = "Horde" },       -- Portal: Warspear
 
     -- mage teleports
-    [193759] = { class = 'MAGE', level = 14 },                          -- Teleport: Hall of the Guardian
-    [53140]  = { class = 'MAGE', level = 71 },                          -- Teleport: Dalaran - Northrend
-    [224869] = { class = 'MAGE', level = 71 },                          -- Teleport: Dalaran - Broken Isles
-    [120145] = { class = 'MAGE', level = 71 },                          -- Ancient Teleport: Dalaran
-    [3561]   = { class = 'MAGE', level = 17, faction = 'Alliance' },    -- Teleport: Stormwind
-    [3562]   = { class = 'MAGE', level = 17, faction = 'Alliance' },    -- Teleport: Ironforge
-    [3565]   = { class = 'MAGE', level = 17, faction = 'Alliance' },    -- Teleport: Darnassus
-    [32271]  = { class = 'MAGE', level = 17, faction = 'Alliance' },    -- Teleport: Exodar
-    [49359]  = { class = 'MAGE', level = 17, faction = 'Alliance' },    -- Teleport: Theramore
-    [33690]  = { class = 'MAGE', level = 62, faction = 'Alliance' },    -- Teleport: Shattrath
-    [88342]  = { class = 'MAGE', level = 85, faction = 'Alliance' },    -- Teleport: Tol Barad
-    [132621] = { class = 'MAGE', level = 90, faction = 'Alliance' },    -- Teleport: Vale of Eternal Blossoms
-    [176248] = { class = 'MAGE', level = 92, faction = 'Alliance' },    -- Teleport: Stormshield
-    [3567]   = { class = 'MAGE', level = 17, faction = 'Horde' },       -- Teleport: Orgrimmar
-    [3563]   = { class = 'MAGE', level = 17, faction = 'Horde' },       -- Teleport: Undercity
-    [3566]   = { class = 'MAGE', level = 17, faction = 'Horde' },       -- Teleport: Thunder Bluff
-    [32272]  = { class = 'MAGE', level = 17, faction = 'Horde' },       -- Teleport: Silvermoon
-    [49358]  = { class = 'MAGE', level = 52, faction = 'Horde' },       -- Teleport: Stonard
-    [35715]  = { class = 'MAGE', level = 62, faction = 'Horde' },       -- Teleport: Shattrath
-    [88344]  = { class = 'MAGE', level = 85, faction = 'Horde' },       -- Teleport: Tol Barad
-    [132627] = { class = 'MAGE', level = 90, faction = 'Horde' },       -- Teleport: Vale of Eternal Blossoms
-    [176242] = { class = 'MAGE', level = 92, faction = 'Horde' },       -- Teleport: Warspear
+    [193759] = { class = "MAGE", level = 14 },                          -- Teleport: Hall of the Guardian
+    [53140]  = { class = "MAGE", level = 71 },                          -- Teleport: Dalaran - Northrend
+    [224869] = { class = "MAGE", level = 71 },                          -- Teleport: Dalaran - Broken Isles
+    [120145] = { class = "MAGE", level = 71 },                          -- Ancient Teleport: Dalaran
+    [3561]   = { class = "MAGE", level = 17, faction = "Alliance" },    -- Teleport: Stormwind
+    [3562]   = { class = "MAGE", level = 17, faction = "Alliance" },    -- Teleport: Ironforge
+    [3565]   = { class = "MAGE", level = 17, faction = "Alliance" },    -- Teleport: Darnassus
+    [32271]  = { class = "MAGE", level = 17, faction = "Alliance" },    -- Teleport: Exodar
+    [49359]  = { class = "MAGE", level = 17, faction = "Alliance" },    -- Teleport: Theramore
+    [33690]  = { class = "MAGE", level = 62, faction = "Alliance" },    -- Teleport: Shattrath
+    [88342]  = { class = "MAGE", level = 85, faction = "Alliance" },    -- Teleport: Tol Barad
+    [132621] = { class = "MAGE", level = 90, faction = "Alliance" },    -- Teleport: Vale of Eternal Blossoms
+    [176248] = { class = "MAGE", level = 92, faction = "Alliance" },    -- Teleport: Stormshield
+    [3567]   = { class = "MAGE", level = 17, faction = "Horde" },       -- Teleport: Orgrimmar
+    [3563]   = { class = "MAGE", level = 17, faction = "Horde" },       -- Teleport: Undercity
+    [3566]   = { class = "MAGE", level = 17, faction = "Horde" },       -- Teleport: Thunder Bluff
+    [32272]  = { class = "MAGE", level = 17, faction = "Horde" },       -- Teleport: Silvermoon
+    [49358]  = { class = "MAGE", level = 52, faction = "Horde" },       -- Teleport: Stonard
+    [35715]  = { class = "MAGE", level = 62, faction = "Horde" },       -- Teleport: Shattrath
+    [88344]  = { class = "MAGE", level = 85, faction = "Horde" },       -- Teleport: Tol Barad
+    [132627] = { class = "MAGE", level = 90, faction = "Horde" },       -- Teleport: Vale of Eternal Blossoms
+    [176242] = { class = "MAGE", level = 92, faction = "Horde" },       -- Teleport: Warspear
 
     -- rogue poisons
-    [2823]   = { class = 'ROGUE', spec = 259, level = 2 },              -- Deadly Poison
-    [3408]   = { class = 'ROGUE', spec = 259, level = 19 },             -- Crippling Poison
-    [8679]   = { class = 'ROGUE', spec = 259, level = 25 },             -- Wound Poison
-    [108211] = { class = 'ROGUE', spec = 259, level = 60 },             -- Leeching Poison
-    [200802] = { class = 'ROGUE', spec = 259, level = 90 },             -- Agonizing Poison
+    [2823]   = { class = "ROGUE", spec = 259, level = 2 },              -- Deadly Poison
+    [3408]   = { class = "ROGUE", spec = 259, level = 19 },             -- Crippling Poison
+    [8679]   = { class = "ROGUE", spec = 259, level = 25 },             -- Wound Poison
+    [108211] = { class = "ROGUE", spec = 259, level = 60 },             -- Leeching Poison
+    [200802] = { class = "ROGUE", spec = 259, level = 90 },             -- Agonizing Poison
 }

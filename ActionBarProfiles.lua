@@ -1,6 +1,6 @@
 local addonName, addon = ...
 
-LibStub("AceAddon-3.0"):NewAddon(addon, addonName, "AceConsole-3.0", "AceSerializer-3.0", "AceTimer-3.0")
+LibStub("AceAddon-3.0"):NewAddon(addon, addonName, "AceConsole-3.0", "AceSerializer-3.0", "AceTimer-3.0", "AceEvent-3.0")
 
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 local DEBUG = "|cffff0000Debug:|r "
@@ -68,6 +68,27 @@ function addon:OnInitialize()
         PaperDollActionBarProfilesPane:OnInitialize()
         PaperDollActionBarProfilesSaveDialog:OnInitialize()
     end
+
+    -- events
+    self:RegisterEvent("PLAYER_REGEN_DISABLED", function(...)
+        if PaperDollActionBarProfilesPane and PaperDollActionBarProfilesPane:IsShown() then
+            self:ScheduleTimer(function()
+                PaperDollActionBarProfilesPane:Update()
+            end, 0.1)
+        end
+
+        if self.tooltip and self.tooltip:IsShown() then
+            self.tooltip:Hide()
+        end
+    end)
+
+    self:RegisterEvent("PLAYER_REGEN_ENABLED", function(...)
+        if PaperDollActionBarProfilesPane and PaperDollActionBarProfilesPane:IsShown() then
+            self:ScheduleTimer(function()
+                PaperDollActionBarProfilesPane:Update()
+            end, 0.1)
+        end
+    end)
 end
 
 function addon:OnChatCommand(message)
@@ -197,7 +218,7 @@ function addon:UpdateTooltipData(tooltip)
 
             tooltip:SetCellTextColor(line, 1, color.r, color.g, color.b)
 
-            tooltip:SetLineScript(line, 'OnMouseUp', function()
+            tooltip:SetLineScript(line, "OnMouseUp", function()
                 local fail, total = addon:UseProfile(profile, true, cache)
 
                 if fail > 0 then

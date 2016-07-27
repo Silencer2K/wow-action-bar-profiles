@@ -393,7 +393,7 @@ function addon:RestoreBindings(profile, check, cache, res)
         end
     end
 
-    if LibStub('AceAddon-3.0'):GetAddon('Dominos', true) and profile.bindingsDominos then
+    if LibStub("AceAddon-3.0"):GetAddon("Dominos", true) and profile.bindingsDominos then
         for index = 13, 60 do
             local key
 

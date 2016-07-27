@@ -211,7 +211,12 @@ function frame:Update()
     end
 
     if self.selected then
-        self.UseProfile:Enable()
+        if InCombatLockdown() then
+            self.UseProfile:Disable()
+        else
+            self.UseProfile:Enable()
+        end
+
         self.SaveProfile:Enable()
     else
         PaperDollActionBarProfilesSaveDialog:Hide()
