@@ -12,12 +12,7 @@ function addon:SaveProfile(name, options)
 
     list[name] = profile
 
-    if PaperDollActionBarProfilesPane and PaperDollActionBarProfilesPane:IsShown() then
-        self:ScheduleTimer(function()
-            PaperDollActionBarProfilesPane:Update()
-        end, 0.1)
-    end
-
+    self:UpdateGUI()
     self:Printf(L.msg_profile_saved, name)
 end
 
@@ -41,12 +36,7 @@ function addon:UpdateProfileOptions(profile, options, quiet)
     end
 
     if not quiet then
-        if PaperDollActionBarProfilesPane and PaperDollActionBarProfilesPane:IsShown() then
-            self:ScheduleTimer(function()
-                PaperDollActionBarProfilesPane:Update()
-            end, 0.1)
-        end
-
+        self:UpdateGUI()
         self:Printf(L.msg_profile_updated, profile.name)
     end
 end
@@ -67,12 +57,7 @@ function addon:UpdateProfile(profile, quiet)
     self:SaveBindings(profile)
 
     if not quiet then
-        if PaperDollActionBarProfilesPane and PaperDollActionBarProfilesPane:IsShown() then
-            self:ScheduleTimer(function()
-                PaperDollActionBarProfilesPane:Update()
-            end, 0.1)
-        end
-
+        self:UpdateGUI()
         self:Printf(L.msg_profile_updated, profile.name)
     end
 end
@@ -89,11 +74,7 @@ function addon:RenameProfile(name, rename, quiet)
     list[rename] = profile
 
     if not quiet then
-        if PaperDollActionBarProfilesPane and PaperDollActionBarProfilesPane:IsShown() then
-            self:ScheduleTimer(function()
-                PaperDollActionBarProfilesPane:Update()
-            end, 0.1)
-        end
+        self:UpdateGUI()
     end
 
     self:Printf(L.msg_profile_renamed, name, rename)
@@ -104,12 +85,7 @@ function addon:DeleteProfile(name)
 
     list[name] = nil
 
-    if PaperDollActionBarProfilesPane and PaperDollActionBarProfilesPane:IsShown() then
-        self:ScheduleTimer(function()
-            PaperDollActionBarProfilesPane:Update()
-        end, 0.1)
-    end
-
+    self:UpdateGUI()
     self:Printf(L.msg_profile_deleted, name)
 end
 

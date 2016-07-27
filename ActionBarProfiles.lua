@@ -71,11 +71,7 @@ function addon:OnInitialize()
 
     -- events
     self:RegisterEvent("PLAYER_REGEN_DISABLED", function(...)
-        if PaperDollActionBarProfilesPane and PaperDollActionBarProfilesPane:IsShown() then
-            self:ScheduleTimer(function()
-                PaperDollActionBarProfilesPane:Update()
-            end, 0.1)
-        end
+        self:UpdateGUI()
 
         if self.tooltip and self.tooltip:IsShown() then
             self.tooltip:Hide()
@@ -83,11 +79,7 @@ function addon:OnInitialize()
     end)
 
     self:RegisterEvent("PLAYER_REGEN_ENABLED", function(...)
-        if PaperDollActionBarProfilesPane and PaperDollActionBarProfilesPane:IsShown() then
-            self:ScheduleTimer(function()
-                PaperDollActionBarProfilesPane:Update()
-            end, 0.1)
-        end
+        self:UpdateGUI()
     end)
 end
 
@@ -236,6 +228,14 @@ function addon:UpdateTooltipData(tooltip)
     end
 
     tooltip:AddLine("")
+end
+
+function addon:UpdateGUI()
+    if PaperDollActionBarProfilesPane and PaperDollActionBarProfilesPane:IsShown() then
+        self:ScheduleTimer(function()
+            PaperDollActionBarProfilesPane:Update()
+        end, 0.1)
+    end
 end
 
 local PET_JOURNAL_FLAGS = { LE_PET_JOURNAL_FILTER_COLLECTED, LE_PET_JOURNAL_FILTER_NOT_COLLECTED }

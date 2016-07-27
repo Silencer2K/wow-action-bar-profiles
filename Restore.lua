@@ -74,11 +74,7 @@ function addon:UseProfile(profile, check, cache)
     cache.talents = talents
 
     if not check then
-        if PaperDollActionBarProfilesPane and PaperDollActionBarProfilesPane:IsShown() then
-            self:ScheduleTimer(function()
-                PaperDollActionBarProfilesPane:Update()
-            end, 0.1)
-        end
+        self:UpdateGUI()
     end
 
     return res.fail, res.total
