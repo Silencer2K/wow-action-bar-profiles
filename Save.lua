@@ -24,15 +24,17 @@ function addon:UpdateProfileOptions(profile, options, quiet)
         if not profile then return end
     end
 
-    local k, v
-    for k in pairs(profile) do
-        if k:sub(1, 4) == "skip" then
-            profile[k] = nil
+    if options then
+        local k, v
+        for k in pairs(profile) do
+            if k:sub(1, 4) == "skip" then
+                profile[k] = nil
+            end
         end
-    end
 
-    for k, v in pairs(options) do
-        profile[k] = v
+        for k, v in pairs(options) do
+            profile[k] = v
+        end
     end
 
     if not quiet then
