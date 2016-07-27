@@ -255,12 +255,12 @@ end
 
 function addon:UpdateGUI()
     if PaperDollActionBarProfilesPane and PaperDollActionBarProfilesPane:IsShown() then
-        if self.timerUpdate then
-            self:CancelTimer(self.timerUpdate)
+        if self.updateTimer then
+            self:CancelTimer(self.updateTimer)
         end
 
-        self.timerUpdate = self:ScheduleTimer(function()
-            self.timerUpdate = nil
+        self.updateTimer = self:ScheduleTimer(function()
+            self.updateTimer = nil
             PaperDollActionBarProfilesPane:Update()
         end, 0.1)
     end
