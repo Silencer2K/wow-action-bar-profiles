@@ -81,6 +81,29 @@ function addon:OnInitialize()
     self:RegisterEvent("PLAYER_REGEN_ENABLED", function(...)
         self:UpdateGUI()
     end)
+
+    self:RegisterEvent("PLAYER_UPDATE_RESTING", function(...)
+        self:UpdateGUI()
+    end)
+
+    self:RegisterEvent("UNIT_AURA", function(event, target)
+        if target == "player" then
+            if self.auraTimer then
+                self:CancelTimer(self.auraTimer)
+            end
+
+            self.auraTimer = self:ScheduleTimer(function()
+                self.auraTimer = nil
+
+                local state = UnitAura("player", GetSpellInfo(ABP_DUNGEON_PREPARE_SPELL_ID)) and true or nil
+
+                if state ~= self.auraState then
+                    self.auraState = state
+                    self:UpdateGUI()
+                end
+            end, 0.1)
+        end
+    end)
 end
 
 function addon:OnChatCommand(message)
@@ -232,7 +255,12 @@ end
 
 function addon:UpdateGUI()
     if PaperDollActionBarProfilesPane and PaperDollActionBarProfilesPane:IsShown() then
-        self:ScheduleTimer(function()
+        if self.timerUpdate then
+            self:CancelTimer(self.timerUpdate)
+        end
+
+        self.timerUpdate = self:ScheduleTimer(function()
+            self.timerUpdate = nil
             PaperDollActionBarProfilesPane:Update()
         end, 0.1)
     end

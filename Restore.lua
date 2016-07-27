@@ -96,7 +96,7 @@ function addon:RestoreTalents(profile, check, cache, res)
 
     -- hack: update cache
     local talents = { id = {}, name = {} }
-    local rest = IsResting()
+    local rest = self.auraState or IsResting()
 
     local tier
     for tier = 1, MAX_TALENT_TIERS do
