@@ -16,7 +16,7 @@ function addon:cPrint(cond, ...)
 end
 
 function addon:OnInitialize()
-    self.db = LibStub("AceDB-3.0"):New(addonName .. "DBv2", {
+    self.db = LibStub("AceDB-3.0"):New(addonName .. "DBv3", {
         profile = {
             minimap = {
                 hide = false,

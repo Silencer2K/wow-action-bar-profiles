@@ -45,6 +45,7 @@ function addon:UseProfile(profile, check, cache)
 
     cache = cache or self:MakeCache()
 
+    local macros = cache.macros
     local talents = cache.talents
 
     local res = { fail = 0, total = 0 }
@@ -69,6 +70,7 @@ function addon:UseProfile(profile, check, cache)
         self:RestoreBindings(profile, check, cache, res)
     end
 
+    cache.macros = macros
     cache.talents = talents
 
     if not check then
@@ -80,6 +82,9 @@ end
 
 function addon:RestoreMacros(profile, check, cache, res)
     local fail, total = 0, 0
+
+    local count = select(2, GetNumMacros())
+    local macros = table.s2k_copy(cache.macros)
 
     local slot
     for slot = 1, ABP_MAX_ACTION_BUTTONS do
@@ -98,13 +103,28 @@ function addon:RestoreMacros(profile, check, cache, res)
 
                     body = self:DecodeLink(body)
 
-                    local found = self:GetFromCache(cache.macros, self:PackMacro(body), name, not check and link)
-                    if found then
+                    if self:GetFromCache(cache.macros, self:PackMacro(body)) then
                         ok = true
+                        count = count - 1
+
+                    elseif count < MAX_CHARACTER_MACROS then
+                        if not check then
+                            index = CreateMacro(name, icon, body, 1)
+                            if index then
+                                ok = true
+                                self:UpdateCache(macros, index, self:PackMacro(body), name)
+                            end
+                        else
+                            ok = true
+                            self:UpdateCache(macros, -1, self:PackMacro(body), name)
+                        end
                     end
 
                     if not ok then
                         fail = fail + 1
+                        self:cPrintf(not check, L.msg_cant_create_macro, link)
+                    else
+                        count = count + 1
                     end
                 end
             else
@@ -112,6 +132,8 @@ function addon:RestoreMacros(profile, check, cache, res)
             end
         end
     end
+
+    cache.macros = macros
 
     if profile.skipActions then
         if res then
