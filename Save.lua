@@ -177,7 +177,7 @@ function addon:SaveActions(profile)
 
                 actions[slot] = string.format(
                     "|cffff0000|Habp:macro:%s:%s|h[%s]|h|r",
-                    icon, self:Serialize(body), name
+                    icon, self:EncodeLink(body), name
                 )
             end
 
