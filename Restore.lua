@@ -45,14 +45,13 @@ function addon:UseProfile(profile, check, cache)
 
     cache = cache or self:MakeCache()
 
+    local talents = cache.talents
+
     local res = { fail = 0, total = 0 }
 
     if not profile.skipMacros then
         self:RestoreMacros(profile, check, cache, res)
     end
-
-    -- hack: save talents
-    local talents = cache.talents
 
     if not profile.skipTalents then
         self:RestoreTalents(profile, check, cache, res)
@@ -70,7 +69,6 @@ function addon:UseProfile(profile, check, cache)
         self:RestoreBindings(profile, check, cache, res)
     end
 
-    -- hack: restore talents
     cache.talents = talents
 
     if not check then
@@ -83,12 +81,48 @@ end
 function addon:RestoreMacros(profile, check, cache, res)
     local fail, total = 0, 0
 
-    if res then
-        res.fail = res.fail + fail
-        res.total = res.total + total
+    local slot
+    for slot = 1, ABP_MAX_ACTION_BUTTONS do
+        local link = profile.actions[slot]
+        if link then
+            -- has action
+            local data, name = link:match("^|c.-|H(.-)|h%[(.-)%]|h|r$")
+            link = link:gsub("|Habp:.+|h(%[.+%])|h", "%1")
+
+            if data then
+                local type, sub, icon, body = strsplit(":", data)
+
+                if type == "abp" and sub == "macro" then
+                    local ok
+                    total = total + 1
+
+                    body = self:DecodeLink(body)
+
+                    local found = self:GetFromCache(cache.macros, self:PackMacro(body), name, not check and link)
+                    if found then
+                        ok = true
+                    end
+
+                    if not ok then
+                        fail = fail + 1
+                    end
+                end
+            else
+                self:cPrintf(profile.skipActions and not check, L.msg_bad_link, link)
+            end
+        end
     end
 
-    return fail, total
+    if profile.skipActions then
+        if res then
+            res.fail = res.fail + fail
+            res.total = res.total + total
+        end
+
+        return fail, total
+    end
+
+    return 0, 0
 end
 
 function addon:RestoreTalents(profile, check, cache, res)
@@ -106,7 +140,7 @@ function addon:RestoreTalents(profile, check, cache, res)
             local ok
             total = total + 1
 
-            local data, name = link:match("^|c.+|H(.+)|h%[(.+)%]|h|r$")
+            local data, name = link:match("^|c.-|H(.-)|h%[(.-)%]|h|r$")
             link = link:gsub("|Habp:.+|h(%[.+%])|h", "%1")
 
             if data then
@@ -121,7 +155,7 @@ function addon:RestoreTalents(profile, check, cache, res)
 
                             if rest then
                                 -- hack: update cache
-                                self:UpdateCache(talents, found, id, name)
+                                self:UpdateCache(talents, found, id, select(2, GetTalentInfoByID(id)))
 
                                 if not check then
                                     LearnTalent(found)
@@ -170,7 +204,7 @@ function addon:RestoreActions(profile, check, cache, res)
             local ok
             total = total + 1
 
-            local data, name = link:match("^|c.+|H(.+)|h%[(.+)%]|h|r$")
+            local data, name = link:match("^|c.-|H(.-)|h%[(.-)%]|h|r$")
             link = link:gsub("|Habp:.+|h(%[.+%])|h", "%1")
 
             if data then
@@ -331,7 +365,7 @@ function addon:RestorePetActions(profile, check, cache, res)
             local ok
             total = total + 1
 
-            local data, name = link:match("^|c.+|H(.+)|h%[(.+)%]|h|r$")
+            local data, name = link:match("^|c.-|H(.-)|h%[(.-)%]|h|r$")
             link = link:gsub("|Habp:.+|h(%[.+%])|h", "%1")
 
             if data then
@@ -447,7 +481,7 @@ function addon:GetFromCache(cache, id, name, link)
     end
 
     if cache.name and name and cache.name[name] then
-        --self:cPrintf(link, DEBUG .. L.msg_found_by_name, link)
+        self:cPrintf(link, DEBUG .. L.msg_found_by_name, link)
         return cache.name[name]
     end
 end
