@@ -72,10 +72,6 @@ function addon:OnInitialize()
     -- events
     self:RegisterEvent("PLAYER_REGEN_DISABLED", function(...)
         self:UpdateGUI()
-
-        if self.tooltip and self.tooltip:IsShown() then
-            self.tooltip:Hide()
-        end
     end)
 
     self:RegisterEvent("PLAYER_REGEN_ENABLED", function(...)
@@ -165,10 +161,8 @@ function addon:OnChatCommand(message)
 end
 
 function addon:UpdateTooltip(anchor)
-    if not InCombatLockdown() and not (self.tooltip and self.tooltip:IsShown()) then
-        if qtip:IsAcquired(addonName) and self.tooltip then
-            self.tooltip:Clear()
-        else
+    if not (InCombatLockdown() or (self.tooltip and self.tooltip:IsShown())) then
+        if not (qtip:IsAcquired(addonName) and self.tooltip) then
             self.tooltip = qtip:Acquire(addonName, 2, "LEFT")
 
             self.tooltip.OnRelease = function()
@@ -176,19 +170,18 @@ function addon:UpdateTooltip(anchor)
             end
         end
 
-        self:UpdateTooltipData(self.tooltip)
-
         if anchor then
             self.tooltip:SmartAnchorTo(anchor)
             self.tooltip:SetAutoHideDelay(0.05, anchor)
         end
 
-        self.tooltip:UpdateScrolling()
-        self.tooltip:Show()
+        self:UpdateTooltipData(self.tooltip)
     end
 end
 
 function addon:UpdateTooltipData(tooltip)
+    tooltip:Clear()
+
     local line = tooltip:AddHeader("Action Bar Profiles")
 
     local profiles = { addon:GetProfiles() }
@@ -251,19 +244,31 @@ function addon:UpdateTooltipData(tooltip)
     end
 
     tooltip:AddLine("")
+
+    tooltip:UpdateScrolling()
+    tooltip:Show()
 end
 
 function addon:UpdateGUI()
-    if PaperDollActionBarProfilesPane and PaperDollActionBarProfilesPane:IsShown() then
-        if self.updateTimer then
-            self:CancelTimer(self.updateTimer)
+    if self.updateTimer then
+        self:CancelTimer(self.updateTimer)
+    end
+
+    self.updateTimer = self:ScheduleTimer(function()
+        self.updateTimer = nil
+
+        if PaperDollActionBarProfilesPane and PaperDollActionBarProfilesPane:IsShown() then
+            PaperDollActionBarProfilesPane:Update()
         end
 
-        self.updateTimer = self:ScheduleTimer(function()
-            self.updateTimer = nil
-            PaperDollActionBarProfilesPane:Update()
-        end, 0.1)
-    end
+        if self.tooltip and self.tooltip:IsShown() then
+            if InCombatLockdown() then
+                self.tooltip:Hide()
+            else
+                self:UpdateTooltipData(self.tooltip)
+            end
+        end
+    end, 0.1)
 end
 
 local PET_JOURNAL_FLAGS = { LE_PET_JOURNAL_FILTER_COLLECTED, LE_PET_JOURNAL_FILTER_NOT_COLLECTED }
