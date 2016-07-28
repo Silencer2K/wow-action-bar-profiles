@@ -167,6 +167,8 @@ function addon:SaveActions(profile)
         elseif type == "summonmount" then
             if id == 0xFFFFFFF then
                 actions[slot] = GetSpellLink(ABP_RANDOM_MOUNT_SPELL_ID)
+            else
+                actions[slot] = GetSpellLink(({ C_MountJournal.GetMountInfoByID(id) })[2])
             end
 
         elseif type == "macro" then
