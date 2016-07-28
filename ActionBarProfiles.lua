@@ -25,6 +25,10 @@ function addon:OnInitialize()
         },
     }, ({ UnitClass("player") })[2])
 
+    self.db.RegisterCallback(self, "OnProfileReset", "UpdateGUI")
+    self.db.RegisterCallback(self, "OnProfileChanged", "UpdateGUI")
+    self.db.RegisterCallback(self, "OnProfileCopied", "UpdateGUI")
+
     -- chat command
     self:RegisterChatCommand("abp", "OnChatCommand")
 
