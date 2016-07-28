@@ -174,7 +174,7 @@ function addon:RestoreActions(profile, check, cache, res)
             link = link:gsub("|Habp:.+|h(%[.+%])|h", "%1")
 
             if data then
-                local type, sub, p1, p2, p6 = table.s2k_select({ strsplit(":", data) }, 1, 2, 3, 4, 8)
+                local type, sub, p1, p2, _, _, _, p6 = strsplit(":", data)
                 local id = tonumber(sub)
 
                 if type == "spell" then
@@ -252,6 +252,8 @@ function addon:RestoreActions(profile, check, cache, res)
                         end
                     end
 
+                    self:cPrintf(not ok and not check, L.msg_pet_not_exists, link)
+
                 elseif type == "abp" then
                     id = tonumber(p1)
 
@@ -276,6 +278,8 @@ function addon:RestoreActions(profile, check, cache, res)
                                 self:PlaceMacro(slot, found, link)
                             end
                         end
+
+                        self:cPrintf(not ok and not check, L.msg_macro_not_exists, link)
 
                     elseif sub == "equip" then
 
@@ -672,7 +676,7 @@ function addon:PreloadPetJournal(pets)
     local index
     for index = 1, C_PetJournal:GetNumPets() do
         local id, species = C_PetJournal.GetPetInfoByIndex(index)
-        self:UpdateCache(pets, id, id, name)
+        self:UpdateCache(pets, id, id, species)
     end
 
     self:RestorePetJournalFilters(saved)
