@@ -81,7 +81,7 @@ ABP_SPECIAL_SPELLS = {
     [688]    = { class = "WARLOCK" },                   -- Summon Imp
     [697]    = { class = "WARLOCK", level = 8 },        -- Summon Voidwalker
     [712]    = { class = "WARLOCK", level = 28 },       -- Summon Succubus
-    [691]    = { class = "WARLOCK", level = 35 },       -- Summon FelHUNTER
+    [691]    = { class = "WARLOCK", level = 35 },       -- Summon Felhunter
     [30146]  = { class = "WARLOCK", level = 40 },       -- Summon Felguard
 
     -- mage portals
