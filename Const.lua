@@ -73,6 +73,7 @@ ABP_SPECIAL_SPELLS = {
     [1462]   = { class = "HUNTER", level = 12 },        -- Beast Lore
     [2641]   = { class = "HUNTER", level = 10 },        -- Dismiss Pet
     [6991]   = { class = "HUNTER", level = 11 },        -- Feed Pet
+    [136]    = { class = "HUNTER" },                    -- Mend Pet
     [982]    = { class = "HUNTER" },                    -- Revive Pet
     [1515]   = { class = "HUNTER", level = 10 },        -- Tame Beast
 

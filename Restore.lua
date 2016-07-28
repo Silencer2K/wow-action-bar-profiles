@@ -261,7 +261,7 @@ function addon:RestoreActions(profile, check, cache, res)
                             ok = true
 
                             if not check then
-                                self:PickupAndPlaceSpellBookItem(slot, found, BOOKTYPE_SPELL, link)
+                                self:PickupAndPlaceFlyout(slot, found, BOOKTYPE_SPELL, link)
                             end
                         end
 
@@ -740,6 +740,13 @@ function addon:PickupAndPlaceSpellBookItem(slot, id, tab, link, count)
     else
         self:PlaceToSlot(slot)
     end
+end
+
+function addon:PickupAndPlaceFlyout(slot, id, tab, link, count)
+    ClearCursor()
+    PickupSpellBookItem(id, tab)
+
+    self:PlaceToSlot(slot)
 end
 
 function addon:PickupAndPlaceTalent(slot, id, link, count)
