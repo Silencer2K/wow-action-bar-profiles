@@ -110,7 +110,7 @@ function addon:RestoreTalents(profile, check, cache, res)
             link = link:gsub("|Habp:.+|h(%[.+%])|h", "%1")
 
             if data then
-                local type, sub = strsplit(":", data, 3)
+                local type, sub = strsplit(":", data)
                 local id = tonumber(sub)
 
                 if type == "talent" then
@@ -174,7 +174,7 @@ function addon:RestoreActions(profile, check, cache, res)
             link = link:gsub("|Habp:.+|h(%[.+%])|h", "%1")
 
             if data then
-                local type, sub, p1, p2, p7 = table.s2k_select({ strsplit(":", data) }, 1, 2, 3, 4, 8)
+                local type, sub, p1, p2, p6 = table.s2k_select({ strsplit(":", data) }, 1, 2, 3, 4, 8)
                 local id = tonumber(sub)
 
                 if type == "spell" then
@@ -243,7 +243,7 @@ function addon:RestoreActions(profile, check, cache, res)
                     ok = true   -- sic!
 
                 elseif type == "battlepet" then
-                    local found = self:GetFromCache(cache.pets, p7, id, not check and link)
+                    local found = self:GetFromCache(cache.pets, p6, id, not check and link)
                     if found then
                         ok = true
 
@@ -331,7 +331,7 @@ function addon:RestorePetActions(profile, check, cache, res)
             link = link:gsub("|Habp:.+|h(%[.+%])|h", "%1")
 
             if data then
-                local type, sub, p1 = strsplit(":", data, 4)
+                local type, sub, p1 = strsplit(":", data)
                 local id = tonumber(sub)
 
                 if type == "spell" or (type == "abp" and sub == "pet") then
