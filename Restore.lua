@@ -342,7 +342,15 @@ function addon:RestoreActions(profile, check, cache, res)
                         self:cPrintf(not ok and not check, L.msg_macro_not_exists, link)
 
                     elseif sub == "equip" then
+                        if GetEquipmentSetInfoByName(name) then
+                            ok = true
 
+                            if not check then
+                                self:PlaceEquipment(slot, name, link)
+                            end
+                        end
+
+                        self:cPrintf(not ok and not check, L.msg_equip_not_exists, link)
                     else
                         self:cPrintf(not check, L.msg_bad_link, link)
                     end
@@ -947,6 +955,13 @@ function addon:PlaceMacro(slot, id, link, count)
     else
         self:PlaceToSlot(slot)
     end
+end
+
+function addon:PlaceEquipment(slot, id, link, count)
+    ClearCursor()
+    PickupEquipmentSetByName(id)
+
+    self:PlaceToSlot(slot)
 end
 
 function addon:PlacePetSpell(slot, id, link, count)
