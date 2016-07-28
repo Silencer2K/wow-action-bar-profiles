@@ -268,7 +268,7 @@ function addon:RestoreActions(profile, check, cache, res)
                         self:cPrintf(not ok and not check, L.msg_spell_not_exists, link)
 
                     elseif sub == "macro" then
-                        local found = self:GetFromCache(cache.macros, self:MakeMacroKey(p2), name, not check and link)
+                        local found = self:GetFromCache(cache.macros, self:MakeMacroKey(select(2, self:Deserialize(p2))), name, not check and link)
                         if found then
                             ok = true
 
@@ -679,11 +679,7 @@ function addon:PreloadPetJournal(pets)
 end
 
 function addon:MakeMacroKey(body)
-    body = body:gsub(" +", " ")
-    body = body:gsub("\n+", "\n")
-    body = body:gsub("\n$", "")
-
-    return body
+    return body:gsub(" +", " "):gsub("\n+", "\n"):gsub("\n$", "")
 end
 
 function addon:PreloadMacros(macros)
