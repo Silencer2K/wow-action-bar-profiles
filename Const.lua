@@ -137,4 +137,9 @@ ABP_SPECIAL_SPELLS = {
     [8679]   = { class = "ROGUE", spec = 259, level = 25 },             -- Wound Poison
     [108211] = { class = "ROGUE", spec = 259, level = 60 },             -- Leeching Poison
     [200802] = { class = "ROGUE", spec = 259, level = 90 },             -- Agonizing Poison
+
+    -- paladin blessings
+    [203528] = { class = "PALADIN", spec = 70, level = 42 },            -- Greater Blessing of Might
+    [203538] = { class = "PALADIN", spec = 70, level = 44 },            -- Greater Blessing of Kings
+    [203539] = { class = "PALADIN", spec = 70, level = 46 },            -- Greater Blessing of Wisdom
 }
