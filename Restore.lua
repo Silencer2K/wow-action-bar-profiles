@@ -182,7 +182,7 @@ function addon:RestoreActions(profile, check, cache, res)
                         ok = true
 
                         if not check then
-                            self:PickupAndPlaceMount(slot, 0, link)
+                            self:PlaceMount(slot, 0, link)
                         end
                     else
                         local found = self:FindSpellInCache(cache.spells, id, name, not check and link)
@@ -190,7 +190,7 @@ function addon:RestoreActions(profile, check, cache, res)
                             ok = true
 
                             if not check then
-                                self:PickupAndPlaceSpell(slot, found, link)
+                                self:PlaceSpell(slot, found, link)
                             end
                         end
                     end
@@ -203,7 +203,7 @@ function addon:RestoreActions(profile, check, cache, res)
                         ok = true
 
                         if not check then
-                            self:PickupAndPlaceTalent(slot, found, link)
+                            self:PlaceTalent(slot, found, link)
                         end
                     end
 
@@ -214,7 +214,7 @@ function addon:RestoreActions(profile, check, cache, res)
                         ok = true
 
                         if not check then
-                            self:PickupAndPlaceItem(slot, id, link)
+                            self:PlaceItem(slot, id, link)
                         end
                     else
                         local found = self:FindItemInCache(cache.equip, id, name, not check and link)
@@ -222,7 +222,7 @@ function addon:RestoreActions(profile, check, cache, res)
                             ok = true
 
                             if not check then
-                                self:PickupAndPlaceInventoryItem(slot, found, link)
+                                self:PlaceInventoryItem(slot, found, link)
                             end
                         else
                             found = self:FindItemInCache(cache.bags, id, name, not check and link)
@@ -230,14 +230,14 @@ function addon:RestoreActions(profile, check, cache, res)
                                 ok = true
 
                                 if not check then
-                                    self:PickupAndPlaceContainerItem(slot, found[1], found[2], link)
+                                    self:PlaceContainerItem(slot, found[1], found[2], link)
                                 end
                             end
                         end
                     end
 
                     if not ok and not check then
-                        self:PickupAndPlaceItem(slot, S2KFI:GetConvertedItemId(id) or id, link)
+                        self:PlaceItem(slot, S2KFI:GetConvertedItemId(id) or id, link)
                     end
 
                     ok = true   -- sic!
@@ -248,7 +248,7 @@ function addon:RestoreActions(profile, check, cache, res)
                         ok = true
 
                         if not check then
-                            self:PickupAndPlacePet(slot, found, link)
+                            self:PlacePet(slot, found, link)
                         end
                     end
 
@@ -261,7 +261,7 @@ function addon:RestoreActions(profile, check, cache, res)
                             ok = true
 
                             if not check then
-                                self:PickupAndPlaceFlyout(slot, found, BOOKTYPE_SPELL, link)
+                                self:PlaceFlyout(slot, found, BOOKTYPE_SPELL, link)
                             end
                         end
 
@@ -339,7 +339,7 @@ function addon:RestorePetActions(profile, check, cache, res)
                         ok = true
 
                         if not check then
-                            self:PickupAndPlacePetSpell(slot, found, link)
+                            self:PlacePetSpell(slot, found, link)
                         end
                     end
                 else
@@ -704,7 +704,7 @@ function addon:PlaceToPetSlot(slot)
     ClearCursor()
 end
 
-function addon:PickupAndPlaceSpell(slot, id, link, count)
+function addon:PlaceSpell(slot, id, link, count)
     count = count or ABP_PICKUP_RETRY_COUNT
 
     ClearCursor()
@@ -713,7 +713,7 @@ function addon:PickupAndPlaceSpell(slot, id, link, count)
     if not CursorHasSpell() then
         if count > 0 then
             self:ScheduleTimer(function()
-                self:PickupAndPlaceSpell(slot, id, link, count - 1)
+                self:PlaceSpell(slot, id, link, count - 1)
             end, ABP_PICKUP_RETRY_INTERVAL)
         else
             self:cPrintf(link, DEBUG .. L.msg_cant_place_spell, link)
@@ -723,7 +723,7 @@ function addon:PickupAndPlaceSpell(slot, id, link, count)
     end
 end
 
-function addon:PickupAndPlaceSpellBookItem(slot, id, tab, link, count)
+function addon:PlaceSpellBookItem(slot, id, tab, link, count)
     count = count or ABP_PICKUP_RETRY_COUNT
 
     ClearCursor()
@@ -732,7 +732,7 @@ function addon:PickupAndPlaceSpellBookItem(slot, id, tab, link, count)
     if not CursorHasSpell() then
         if count > 0 then
             self:ScheduleTimer(function()
-                self:PickupAndPlaceSpellBookItem(slot, id, tab, link, count - 1)
+                self:PlaceSpellBookItem(slot, id, tab, link, count - 1)
             end, ABP_PICKUP_RETRY_INTERVAL)
         else
             self:cPrintf(link, DEBUG .. L.msg_cant_place_spell, link)
@@ -742,14 +742,14 @@ function addon:PickupAndPlaceSpellBookItem(slot, id, tab, link, count)
     end
 end
 
-function addon:PickupAndPlaceFlyout(slot, id, tab, link, count)
+function addon:PlaceFlyout(slot, id, tab, link, count)
     ClearCursor()
     PickupSpellBookItem(id, tab)
 
     self:PlaceToSlot(slot)
 end
 
-function addon:PickupAndPlaceTalent(slot, id, link, count)
+function addon:PlaceTalent(slot, id, link, count)
     count = count or ABP_PICKUP_RETRY_COUNT
 
     ClearCursor()
@@ -758,7 +758,7 @@ function addon:PickupAndPlaceTalent(slot, id, link, count)
     if not CursorHasSpell() then
         if count > 0 then
             self:ScheduleTimer(function()
-                self:PickupAndPlaceTalent(slot, id, link, count - 1)
+                self:PlaceTalent(slot, id, link, count - 1)
             end, ABP_PICKUP_RETRY_INTERVAL)
         else
             self:cPrintf(link, DEBUG .. L.msg_cant_place_spell, link)
@@ -768,21 +768,21 @@ function addon:PickupAndPlaceTalent(slot, id, link, count)
     end
 end
 
-function addon:PickupAndPlaceMount(slot, id, link, count)
+function addon:PlaceMount(slot, id, link, count)
     ClearCursor()
     C_MountJournal.Pickup(id)
 
     self:PlaceToSlot(slot)
 end
 
-function addon:PickupAndPlaceItem(slot, id, link, count)
+function addon:PlaceItem(slot, id, link, count)
     ClearCursor()
     PickupItem(id)
 
     self:PlaceToSlot(slot)
 end
 
-function addon:PickupAndPlaceInventoryItem(slot, id, link, count)
+function addon:PlaceInventoryItem(slot, id, link, count)
     count = count or ABP_PICKUP_RETRY_COUNT
 
     ClearCursor()
@@ -791,7 +791,7 @@ function addon:PickupAndPlaceInventoryItem(slot, id, link, count)
     if not CursorHasItem() then
         if count > 0 then
             self:ScheduleTimer(function()
-                self:PickupAndPlaceInventoryItem(slot, id, link, count - 1)
+                self:PlaceInventoryItem(slot, id, link, count - 1)
             end, ABP_PICKUP_RETRY_INTERVAL)
         else
             self:cPrintf(link, DEBUG .. L.msg_cant_place_item, link)
@@ -801,7 +801,7 @@ function addon:PickupAndPlaceInventoryItem(slot, id, link, count)
     end
 end
 
-function addon:PickupAndPlaceContainerItem(slot, bag, id, link, count)
+function addon:PlaceContainerItem(slot, bag, id, link, count)
     count = count or ABP_PICKUP_RETRY_COUNT
 
     ClearCursor()
@@ -810,7 +810,7 @@ function addon:PickupAndPlaceContainerItem(slot, bag, id, link, count)
     if not CursorHasItem() then
         if count > 0 then
             self:ScheduleTimer(function()
-                self:PickupAndPlaceContainerItem(slot, id, link, count - 1)
+                self:PlaceContainerItem(slot, id, link, count - 1)
             end, ABP_PICKUP_RETRY_INTERVAL)
         else
             self:cPrintf(link, DEBUG .. L.msg_cant_place_item, link)
@@ -820,14 +820,14 @@ function addon:PickupAndPlaceContainerItem(slot, bag, id, link, count)
     end
 end
 
-function addon:PickupAndPlacePet(slot, id, link, count)
+function addon:PlacePet(slot, id, link, count)
     ClearCursor()
     C_PetJournal.PickupPet(id)
 
     self:PlaceToSlot(slot)
 end
 
-function addon:PickupAndPlacePetSpell(slot, id, link, count)
+function addon:PlacePetSpell(slot, id, link, count)
     ClearCursor()
     PickupSpellBookItem(id, BOOKTYPE_PET)
 
