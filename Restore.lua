@@ -452,7 +452,7 @@ function addon:FindSpellInCache(cache, id, name, link)
     if similar then
         local alt
         for alt in table.s2k_values(similar) do
-            local found = self:GetFromCache(cache, id)
+            local found = self:GetFromCache(cache, alt)
             if found then
                 return found
             end
