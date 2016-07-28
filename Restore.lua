@@ -268,6 +268,14 @@ function addon:RestoreActions(profile, check, cache, res)
                         self:cPrintf(not ok and not check, L.msg_spell_not_exists, link)
 
                     elseif sub == "macro" then
+                        local found = self:GetFromCache(cache.macros, self:MakeMacroKey(p2), name, not check and link)
+                        if found then
+                            ok = true
+
+                            if not check then
+                                self:PlaceMacro(slot, found, link)
+                            end
+                        end
 
                     elseif sub == "equip" then
 
@@ -507,6 +515,8 @@ function addon:MakeCache()
 
         pets = { id = {}, name = {} },
 
+        macros = { id = {}, name = {} },
+
         petSpells = { id = {}, name = {} },
     }
 
@@ -520,6 +530,8 @@ function addon:MakeCache()
     self:PreloadBags(cache.bags)
 
     self:PreloadPetJournal(cache.pets)
+
+    self:PreloadMacros(cache.macros)
 
     self:PreloadPetSpells(cache.petSpells)
 
@@ -664,6 +676,33 @@ function addon:PreloadPetJournal(pets)
     end
 
     self:RestorePetJournalFilters(saved)
+end
+
+function addon:MakeMacroKey(body)
+    body = body:gsub(" +", " ")
+    body = body:gsub("\n+", "\n")
+    body = body:gsub("\n$", "")
+
+    return body
+end
+
+function addon:PreloadMacros(macros)
+    local all, char = GetNumMacros()
+
+    local index
+    for index = 1, all do
+        local name, _, body = GetMacroInfo(index)
+        if body then
+            self:UpdateCache(macros, index, addon:MakeMacroKey(body), name)
+        end
+    end
+
+    for index = MAX_ACCOUNT_MACROS + 1, MAX_ACCOUNT_MACROS + char do
+        local name, _, body = GetMacroInfo(index)
+        if body then
+            self:UpdateCache(macros, index, addon:MakeMacroKey(body), name)
+        end
+    end
 end
 
 function addon:PreloadPetSpells(spells)
@@ -825,6 +864,25 @@ function addon:PlacePet(slot, id, link, count)
     C_PetJournal.PickupPet(id)
 
     self:PlaceToSlot(slot)
+end
+
+function addon:PlaceMacro(slot, id, link, count)
+    count = count or ABP_PICKUP_RETRY_COUNT
+
+    ClearCursor()
+    PickupMacro(id)
+
+    if not CursorHasMacro() then
+        if count > 0 then
+            self:ScheduleTimer(function()
+                self:PlaceMacro(slot, id, link, count - 1)
+            end, ABP_PICKUP_RETRY_INTERVAL)
+        else
+            self:cPrintf(link, DEBUG .. L.msg_cant_place_macro, link)
+        end
+    else
+        self:PlaceToSlot(slot)
+    end
 end
 
 function addon:PlacePetSpell(slot, id, link, count)
