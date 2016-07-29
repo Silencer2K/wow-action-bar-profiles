@@ -447,7 +447,12 @@ function addon:CommSendCmd(cmd, target)
         cmd = cmd,
         timer = self:ScheduleTimer(function()
             if cmd == "share" then
-                SendChatMessage(L.char_share_invite:format(ABP_ADDON_NAME, ABP_ADDON_NAME, ABP_DOWNLOAD_LINK), "WHISPER", nil, target)
+                local messages = { strsplit("\n", L.chat_share_invite:format(ABP_ADDON_NAME, ABP_ADDON_NAME, ABP_DOWNLOAD_LINK)) }
+
+                local message
+                for message in table.s2k_values(messages) do
+                    SendChatMessage(message, "WHISPER", nil, target)
+                end
             end
 
             self.commCmds[id] = nil
