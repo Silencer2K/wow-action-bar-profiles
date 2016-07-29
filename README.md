@@ -11,10 +11,10 @@ Chat commands
 -------------
 
 * /abp list - shows the list of available profiles
-* /abp use *profile name* - activates the profile named *profile name*
-* /abp save *profile name* - saves current action bars to the profile named *profile name*
-* /abp del *profile name* - deletes the profile named *profile name*
-* /abp send *character* - sends current action bars to *character*
+* /abp use *name* - activates the profile *name*
+* /abp save *name* - saves current actions to the profile *name*
+* /abp del *name* - deletes the profile *name*
+* /abp send *char* - sends current profile to *char*
 
 Links
 -----
@@ -22,5 +22,4 @@ Links
 * The latest release is available on [http://www.curse.com/addons/wow/action-bar-profiles](http://www.curse.com/addons/wow/action-bar-profiles)
 * The latest alpha build is available on [http://www.wowace.com/addons/action-bar-profiles/files](http://www.wowace.com/addons/action-bar-profiles/files)
 * The source code is available on [https://github.com/Silencer2K/wow-action-bar-profiles](https://github.com/Silencer2K/wow-action-bar-profiles)
-* You can add the translation or correct an error in the text on [http://www.wowace.com/addons/action-bar-profiles/localization](http://www.wowace.com/addons/action-bar-profiles/localization)
 * My other add-ons are available on [http://www.curse.com/users/silencer2k/projects](http://www.curse.com/users/silencer2k/projects)
