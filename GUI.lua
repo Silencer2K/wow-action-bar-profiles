@@ -18,11 +18,9 @@ function frame:OnInitialize()
     self.update = function() self:Update() end
 
     HybridScrollFrame_CreateButtons(self, "ActionBarProfileButtonTemplate", 2, -(self.UseProfile:GetHeight() + 4))
-    --self:Update()
 end
 
 function frame:OnShow()
-    HybridScrollFrame_CreateButtons(self, "ActionBarProfileButtonTemplate")
     self:Update()
 end
 
