@@ -1,7 +1,7 @@
 Action Bar Profiles
 ===================
 
-:warning: **Please note, updating to 7.0.3-2 deletes all existing profiles.**
+⚠️ **Please note, updating to 7.0.3-2 deletes all existing profiles.**
 
 Add-on that allows you to setup and quickly switch between different profiles of your action bars, talents and macros.
 
