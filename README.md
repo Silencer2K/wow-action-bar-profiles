@@ -1,7 +1,7 @@
 Action Bar Profiles
 ===================
 
-**Please note, updating to 7.0.3-2 deletes all existing profiles.**
+:warning: **Please note, updating to 7.0.3-2 deletes all existing profiles.**
 
 Add-on that allows you to setup and quickly switch between different profiles of your action bars. Add-on is very similar to **Action Bar Saver** but uses GUI instead of chat commands.
 
