@@ -9,9 +9,9 @@ Chat commands
 -------------
 
 * /abp list - shows the list of available profiles
-* /abp use **name** - activates the profile **name**
-* /abp save **name** - saves current actions to the profile **name**
-* /abp del **name** - deletes the profile **name**
+* /abp use **name** - activates the profile
+* /abp save **name** - saves current actions to the profile
+* /abp del **name** - deletes the profile
 * /abp send **char** - sends current profile to **char**
 
 Links
