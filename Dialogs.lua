@@ -67,6 +67,22 @@ StaticPopupDialogs.CONFIRM_OVERWRITE_ACTION_BAR_PROFILE = {
     whileDead = 1,
 }
 
+StaticPopupDialogs.CONFIRM_RECEIVE_ACTION_BAR_PROFILE = {
+    text = L.confirm_receive,
+
+    button1 = YES,
+    button2 = NO,
+
+    OnAccept = function(popup) addon:OnReceiveConfirm(popup) end,
+    OnHide = function(popup) end,
+    OnCancel = function(popup) end,
+
+    hideOnEscape = 1,
+    timeout = 0,
+    exclusive = 1,
+    whileDead = 1,
+}
+
 function addon:ShowPopup(id, p1, p2, options)
     local popup = StaticPopup_Show(id, p1, p2)
     if popup then
@@ -98,5 +114,17 @@ function addon:OnOverwriteConfirm(popup)
 
     if popup.hide then
         popup.hide:Hide()
+    end
+end
+
+function addon:OnReceiveConfirm(popup)
+    local name = self:GuessName(popup.name)
+    if name then
+        local list = self.db.profile.list
+
+        list[name] = popup.profile
+
+        self:UpdateGUI()
+        self:Printf(L.msg_profile_saved, name)
     end
 end

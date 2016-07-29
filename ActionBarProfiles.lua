@@ -1,6 +1,6 @@
 local addonName, addon = ...
 
-LibStub("AceAddon-3.0"):NewAddon(addon, addonName, "AceConsole-3.0", "AceTimer-3.0", "AceEvent-3.0")
+LibStub("AceAddon-3.0"):NewAddon(addon, addonName, "AceConsole-3.0", "AceTimer-3.0", "AceEvent-3.0", "AceComm-3.0", "AceSerializer-3.0")
 
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 local DEBUG = "|cffff0000Debug:|r "
@@ -16,7 +16,7 @@ function addon:cPrint(cond, ...)
 end
 
 function addon:OnInitialize()
-    self.db = LibStub("AceDB-3.0"):New(addonName .. "DBv3", {
+    self.db = LibStub("AceDB-3.0"):New(addonName .. "DB" .. ABP_DB_VERSION, {
         profile = {
             minimap = {
                 hide = false,
@@ -104,6 +104,11 @@ function addon:OnInitialize()
             end, 0.1)
         end
     end)
+
+    -- profile sharing
+    self:RegisterComm(ABP_COMM_SHARE, function(...)
+        self:OnCommShare(...)
+    end)
 end
 
 function addon:OnChatCommand(message)
@@ -160,6 +165,11 @@ function addon:OnChatCommand(message)
             else
                 self:Printf(L.msg_profile_not_exists, param)
             end
+        end
+
+    elseif cmd == "send" or cmd == "share" or cmd == "sh" then
+        if param ~= "" then
+            self:ShareProfile(param)
         end
     end
 end
@@ -387,4 +397,19 @@ end
 
 function addon:PackMacro(macro)
     return macro:gsub("^%s+", ""):gsub("%s+\n", "\n"):gsub("\n%s+", "\n"):gsub("%s+$", "")
+end
+
+function addon:OnCommShare(prefix, text, channel, sender)
+    if channel == "WHISPER" then
+        local profile = select(2, self:Deserialize(text))
+        if profile then
+            if not addon:ShowPopup("CONFIRM_RECEIVE_ACTION_BAR_PROFILE", sender, nil, { name = sender, profile = profile }) then
+                UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
+            end
+        end
+    end
+end
+
+function addon:ShareProfile(target)
+    self:SendCommMessage(ABP_COMM_SHARE, self:Serialize(self:UpdateProfile({}, true)), "WHISPER", target)
 end

@@ -3,6 +3,22 @@ local addonName, addon = ...
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 local DEBUG = "|cffff0000Debug:|r "
 
+function addon:GuessName(name)
+    local list = self.db.profile.list
+
+    if not list[name] then
+        return name
+    end
+
+    local i
+    for i = 2, 99 do
+        local try = string.format("%s (%d)", name, i)
+        if not list[try] then
+            return try
+        end
+    end
+end
+
 function addon:SaveProfile(name, options)
     local list = self.db.profile.list
     local profile = { name = name }
@@ -62,6 +78,8 @@ function addon:UpdateProfile(profile, quiet)
         self:UpdateGUI()
         self:Printf(L.msg_profile_updated, profile.name)
     end
+
+    return profile
 end
 
 function addon:RenameProfile(name, rename, quiet)
