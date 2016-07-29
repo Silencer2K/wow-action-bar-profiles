@@ -106,6 +106,10 @@ function addon:OnInitialize()
     end)
 
     -- profile sharing
+    self:RegisterComm(ABP_COMM_CMD, function(...)
+        self:OnCommCmd(...)
+    end)
+
     self:RegisterComm(ABP_COMM_SHARE, function(...)
         self:OnCommShare(...)
     end)
@@ -169,7 +173,7 @@ function addon:OnChatCommand(message)
 
     elseif cmd == "send" or cmd == "share" or cmd == "sh" then
         if param ~= "" then
-            self:ShareProfile(param)
+            self:CommSendCmd("share", param)
         end
     end
 end
@@ -399,9 +403,33 @@ function addon:PackMacro(macro)
     return macro:gsub("^%s+", ""):gsub("%s+\n", "\n"):gsub("\n%s+", "\n"):gsub("%s+$", "")
 end
 
+function addon:OnCommCmd(prefix, text, channel, sender)
+    if channel == "WHISPER" then
+        local type, cmd, id = strsplit(":", text)
+
+        if type == "req" then
+            self:SendCommMessage(ABP_COMM_CMD, string.format("ack:%s:%s", cmd, id), "WHISPER", sender)
+
+        elseif type == "ack" then
+            if self.commCmds and self.commCmds[id] and self.commCmds[id].cmd == cmd then
+                if self.commCmds[id].timer then
+                    self:CancelTimer(self.commCmds[id].timer)
+                end
+
+                if cmd == "share" then
+                    self:SendCommMessage(ABP_COMM_SHARE, self:Serialize(self:UpdateProfile({}, true)), "WHISPER", sender)
+                end
+
+                self.commCmds[id] = nil
+            end
+        end
+    end
+end
+
 function addon:OnCommShare(prefix, text, channel, sender)
     if channel == "WHISPER" then
         local profile = select(2, self:Deserialize(text))
+
         if profile then
             if not addon:ShowPopup("CONFIRM_RECEIVE_ACTION_BAR_PROFILE", sender, nil, { name = sender, profile = profile }) then
                 UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
@@ -410,6 +438,21 @@ function addon:OnCommShare(prefix, text, channel, sender)
     end
 end
 
-function addon:ShareProfile(target)
-    self:SendCommMessage(ABP_COMM_SHARE, self:Serialize(self:UpdateProfile({}, true)), "WHISPER", target)
+function addon:CommSendCmd(cmd, target)
+    local id = string.format("%08d", math.random(99999999))
+
+    self.commCmds = self.commCmds or {}
+
+    self.commCmds[id] = {
+        cmd = cmd,
+        timer = self:ScheduleTimer(function()
+            self:OnCommTimeout(id)
+                if cmd == "share" then
+                end
+
+            self.commCmds[id] = nil
+        end, 5)
+    }
+
+    self:SendCommMessage(ABP_COMM_CMD, string.format("req:%s:%s", cmd, id), "WHISPER", target)
 end
