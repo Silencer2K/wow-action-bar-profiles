@@ -446,9 +446,9 @@ function addon:CommSendCmd(cmd, target)
     self.commCmds[id] = {
         cmd = cmd,
         timer = self:ScheduleTimer(function()
-            self:OnCommTimeout(id)
-                if cmd == "share" then
-                end
+            if cmd == "share" then
+                SendChatMessage(L.char_share_invite:format(ABP_ADDON_NAME, ABP_ADDON_NAME, ABP_DOWNLOAD_LINK), "WHISPER", nil, target)
+            end
 
             self.commCmds[id] = nil
         end, 5)
