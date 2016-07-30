@@ -44,7 +44,7 @@ function addon:OnInitialize()
         icon = "Interface\\ICONS\\INV_Misc_Book_09",
         label = addonName,
         OnEnter = function(...)
-            self:UpdateTooltip(...)
+            self:ShowTooltip(...)
         end,
         OnLeave = function()
         end,
@@ -178,7 +178,7 @@ function addon:OnChatCommand(message)
     end
 end
 
-function addon:UpdateTooltip(anchor)
+function addon:ShowTooltip(anchor)
     if not (InCombatLockdown() or (self.tooltip and self.tooltip:IsShown())) then
         if not (qtip:IsAcquired(addonName) and self.tooltip) then
             self.tooltip = qtip:Acquire(addonName, 2, "LEFT")
@@ -193,11 +193,11 @@ function addon:UpdateTooltip(anchor)
             self.tooltip:SetAutoHideDelay(0.05, anchor)
         end
 
-        self:UpdateTooltipData(self.tooltip)
+        self:UpdateTooltip(self.tooltip)
     end
 end
 
-function addon:UpdateTooltipData(tooltip)
+function addon:UpdateTooltip(tooltip)
     tooltip:Clear()
 
     local line = tooltip:AddHeader("Action Bar Profiles")
@@ -283,7 +283,7 @@ function addon:UpdateGUI()
             if InCombatLockdown() then
                 self.tooltip:Hide()
             else
-                self:UpdateTooltipData(self.tooltip)
+                self:UpdateTooltip(self.tooltip)
             end
         end
     end, 0.1)
