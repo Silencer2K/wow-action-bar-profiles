@@ -115,12 +115,22 @@ function addon:OnInitialize()
     end)
 end
 
+function addon:ParseArgs(message)
+    local arg, pos = self:GetArgs(message, 1, 1)
+
+    if arg then
+        if pos <= #message then
+            return arg, message:sub(pos)
+        else
+            return arg
+        end
+    end
+end
+
 function addon:OnChatCommand(message)
-    local cmd, pos = self:GetArgs(message, 1, 1)
+    local cmd, param = self:ParseArgs(message)
 
     if not cmd then return end
-
-    local param = strtrim(message:sub(pos))
 
     if cmd == "list" or cmd == "ls" then
         local list = {}
@@ -139,7 +149,7 @@ function addon:OnChatCommand(message)
         end
 
     elseif cmd == "save" or cmd == "sv" then
-        if param ~= "" then
+        if param then
             local profile = self:GetProfiles(param, true)
 
             if profile then
@@ -150,7 +160,7 @@ function addon:OnChatCommand(message)
         end
 
     elseif cmd == "delete" or cmd == "del" or cmd == "remove" or cmd == "rm" then
-        if param ~= "" then
+        if param then
             local profile = self:GetProfiles(param, true)
 
             if profile then
@@ -161,7 +171,7 @@ function addon:OnChatCommand(message)
         end
 
     elseif cmd == "use" or cmd == "load" or cmd == "ld" then
-        if param ~= "" then
+        if param then
             local profile = self:GetProfiles(param, true)
 
             if profile then
@@ -172,7 +182,7 @@ function addon:OnChatCommand(message)
         end
 
     elseif cmd == "send" or cmd == "share" or cmd == "sh" then
-        if param ~= "" then
+        if param then
             self:CommSendCmd("share", param)
         end
     end
