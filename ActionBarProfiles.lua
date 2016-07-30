@@ -183,7 +183,21 @@ function addon:OnChatCommand(message)
 
     elseif cmd == "send" or cmd == "share" or cmd == "sh" then
         if param then
-            self:CommSendCmd("share", param)
+            local char, profile
+
+            char, param = self:ParseArgs(param)
+
+            if param then
+                profile = self:GetProfiles(param, true)
+            else
+                profile = self:UpdateProfile({}, true)
+            end
+
+            if profile then
+                self:CommSendCmd("share", char, profile)
+            else
+                self:Printf(L.msg_profile_not_exists, param)
+            end
         end
     end
 end
@@ -427,7 +441,7 @@ function addon:OnCommCmd(prefix, text, channel, sender)
                 end
 
                 if cmd == "share" then
-                    self:SendCommMessage(ABP_COMM_SHARE, self:Serialize(self:UpdateProfile({}, true)), "WHISPER", sender)
+                    self:SendCommMessage(ABP_COMM_SHARE, self:Serialize(self.commCmds[id].data), "WHISPER", sender)
                 end
 
                 self.commCmds[id] = nil
@@ -448,12 +462,13 @@ function addon:OnCommShare(prefix, text, channel, sender)
     end
 end
 
-function addon:CommSendCmd(cmd, target)
+function addon:CommSendCmd(cmd, target, data)
     local id = string.format("%08d", math.random(99999999))
 
     self.commCmds = self.commCmds or {}
 
     self.commCmds[id] = {
+        data = data,
         cmd = cmd,
         timer = self:ScheduleTimer(function()
             if cmd == "share" then
