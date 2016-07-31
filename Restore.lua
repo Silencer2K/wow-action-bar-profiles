@@ -87,8 +87,25 @@ end
 function addon:RestoreMacros(profile, check, cache, res)
     local fail, total = 0, 0
 
-    local count = select(2, GetNumMacros())
-    local macros = table.s2k_copy(cache.macros)
+    local all, char = GetNumMacros()
+    local macros
+
+    if self.db.profile.delete_macros then
+        macros = { id = {}, name = {} }
+
+        if not check then
+            local index
+            for index = 1, all do
+                DeleteMacro(1)
+            end
+
+            for index = 1, char do
+                DeleteMacro(MAX_ACCOUNT_MACROS + 1)
+            end
+        end
+    else
+        macros = table.s2k_copy(cache.macros)
+    end
 
     local slot
     for slot = 1, ABP_MAX_ACTION_BUTTONS do
@@ -99,7 +116,7 @@ function addon:RestoreMacros(profile, check, cache, res)
             link = link:gsub("|Habp:.+|h(%[.+%])|h", "%1")
 
             if data then
-                local type, sub, icon, body = strsplit(":", data)
+                local type, sub, icon, body, global = strsplit(":", data)
 
                 if type == "abp" and sub == "macro" then
                     local ok
@@ -107,13 +124,10 @@ function addon:RestoreMacros(profile, check, cache, res)
 
                     body = self:DecodeLink(body)
 
-                    if self:GetFromCache(cache.macros, self:PackMacro(body)) then
-                        ok = true
-                        count = count - 1
-
-                    elseif count < MAX_CHARACTER_MACROS then
+                    if self.db.profile.delete_macros then
                         if not check then
-                            index = CreateMacro(name, icon, body, 1)
+                            local index = CreateMacro(name, icon, body, not global)
+
                             if index then
                                 ok = true
                                 self:UpdateCache(macros, index, self:PackMacro(body), name)
@@ -122,33 +136,75 @@ function addon:RestoreMacros(profile, check, cache, res)
                             ok = true
                             self:UpdateCache(macros, -1, self:PackMacro(body), name)
                         end
+                    else
                     end
 
                     if not ok then
                         fail = fail + 1
                         self:cPrintf(not check, L.msg_cant_create_macro, link)
                     else
-                        count = count + 1
+                        all = all + ((global and 1) or 0)
+                        char = char + ((global and 0) or 1)
                     end
                 end
             else
-                self:cPrintf(profile.skipActions and not check, L.msg_bad_link, link)
+                self:cPrintf(not check, L.msg_bad_link, link)
+            end
+        end
+    end
+
+    if self.db.profile.delete_macros and profile.macros then
+        for slot = 1, #profile.macros do
+            local link = profile.macros[slot]
+
+            local data, name = link:match("^|c.-|H(.-)|h%[(.-)%]|h|r$")
+            link = link:gsub("|Habp:.+|h(%[.+%])|h", "%1")
+
+            if data then
+                local type, sub, icon, body, global = strsplit(":", data)
+
+                if type == "abp" and sub == "macro" then
+                    local ok
+                    total = total + 1
+
+                    body = self:DecodeLink(body)
+
+                    if not check then
+                        local index = CreateMacro(name, icon, body, not global)
+
+                        if index then
+                            ok = true
+                            self:UpdateCache(macros, index, self:PackMacro(body), name)
+                        end
+                    else
+                        ok = true
+                        self:UpdateCache(macros, -1, self:PackMacro(body), name)
+                    end
+
+                    if not ok then
+                        fail = fail + 1
+                        self:cPrintf(not check, L.msg_cant_create_macro, link)
+                    else
+                        all = all + ((global and 1) or 0)
+                        char = char + ((global and 0) or 1)
+                    end
+                else
+                    self:cPrintf(not check, L.msg_bad_link, link)
+                end
+            else
+                self:cPrintf(not check, L.msg_bad_link, link)
             end
         end
     end
 
     cache.macros = macros
 
-    if profile.skipActions then
-        if res then
-            res.fail = res.fail + fail
-            res.total = res.total + total
-        end
-
-        return fail, total
+    if res then
+        res.fail = res.fail + fail
+        res.total = res.total + total
     end
 
-    return 0, 0
+    return fail, total
 end
 
 function addon:RestoreTalents(profile, check, cache, res)
@@ -339,7 +395,13 @@ function addon:RestoreActions(profile, check, cache, res)
                             end
                         end
 
-                        self:cPrintf(not ok and not check, L.msg_macro_not_exists, link)
+                        if not ok then
+                            if profile.skipMacros then
+                                self:cPrintf(not check, L.msg_macro_not_exists, link)
+                            else
+                                fail = fail - 1
+                            end
+                        end
 
                     elseif sub == "equip" then
                         if GetEquipmentSetInfoByName(name) then
