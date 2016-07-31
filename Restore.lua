@@ -137,7 +137,7 @@ function addon:RestoreMacros(profile, check, cache, res)
                             self:UpdateCache(macros, -1, self:PackMacro(body), name)
                         end
                     else
-                        --
+                    --
                     end
 
                     if not ok then
