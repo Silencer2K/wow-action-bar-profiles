@@ -90,7 +90,7 @@ function addon:RestoreMacros(profile, check, cache, res)
     local all, char = GetNumMacros()
     local macros
 
-    if self.db.profile.delete_macros then
+    if self.db.profile.replace_macros then
         macros = { id = {}, name = {} }
 
         if not check then
@@ -124,16 +124,16 @@ function addon:RestoreMacros(profile, check, cache, res)
 
                     body = self:DecodeLink(body)
 
-                    if not self.db.profile.delete_macros and self:GetFromCache(macros, self:PackMacro(body), name) then
+                    if not self.db.profile.replace_macros and self:GetFromCache(macros, self:PackMacro(body), name) then
                         ok = true
 
-                    elseif self.db.profile.delete_macros or (global and all < MAX_ACCOUNT_MACROS) or (not global and char < MAX_CHARACTER_MACROS) then
+                    elseif self.db.profile.replace_macros or (global and all < MAX_ACCOUNT_MACROS) or (not global and char < MAX_CHARACTER_MACROS) then
                         if check or CreateMacro(name, icon, body, not global) then
                             ok = true
                             self:UpdateCache(macros, -1, self:PackMacro(body), name)
                         end
 
-                        if not self.db.profile.delete_macros and ok then
+                        if not self.db.profile.replace_macros and ok then
                             all = all + ((global and 1) or 0)
                             char = char + ((global and 0) or 1)
                         end
@@ -150,7 +150,7 @@ function addon:RestoreMacros(profile, check, cache, res)
         end
     end
 
-    if self.db.profile.delete_macros and profile.macros then
+    if self.db.profile.replace_macros and profile.macros then
         for slot = 1, #profile.macros do
             local link = profile.macros[slot]
 

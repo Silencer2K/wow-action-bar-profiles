@@ -27,16 +27,16 @@ function addon:GetOptions()
                             return not self.db.profile.minimap.hide
                         end,
                     },
-                    delete_macros = {
+                    replace_macros = {
                         order = 2,
-                        name = L.cfg_delete_macros,
+                        name = L.cfg_replace_macros,
                         type = "toggle",
                         width = "full",
                         set = function(info, value)
-                            self.db.profile.delete_macros = value
+                            self.db.profile.replace_macros = value
                         end,
                         get = function(info)
-                            return self.db.profile.delete_macros
+                            return self.db.profile.replace_macros
                         end,
                     },
                 },

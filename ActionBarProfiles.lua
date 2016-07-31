@@ -22,7 +22,7 @@ function addon:OnInitialize()
                 hide = false,
             },
             list = {},
-            delete_macros = false,
+            replace_macros = false,
         },
     }, ({ UnitClass("player") })[2])
 
