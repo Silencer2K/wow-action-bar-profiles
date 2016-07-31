@@ -57,8 +57,7 @@ function addon:OnInitialize()
         end,
     })
 
-    self.icon = LibStub("LibDBIcon-1.0")
-    self.icon:Register(addonName, self.ldb, self.db.profile.minimap)
+    LibStub("LibDBIcon-1.0"):Register(addonName, self.ldb, self.db.profile.minimap)
 
     -- char frame
     if PaperDollActionBarProfilesPane then
