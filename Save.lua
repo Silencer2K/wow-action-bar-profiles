@@ -193,10 +193,17 @@ function addon:SaveActions(profile)
             if id > 0 then
                 local name, icon, body = GetMacroInfo(id)
 
-                actions[slot] = string.format(
-                    "|cffff0000|Habp:macro:%s:%s|h[%s]|h|r",
-                    icon, self:EncodeLink(body), name
-                )
+                if id > MAX_ACCOUNT_MACROS then
+                    actions[slot] = string.format(
+                        "|cffff0000|Habp:macro:%s:%s|h[%s]|h|r",
+                        icon, self:EncodeLink(body), name
+                    )
+                else
+                    actions[slot] = string.format(
+                        "|cffff0000|Habp:macro:%s:%s:1|h[%s]|h|r",
+                        icon, self:EncodeLink(body), name
+                    )
+                end
             end
 
         elseif type == "equipmentset" then
