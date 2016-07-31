@@ -145,7 +145,7 @@ function addon:RestoreMacros(profile, check, cache, res)
                     end
                 end
             else
-                self:cPrintf(not check, L.msg_bad_link, link)
+                self:cPrintf(profile.skipActions and not check, L.msg_bad_link, link)
             end
         end
     end
