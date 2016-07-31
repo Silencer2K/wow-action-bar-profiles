@@ -22,6 +22,7 @@ function addon:OnInitialize()
                 hide = false,
             },
             list = {},
+            delete_macros = false,
         },
     }, ({ UnitClass("player") })[2])
 
@@ -57,7 +58,8 @@ function addon:OnInitialize()
         end,
     })
 
-    LibStub("LibDBIcon-1.0"):Register(addonName, self.ldb, self.db.profile.minimap)
+    self.icon = LibStub("LibDBIcon-1.0")
+    self.icon:Register(addonName, self.ldb, self.db.profile.minimap)
 
     -- char frame
     if PaperDollActionBarProfilesPane then

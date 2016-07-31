@@ -11,8 +11,10 @@ function addon:GetOptions()
                 type = "group",
                 args = {
                     minimap = {
+                        order = 1,
                         name = L.cfg_minimap_icon,
                         type = "toggle",
+                        width = "full",
                         set = function(info, value)
                             self.db.profile.minimap.hide = not value
                             if value then
@@ -23,6 +25,18 @@ function addon:GetOptions()
                         end,
                         get = function(info)
                             return not self.db.profile.minimap.hide
+                        end,
+                    },
+                    delete_macros = {
+                        order = 2,
+                        name = L.cfg_delete_macros,
+                        type = "toggle",
+                        width = "full",
+                        set = function(info, value)
+                            self.db.profile.delete_macros = value
+                        end,
+                        get = function(info)
+                            return self.db.profile.delete_macros
                         end,
                     },
                 },
