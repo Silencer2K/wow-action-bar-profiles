@@ -137,14 +137,12 @@ function addon:RestoreMacros(profile, check, cache, res)
                             self:UpdateCache(macros, -1, self:PackMacro(body), name)
                         end
                     else
+                        --
                     end
 
                     if not ok then
                         fail = fail + 1
                         self:cPrintf(not check, L.msg_cant_create_macro, link)
-                    else
-                        all = all + ((global and 1) or 0)
-                        char = char + ((global and 0) or 1)
                     end
                 end
             else
@@ -184,9 +182,6 @@ function addon:RestoreMacros(profile, check, cache, res)
                     if not ok then
                         fail = fail + 1
                         self:cPrintf(not check, L.msg_cant_create_macro, link)
-                    else
-                        all = all + ((global and 1) or 0)
-                        char = char + ((global and 0) or 1)
                     end
                 else
                     self:cPrintf(not check, L.msg_bad_link, link)
