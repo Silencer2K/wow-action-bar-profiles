@@ -425,7 +425,7 @@ function addon:DecodeLink(data)
 end
 
 function addon:PackMacro(macro)
-    return macro:gsub("/abp%s+macro", ""):gsub("^%s+", ""):gsub("%s+\n", "\n"):gsub("\n%s+", "\n"):gsub("%s+$", ""):sub(1)
+    return macro:gsub("^%s+", ""):gsub("%s+\n", "\n"):gsub("\n%s+", "\n"):gsub("%s+$", ""):sub(1)
 end
 
 function addon:OnCommCmd(prefix, text, channel, sender)

@@ -151,6 +151,7 @@ function addon:SaveActions(profile)
     profile.talents = talents
 
     local actions = {}
+    local savedMacros = {}
 
     local slot
     for slot = 1, ABP_MAX_ACTION_BUTTONS do
@@ -204,6 +205,8 @@ function addon:SaveActions(profile)
                         icon, self:EncodeLink(body), name
                     )
                 end
+
+                savedMacros[id] = true
             end
 
         elseif type == "equipmentset" then
@@ -215,6 +218,34 @@ function addon:SaveActions(profile)
     end
 
     profile.actions = actions
+
+    local macros = {}
+    local allMacros, charMacros = GetNumMacros()
+
+    local index
+    for index = 1, allMacros do
+        local name, icon, body = GetMacroInfo(index)
+
+        if body and not savedMacros[index] then
+            table.insert(macros, string.format(
+                "|cffff0000|Habp:macro:%s:%s:1|h[%s]|h|r",
+                icon, self:EncodeLink(body), name
+            ))
+        end
+    end
+
+    for index = MAX_ACCOUNT_MACROS + 1, MAX_ACCOUNT_MACROS + charMacros do
+        local name, icon, body = GetMacroInfo(index)
+
+        if body and not savedMacros[index] then
+            table.insert(macros, string.format(
+                "|cffff0000|Habp:macro:%s:%s|h[%s]|h|r",
+                icon, self:EncodeLink(body), name
+            ))
+        end
+    end
+
+    profile.macros = macros
 end
 
 function addon:SavePetActions(profile)
