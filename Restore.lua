@@ -129,11 +129,9 @@ function addon:RestoreMacros(profile, check, cache, res)
 
                     elseif self.db.profile.delete_macros or (global and all < MAX_ACCOUNT_MACROS) or (not global and char < MAX_CHARACTER_MACROS) then
                         if not check then
-                            local index = CreateMacro(name, icon, body, not global)
-
-                            if index then
+                            if CreateMacro(name, icon, body, not global) then
                                 ok = true
-                                self:UpdateCache(macros, index, self:PackMacro(body), name)
+                                self:UpdateCache(macros, -1, self:PackMacro(body), name)
                             end
                         else
                             ok = true
@@ -174,11 +172,9 @@ function addon:RestoreMacros(profile, check, cache, res)
                     body = self:DecodeLink(body)
 
                     if not check then
-                        local index = CreateMacro(name, icon, body, not global)
-
-                        if index then
+                        if CreateMacro(name, icon, body, not global) then
                             ok = true
-                            self:UpdateCache(macros, index, self:PackMacro(body), name)
+                            self:UpdateCache(macros, -1, self:PackMacro(body), name)
                         end
                     else
                         ok = true
@@ -196,6 +192,11 @@ function addon:RestoreMacros(profile, check, cache, res)
                 self:cPrintf(not check, L.msg_bad_link, link)
             end
         end
+    end
+
+    if not check then
+        -- correct macro ids
+        self:PreloadMacros(macros)
     end
 
     cache.macros = macros
