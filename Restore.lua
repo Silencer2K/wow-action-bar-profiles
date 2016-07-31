@@ -137,7 +137,27 @@ function addon:RestoreMacros(profile, check, cache, res)
                             self:UpdateCache(macros, -1, self:PackMacro(body), name)
                         end
                     else
-                    --
+                        if self:GetFromCache(macros, self:PackMacro(body), name) then
+                            ok = true
+
+                        elseif (global and all < MAX_ACCOUNT_MACROS) or (not global and char < MAX_CHARACTER_MACROS) then
+                            if not check then
+                                local index = CreateMacro(name, icon, body, not global)
+
+                                if index then
+                                    ok = true
+                                    self:UpdateCache(macros, index, self:PackMacro(body), name)
+                                end
+                            else
+                                ok = true
+                                self:UpdateCache(macros, -1, self:PackMacro(body), name)
+                            end
+
+                            if ok then
+                                all = all + ((global and 1) or 0)
+                                char = char + ((global and 0) or 1)
+                            end
+                        end
                     end
 
                     if not ok then
@@ -390,10 +410,11 @@ function addon:RestoreActions(profile, check, cache, res)
                             end
                         end
 
-                        if not ok then
-                            if profile.skipMacros then
-                                self:cPrintf(not check, L.msg_macro_not_exists, link)
-                            else
+                        if profile.skipMacros then
+                            self:cPrintf(not ok and not check, L.msg_macro_not_exists, link)
+                        else
+                            total = total - 1
+                            if not ok then
                                 fail = fail - 1
                             end
                         end
