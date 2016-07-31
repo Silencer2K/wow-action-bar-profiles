@@ -124,7 +124,10 @@ function addon:RestoreMacros(profile, check, cache, res)
 
                     body = self:DecodeLink(body)
 
-                    if self.db.profile.delete_macros then
+                    if not self.db.profile.delete_macros and self:GetFromCache(macros, self:PackMacro(body), name) then
+                        ok = true
+
+                    elseif self.db.profile.delete_macros or (global and all < MAX_ACCOUNT_MACROS) or (not global and char < MAX_CHARACTER_MACROS) then
                         if not check then
                             local index = CreateMacro(name, icon, body, not global)
 
@@ -136,27 +139,10 @@ function addon:RestoreMacros(profile, check, cache, res)
                             ok = true
                             self:UpdateCache(macros, -1, self:PackMacro(body), name)
                         end
-                    else
-                        if self:GetFromCache(macros, self:PackMacro(body), name) then
-                            ok = true
 
-                        elseif (global and all < MAX_ACCOUNT_MACROS) or (not global and char < MAX_CHARACTER_MACROS) then
-                            if not check then
-                                local index = CreateMacro(name, icon, body, not global)
-
-                                if index then
-                                    ok = true
-                                    self:UpdateCache(macros, index, self:PackMacro(body), name)
-                                end
-                            else
-                                ok = true
-                                self:UpdateCache(macros, -1, self:PackMacro(body), name)
-                            end
-
-                            if ok then
-                                all = all + ((global and 1) or 0)
-                                char = char + ((global and 0) or 1)
-                            end
+                        if not self.db.profile.delete_macros and ok then
+                            all = all + ((global and 1) or 0)
+                            char = char + ((global and 0) or 1)
                         end
                     end
 
