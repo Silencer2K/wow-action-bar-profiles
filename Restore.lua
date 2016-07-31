@@ -128,12 +128,7 @@ function addon:RestoreMacros(profile, check, cache, res)
                         ok = true
 
                     elseif self.db.profile.delete_macros or (global and all < MAX_ACCOUNT_MACROS) or (not global and char < MAX_CHARACTER_MACROS) then
-                        if not check then
-                            if CreateMacro(name, icon, body, not global) then
-                                ok = true
-                                self:UpdateCache(macros, -1, self:PackMacro(body), name)
-                            end
-                        else
+                        if check or CreateMacro(name, icon, body, not global) then
                             ok = true
                             self:UpdateCache(macros, -1, self:PackMacro(body), name)
                         end
@@ -171,12 +166,7 @@ function addon:RestoreMacros(profile, check, cache, res)
 
                     body = self:DecodeLink(body)
 
-                    if not check then
-                        if CreateMacro(name, icon, body, not global) then
-                            ok = true
-                            self:UpdateCache(macros, -1, self:PackMacro(body), name)
-                        end
-                    else
+                    if check or CreateMacro(name, icon, body, not global) then
                         ok = true
                         self:UpdateCache(macros, -1, self:PackMacro(body), name)
                     end
