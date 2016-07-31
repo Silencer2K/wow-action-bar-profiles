@@ -5,7 +5,7 @@ ABP_COMM_PREFIX = "ABP" .. ABP_DB_VERSION
 ABP_COMM_CMD = ABP_COMM_PREFIX .. "cmd"
 ABP_COMM_SHARE = ABP_COMM_PREFIX .. "share"
 
-ABP_ADDON_NAME = "ActionBarProfiles"
+ABP_ADDON_NAME = "Action Bar Profiles"
 ABP_DOWNLOAD_LINK = "https://mods.curse.com/addons/wow/action-bar-profiles"
 
 ABP_MAX_ACTION_BUTTONS = 120

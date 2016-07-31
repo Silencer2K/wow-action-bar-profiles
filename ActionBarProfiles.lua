@@ -223,7 +223,7 @@ end
 function addon:UpdateTooltip(tooltip)
     tooltip:Clear()
 
-    local line = tooltip:AddHeader("Action Bar Profiles")
+    local line = tooltip:AddHeader(ABP_ADDON_NAME)
 
     local profiles = { addon:GetProfiles() }
 
