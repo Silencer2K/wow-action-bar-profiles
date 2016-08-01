@@ -220,18 +220,14 @@ function addon:RestoreTalents(profile, check, cache, res)
                 if type == "talent" then
                     local found = self:GetFromCache(cache.allTalents[tier], id, name, not check and link)
                     if found then
-                        local learned = self:GetFromCache(cache.talents, id)
-
-                        if learned or rest or select(2, GetTalentTierInfo(tier, 1)) == 0 then
+                        if self:GetFromCache(cache.talents, id) or rest or select(2, GetTalentTierInfo(tier, 1)) == 0 then
                             ok = true
 
-                            if not learned then
-                                -- hack: update cache
-                                self:UpdateCache(talents, found, id, select(2, GetTalentInfoByID(id)))
+                            -- hack: update cache
+                            self:UpdateCache(talents, found, id, select(2, GetTalentInfoByID(id)))
 
-                                if not check then
-                                    LearnTalent(found)
-                                end
+                            if not check then
+                                LearnTalent(found)
                             end
                         else
                             self:cPrintf(not check, L.msg_cant_learn_talent, link)
@@ -253,9 +249,7 @@ function addon:RestoreTalents(profile, check, cache, res)
     end
 
     -- hack: update cache
-    if rest then
-        cache.talents = talents
-    end
+    cache.talents = talents
 
     if res then
         res.fail = res.fail + fail
