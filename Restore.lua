@@ -220,10 +220,12 @@ function addon:RestoreTalents(profile, check, cache, res)
                 if type == "talent" then
                     local found = self:GetFromCache(cache.allTalents[tier], id, name, not check and link)
                     if found then
-                        if rest or self:GetFromCache(cache.talents, id) or select(2, GetTalentTierInfo(tier, 1)) == 0 then
+                        local learned = self:GetFromCache(cache.talents, id)
+
+                        if learned or rest or select(2, GetTalentTierInfo(tier, 1)) == 0 then
                             ok = true
 
-                            if rest then
+                            if not learned then
                                 -- hack: update cache
                                 self:UpdateCache(talents, found, id, select(2, GetTalentInfoByID(id)))
 
