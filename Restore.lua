@@ -220,7 +220,7 @@ function addon:RestoreTalents(profile, check, cache, res)
                 if type == "talent" then
                     local found = self:GetFromCache(cache.allTalents[tier], id, name, not check and link)
                     if found then
-                        if rest or self:GetFromCache(cache.talents, id) then
+                        if rest or self:GetFromCache(cache.talents, id) or select(2, GetTalentTierInfo(tier, 1)) == 0 then
                             ok = true
 
                             if rest then
@@ -743,7 +743,6 @@ function addon:PreloadTalents(talents, all)
         all[tier] = all[tier] or { id = {}, name = {} }
 
         if GetTalentTierInfo(tier, 1) then
-
             local column
             for column = 1, NUM_TALENT_COLUMNS do
                 local id, name, _, selected = GetTalentInfo(tier, column, 1)
