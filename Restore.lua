@@ -715,7 +715,8 @@ function addon:PreloadSpellbook(spells, flyouts)
 
             if type == "FLYOUT" then
                 self:UpdateCache(flyouts, index, id, name)
-            else
+
+            elseif type == "SPELL" then
                 self:UpdateCache(spells, id, id, name)
             end
         end

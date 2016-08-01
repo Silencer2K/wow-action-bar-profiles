@@ -125,7 +125,7 @@ function addon:SaveActions(profile)
                 if type == "FLYOUT" then
                     flyouts[id] = name
 
-                elseif IsTalentSpell(index, BOOKTYPE_SPELL) then
+                elseif type == "SPELL" and IsTalentSpell(index, BOOKTYPE_SPELL) then
                     tsNames[name] = id
                 end
             end
