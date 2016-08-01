@@ -62,10 +62,6 @@ function addon:UseProfile(profile, check, cache)
         self:RestoreActions(profile, check, cache, res)
     end
 
-    if not profile.skipEmptySlots then
-        self:RestoreEmptySlots(profile, check, cache, res)
-    end
-
     if not profile.skipPetActions then
         self:RestorePetActions(profile, check, cache, res)
     end
@@ -423,6 +419,10 @@ function addon:RestoreActions(profile, check, cache, res)
                     self:ClearSlot(slot)
                 end
             end
+        else
+            if not profile.skipEmptySlots and not check then
+                self:ClearSlot(slot)
+            end
         end
     end
 
@@ -432,19 +432,6 @@ function addon:RestoreActions(profile, check, cache, res)
     end
 
     return fail, total
-end
-
-function addon:RestoreEmptySlots(profile, check, cache, res)
-    if not check then
-        local slot
-        for slot = 1, ABP_MAX_ACTION_BUTTONS do
-            if not profile.actions[slot] then
-                self:ClearSlot(slot)
-            end
-        end
-    end
-
-    return 0, 0
 end
 
 function addon:RestorePetActions(profile, check, cache, res)
