@@ -194,6 +194,8 @@ function addon:SaveActions(profile)
             if id > 0 then
                 local name, icon, body = GetMacroInfo(id)
 
+                icon = icon or ABP_EMPTY_ICON_TEXTURE_ID
+
                 if id > MAX_ACCOUNT_MACROS then
                     actions[slot] = string.format(
                         "|cffff0000|Habp:macro:%s:%s|h[%s]|h|r",
@@ -226,6 +228,8 @@ function addon:SaveActions(profile)
     for index = 1, allMacros do
         local name, icon, body = GetMacroInfo(index)
 
+        icon = icon or ABP_EMPTY_ICON_TEXTURE_ID
+
         if body and not savedMacros[index] then
             table.insert(macros, string.format(
                 "|cffff0000|Habp:macro:%s:%s:1|h[%s]|h|r",
@@ -236,6 +240,8 @@ function addon:SaveActions(profile)
 
     for index = MAX_ACCOUNT_MACROS + 1, MAX_ACCOUNT_MACROS + charMacros do
         local name, icon, body = GetMacroInfo(index)
+
+        icon = icon or ABP_EMPTY_ICON_TEXTURE_ID
 
         if body and not savedMacros[index] then
             table.insert(macros, string.format(
