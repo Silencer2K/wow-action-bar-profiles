@@ -509,7 +509,7 @@ function addon:RestoreBindings(profile, check, cache, res)
         local bind = { GetBinding(index) }
         if bind[3] then
             local key
-            for key in pairs({ select(3, unpack(bind)) }) do
+            for key in table.s2k_values({ select(3, unpack(bind)) }) do
                 SetBinding(key)
             end
         end
