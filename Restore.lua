@@ -118,7 +118,11 @@ function addon:RestoreMacros(profile, check, cache, res)
                     local ok
                     total = total + 1
 
-                    body = self:DecodeLink(body)
+                    if body:sub(-2) == "^^" then
+                        body = select(2, self:Deserialize(body))
+                    else
+                        body = self:DecodeLink(body)
+                    end
 
                     if not self.db.profile.replace_macros and self:GetFromCache(macros, self:PackMacro(body), name) then
                         ok = true
@@ -160,7 +164,11 @@ function addon:RestoreMacros(profile, check, cache, res)
                     local ok
                     total = total + 1
 
-                    body = self:DecodeLink(body)
+                    if body:sub(-2) == "^^" then
+                        body = select(2, self:Deserialize(body))
+                    else
+                        body = self:DecodeLink(body)
+                    end
 
                     if check or CreateMacro(name, icon, body, not global) then
                         ok = true
@@ -370,7 +378,15 @@ function addon:RestoreActions(profile, check, cache, res)
                         self:cPrintf(not ok and not check, L.msg_spell_not_exists, link)
 
                     elseif sub == "macro" then
-                        local found = self:GetFromCache(cache.macros, self:PackMacro(self:DecodeLink(p2)), name, not check and link)
+                        local body = p2
+
+                        if body:sub(-2) == "^^" then
+                            body = select(2, self:Deserialize(body))
+                        else
+                            body = self:DecodeLink(body)
+                        end
+
+                        local found = self:GetFromCache(cache.macros, self:PackMacro(body), name, not check and link)
                         if found then
                             ok = true
 
