@@ -99,6 +99,8 @@ function addon:RestoreMacros(profile, check, cache, res)
                 DeleteMacro(MAX_ACCOUNT_MACROS + 1)
             end
         end
+
+        all, char = 0, 0
     else
         macros = table.s2k_copy(cache.macros)
     end
@@ -120,7 +122,7 @@ function addon:RestoreMacros(profile, check, cache, res)
 
                     body = self:DecodeLink(body)
 
-                    if not self.db.profile.replace_macros and self:GetFromCache(macros, self:PackMacro(body), name) then
+                    if self:GetFromCache(macros, self:PackMacro(body)) then
                         ok = true
 
                     elseif self.db.profile.replace_macros or (global and all < MAX_ACCOUNT_MACROS) or (not global and char < MAX_CHARACTER_MACROS) then
@@ -129,7 +131,7 @@ function addon:RestoreMacros(profile, check, cache, res)
                             self:UpdateCache(macros, -1, self:PackMacro(body), name)
                         end
 
-                        if not self.db.profile.replace_macros and ok then
+                        if ok then
                             all = all + ((global and 1) or 0)
                             char = char + ((global and 0) or 1)
                         end
@@ -162,7 +164,10 @@ function addon:RestoreMacros(profile, check, cache, res)
 
                     body = self:DecodeLink(body)
 
-                    if check or CreateMacro(name, icon, body, not global) then
+                    if self:GetFromCache(macros, self:PackMacro(body)) then
+                        ok = true
+
+                    elseif check or CreateMacro(name, icon, body, not global) then
                         ok = true
                         self:UpdateCache(macros, -1, self:PackMacro(body), name)
                     end
