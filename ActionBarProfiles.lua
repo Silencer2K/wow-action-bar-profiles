@@ -96,7 +96,9 @@ function addon:OnInitialize()
             self.auraTimer = self:ScheduleTimer(function()
                 self.auraTimer = nil
 
-                local state = UnitAura("player", GetSpellInfo(ABP_DUNGEON_PREPARE_SPELL_ID)) and true or nil
+                local state = (UnitAura("player", GetSpellInfo(ABP_TOME_OF_CLEAR_MIND_SPELL_ID))
+                    or UnitAura("player", GetSpellInfo(ABP_TOME_OF_TRANQUIL_MIND_SPELL_ID))
+                    or UnitAura("player", GetSpellInfo(ABP_DUNGEON_PREPARE_SPELL_ID))) and true or nil
 
                 if state ~= self.auraState then
                     self.auraState = state
