@@ -655,6 +655,7 @@ function addon:MakeCache()
     self:PreloadSpecialSpells(cache.spells)
     self:PreloadSpellbook(cache.spells, cache.flyouts)
     self:PreloadMountjournal(cache.spells)
+    self:PreloadCombatAllySpells(cache.spells)
 
     self:PreloadEquip(cache.equip)
     self:PreloadBags(cache.bags)
@@ -741,6 +742,17 @@ function addon:PreloadMountjournal(mounts)
 
         if collected and (not required or required == faction) then
             self:UpdateCache(mounts, id, id, name)
+        end
+    end
+end
+
+function addon:PreloadCombatAllySpells(spells)
+    local follower
+    for follower in table.s2k_values(C_Garrison.GetFollowers()) do
+        local id
+        for id in table.s2k_values({ C_Garrison.GetFollowerZoneSupportAbilities(follower.garrFollowerID) }) do
+            local name = GetSpellInfo(id)
+            self:UpdateCache(spells, 211390, id, name)
         end
     end
 end
