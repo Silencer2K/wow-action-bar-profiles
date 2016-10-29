@@ -112,6 +112,10 @@ ABP_SPECIAL_SPELLS = {
         level = 90,
         altSpellIds = { 161676, 161332, 162075, 161767, 170097, 170108, 168487, 168499, 164012, 164050, 165803, 164222, 160240, 160241 },
     },
+    -- broken isles combat ally ability
+    [211390] = {
+        level = 100,
+    },
 
     -- hunter pets
     [883]    = { class = "HUNTER" },                    -- Call Pet 1
