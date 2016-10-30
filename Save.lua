@@ -321,10 +321,42 @@ function addon:SaveBindings(profile)
     profile.bindingsDominos = bindingsDominos
 end
 
+function addon:ResetDefault(key, quiet)
+    local list = self.db.profile.list
+    local profile
+
+    for profile in table.s2k_values(list) do
+        profile.fav = profile.fav or {}
+        profile.fav[key] = nil
+    end
+
+    if not quiet then
+        self:UpdateGUI()
+    end
+end
+
 function addon:SetDefault(name, key)
+    local list = self.db.profile.list
+    local profile = list[name]
+
+    if not profile then return end
+
+    self:ResetDefault(key, true)
+
+    profile.fav = profile.fav or {}
+    profile.fav[key] = 1
+
     self:UpdateGUI()
 end
 
 function addon:UnsetDefault(name, key)
+    local list = self.db.profile.list
+    local profile = list[name]
+
+    if not profile then return end
+
+    profile.fav = profile.fav or {}
+    profile.fav[key] = nil
+
     self:UpdateGUI()
 end

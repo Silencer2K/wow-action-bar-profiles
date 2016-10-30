@@ -1036,4 +1036,12 @@ function addon:PlacePetSpell(slot, id, link, count)
 end
 
 function addon:IsDefault(profile, key)
+    if type(profile) ~= "table" then
+        local list = self.db.profile.list
+        profile = list[profile]
+
+        if not profile then return end
+    end
+
+    return profile.fav[key] and true or nil
 end

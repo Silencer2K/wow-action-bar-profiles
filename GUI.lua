@@ -113,17 +113,17 @@ function frame:OnEditClick(button)
 end
 
 function frame:OnFavClick(button)
-    local name = UnitName("player") .. "-" .. GetRealmName("player")
+    local player = UnitName("player") .. "-" .. GetRealmName("player")
     local spec = GetSpecializationInfo(GetSpecialization())
 
-    addon:SetDefault(button.name, name .. "-" .. spec)
+    addon:SetDefault(button.name, player .. "-" .. spec)
 end
 
 function frame:OnUnfavClick(button)
-    local name = UnitName("player") .. "-" .. GetRealmName("player")
+    local player = UnitName("player") .. "-" .. GetRealmName("player")
     local spec = GetSpecializationInfo(GetSpecialization())
 
-    addon:UnsetDefault(button.name, name .. "-" .. spec)
+    addon:UnsetDefault(button.name, player .. "-" .. spec)
 end
 
 function frame:Update()
@@ -134,7 +134,7 @@ function frame:Update()
 
     local offset = HybridScrollFrame_GetOffset(self)
 
-    local name = UnitName("player") .. "-" .. GetRealmName("player")
+    local player = UnitName("player") .. "-" .. GetRealmName("player")
     local class = select(2, UnitClass("player"))
     local spec = GetSpecializationInfo(GetSpecialization())
 
@@ -201,7 +201,7 @@ function frame:Update()
                     button.SelectedBar:Hide()
                 end
 
-                if addon:IsDefault(profile, name .. "-" .. spec) then
+                if addon:IsDefault(profile, player .. "-" .. spec) then
                     button.UnfavButton:Show()
                 else
                     button.UnfavButton:Hide()
