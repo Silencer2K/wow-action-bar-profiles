@@ -33,15 +33,23 @@ function frame:OnUpdate()
     for button in table.s2k_values(self.buttons) do
         if button:IsMouseOver() then
             if button.name then
+                if button.UnfavButton:IsShown() then
+                    button.FavButton:Hide()
+                else
+                    button.FavButton:Show()
+                end
+
                 button.DeleteButton:Show()
                 button.EditButton:Show()
             else
+                button.FavButton:Hide()
                 button.DeleteButton:Hide()
                 button.EditButton:Hide()
             end
 
             button.HighlightBar:Show()
         else
+            button.FavButton:Hide()
             button.DeleteButton:Hide()
             button.EditButton:Hide()
 
@@ -136,6 +144,7 @@ function frame:Update()
                 button.icon:SetPoint("LEFT", 7, 0)
 
                 button.SelectedBar:Hide()
+                button.UnfavButton:Hide()
             else
                 local profile = profiles[i + offset - 1]
 
@@ -173,6 +182,12 @@ function frame:Update()
                     self.selected = profile.name
                 else
                     button.SelectedBar:Hide()
+                end
+
+                if false then
+                    button.UnfavButton:Show()
+                else
+                    button.UnfavButton:Hide()
                 end
             end
 
