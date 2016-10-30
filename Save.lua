@@ -320,3 +320,11 @@ function addon:SaveBindings(profile)
 
     profile.bindingsDominos = bindingsDominos
 end
+
+function addon:SetDefault(name, key)
+    self:UpdateGUI()
+end
+
+function addon:UnsetDefault(name, key)
+    self:UpdateGUI()
+end

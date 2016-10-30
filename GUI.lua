@@ -112,6 +112,20 @@ function frame:OnEditClick(button)
     PaperDollActionBarProfilesSaveDialog:Show()
 end
 
+function frame:OnFavClick(button)
+    local name = UnitName("player") .. "-" .. GetRealmName("player")
+    local spec = GetSpecializationInfo(GetSpecialization())
+
+    addon:SetDefault(button.name, name .. "-" .. spec)
+end
+
+function frame:OnUnfavClick(button)
+    local name = UnitName("player") .. "-" .. GetRealmName("player")
+    local spec = GetSpecializationInfo(GetSpecialization())
+
+    addon:UnsetDefault(button.name, name .. "-" .. spec)
+end
+
 function frame:Update()
     local profiles = { addon:GetProfiles() }
     local rows = #profiles + 1
@@ -119,7 +133,10 @@ function frame:Update()
     HybridScrollFrame_Update(self, rows * ACTION_BAR_PROFILE_BUTTON_HEIGHT + self.UseProfile:GetHeight() + 20, self:GetHeight())
 
     local offset = HybridScrollFrame_GetOffset(self)
+
+    local name = UnitName("player") .. "-" .. GetRealmName("player")
     local class = select(2, UnitClass("player"))
+    local spec = GetSpecializationInfo(GetSpecialization())
 
     local cache = addon:MakeCache()
 
@@ -184,7 +201,7 @@ function frame:Update()
                     button.SelectedBar:Hide()
                 end
 
-                if false then
+                if addon:IsDefault(profile, name .. "-" .. spec) then
                     button.UnfavButton:Show()
                 else
                     button.UnfavButton:Hide()

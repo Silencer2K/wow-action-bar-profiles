@@ -748,7 +748,7 @@ end
 
 function addon:PreloadCombatAllySpells(spells)
     local follower
-    for follower in table.s2k_values(C_Garrison.GetFollowers()) do
+    for follower in table.s2k_values(C_Garrison.GetFollowers() or {}) do
         if follower.garrFollowerID then
             local id
             for id in table.s2k_values({ C_Garrison.GetFollowerZoneSupportAbilities(follower.garrFollowerID) }) do
@@ -1033,4 +1033,7 @@ function addon:PlacePetSpell(slot, id, link, count)
     PickupSpellBookItem(id, BOOKTYPE_PET)
 
     self:PlaceToPetSlot(slot)
+end
+
+function addon:IsDefault(profile, key)
 end
