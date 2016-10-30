@@ -87,6 +87,10 @@ function addon:OnInitialize()
         self:UpdateGUI()
     end)
 
+    self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED", function(...)
+        self:UpdateGUI()
+    end)
+
     self:RegisterEvent("UNIT_AURA", function(event, target)
         if target == "player" then
             if self.auraTimer then
