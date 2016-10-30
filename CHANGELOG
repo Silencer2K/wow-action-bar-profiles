@@ -1,6 +1,9 @@
+7.1.0-2:
+ - Added auto profile switching
+
 7.1.0:
  - Updated to 7.1.0
- - Combat ally ability fixed
+ - Fixed combat ally ability
 
 7.0.3-3:
  - New macros manager
