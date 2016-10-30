@@ -749,10 +749,12 @@ end
 function addon:PreloadCombatAllySpells(spells)
     local follower
     for follower in table.s2k_values(C_Garrison.GetFollowers()) do
-        local id
-        for id in table.s2k_values({ C_Garrison.GetFollowerZoneSupportAbilities(follower.garrFollowerID) }) do
-            local name = GetSpellInfo(id)
-            self:UpdateCache(spells, 211390, id, name)
+        if follower.garrFollowerID then
+            local id
+            for id in table.s2k_values({ C_Garrison.GetFollowerZoneSupportAbilities(follower.garrFollowerID) }) do
+                local name = GetSpellInfo(id)
+                self:UpdateCache(spells, 211390, id, name)
+            end
         end
     end
 end
