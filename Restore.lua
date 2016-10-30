@@ -1043,5 +1043,5 @@ function addon:IsDefault(profile, key)
         if not profile then return end
     end
 
-    return profile.fav[key] and true or nil
+    return profile.fav and profile.fav[key] and true or nil
 end
