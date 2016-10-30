@@ -29,11 +29,13 @@ function frame:OnHide()
 end
 
 function frame:OnUpdate()
+    local class = select(2, UnitClass("player"))
+
     local button
     for button in table.s2k_values(self.buttons) do
         if button:IsMouseOver() then
             if button.name then
-                if button.UnfavButton:IsShown() then
+                if button.UnfavButton:IsShown() or button.class ~= class then
                     button.FavButton:Hide()
                 else
                     button.FavButton:Show()
@@ -166,8 +168,9 @@ function frame:Update()
                 local profile = profiles[i + offset - 1]
 
                 button.name = profile.name
+                button.class = profile.class
 
-                local name = profile.name
+                local text = profile.name
                 local color = NORMAL_FONT_COLOR
 
                 if profile.class ~= class then
@@ -176,11 +179,11 @@ function frame:Update()
                     local fail, total = addon:UseProfile(profile, true, cache)
                     if fail > 0 then
                         color = RED_FONT_COLOR
-                        name = name .. string.format(" (%d/%d)", fail, total)
+                        text = text .. string.format(" (%d/%d)", fail, total)
                     end
                 end
 
-                button.text:SetText(name)
+                button.text:SetText(text)
                 button.text:SetTextColor(color.r, color.g, color.b)
 
                 if profile.icon then
