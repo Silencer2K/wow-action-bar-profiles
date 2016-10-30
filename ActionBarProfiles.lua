@@ -88,6 +88,30 @@ function addon:OnInitialize()
     end)
 
     self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED", function(...)
+        if self.specTimer then
+            self:CancelTimer(self.specTimer)
+        end
+
+        self.specTimer = self:ScheduleTimer(function()
+            self.specTimer = nil
+
+            local player = UnitName("player") .. "-" .. GetRealmName("player")
+            local spec = GetSpecializationInfo(GetSpecialization())
+
+            if not self.prevSpec or self.prevSpec ~= spec then
+                self.prevSpec = spec
+
+                local list = self.db.profile.list
+                local profile
+
+                for profile in table.s2k_values(list) do
+                    if profile.fav and profile.fav[player .. "-" .. spec] then
+                        self:UseProfile(profile)
+                    end
+                end
+            end
+        end, 0.1)
+
         self:UpdateGUI()
     end)
 
