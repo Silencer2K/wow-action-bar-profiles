@@ -130,6 +130,11 @@ ABP_SPECIAL_SPELLS = {
     [982]    = { class = "HUNTER" },                    -- Revive Pet
     [1515]   = { class = "HUNTER", level = 10 },        -- Tame Beast
 
+    -- hunter traps
+    [187650] = { class = "HUNTER", spec = 255, level = 16 },        -- Freezing Trap
+    [187698] = { class = "HUNTER", spec = 255, level = 36 },        -- Tar Trap
+    [191433] = { class = "HUNTER", spec = 255, level = 50 },        -- Explosive Trap
+
     -- warlock daemons
     [688]    = { class = "WARLOCK" },                   -- Summon Imp
     [697]    = { class = "WARLOCK", level = 8 },        -- Summon Voidwalker
