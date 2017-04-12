@@ -387,7 +387,7 @@ end
 function addon:InjectPaperDollSidebarTab(name, frame, icon, texCoords)
     local tab = #PAPERDOLL_SIDEBARS + 1
 
-    PAPERDOLL_SIDEBARS[tab] = { name = name, frame = frame, icon = icon, texCoords = texCoords }
+    PAPERDOLL_SIDEBARS[tab] = { name = name, frame = frame, icon = icon, texCoords = texCoords, IsActive = function() return true end }
 
     CreateFrame(
         "Button", "PaperDollSidebarTab" .. tab, PaperDollSidebarTabs,
