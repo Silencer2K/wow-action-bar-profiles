@@ -1,8 +1,8 @@
-## Interface: 70100
+## Interface: 70200
 ## Title: Action Bar Profiles
 ## Author: silencer2k@gmail.com
 ## SavedVariables: ActionBarProfilesDBv3
-## Version: 7.1.0
+## Version: 7.2.0
 
 ActionBarProfiles.xml
 
