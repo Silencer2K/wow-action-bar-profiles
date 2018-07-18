@@ -263,9 +263,13 @@ function addon:SavePetActions(profile)
         local index
         for index = 1, HasPetSpells() do
             local id = select(2, GetSpellBookItemInfo(index, BOOKTYPE_PET))
+            local name = GetSpellBookItemName(index, BOOKTYPE_PET)
 
-            if id then
-                local name = GetSpellBookItemName(index, BOOKTYPE_PET)
+            local token = bit.band(id, 0x80000000) == 0
+
+            id = bit.band(id, 0xFFFFFF)
+
+            if not token then
                 petSpells[name] = id
             end
         end
@@ -274,16 +278,16 @@ function addon:SavePetActions(profile)
 
         local slot
         for slot = 1, NUM_PET_ACTION_SLOTS do
-            local name, _, _, token = GetPetActionInfo(slot)
+            local name = GetPetActionInfo(slot)
 
             if name then
-                if token then
+                if petSpells[name] then
+                    petActions[slot] = GetSpellLink(petSpells[name])
+                else
                     petActions[slot] = string.format(
                         "|cffff0000|Habp:pet:%s|h[%s]|h|r",
                         name, _G[name]
                     )
-                else
-                    petActions[slot] = GetSpellLink(petSpells[name])
                 end
             end
         end

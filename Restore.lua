@@ -848,10 +848,13 @@ function addon:PreloadPetSpells(spells)
     if HasPetSpells() then
         local index
         for index = 1, HasPetSpells() do
-            local type, id = GetSpellBookItemInfo(index, BOOKTYPE_PET)
+            local id = select(2, GetSpellBookItemInfo(index, BOOKTYPE_PET))
             local name = GetSpellBookItemName(index, BOOKTYPE_PET)
+            local token = bit.band(id, 0x80000000) == 0
 
-            if type == "PETACTION" then
+            id = bit.band(id, 0xFFFFFF)
+
+            if token then
                 self:UpdateCache(spells, index, -1, name)
             else
                 self:UpdateCache(spells, index, id, name)
