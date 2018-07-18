@@ -1,8 +1,6 @@
 Action Bar Profiles
 ===================
 
-**Please note, updating to 7.0.3-2 deletes all existing profiles.**
-
 Add-on that allows you to setup and quickly switch between different profiles of your action bars, talents, macros and key bindings.
 
 Chat commands
@@ -13,9 +11,6 @@ Chat commands
 * /abp use **profile** - activates **profile**
 * /abp save **profile** - saves current actions to **profile**
 * /abp del **profile** - deletes **profile**
-
-* /abp send **char** - sends current actions to **char**
-* /abp send **char** **profile** - sends **profile** to **char**
 
 Links
 -----

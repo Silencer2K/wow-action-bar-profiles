@@ -1,6 +1,6 @@
 local addonName, addon = ...
 
-LibStub("AceAddon-3.0"):NewAddon(addon, addonName, "AceConsole-3.0", "AceTimer-3.0", "AceEvent-3.0", "AceComm-3.0", "AceSerializer-3.0")
+LibStub("AceAddon-3.0"):NewAddon(addon, addonName, "AceConsole-3.0", "AceTimer-3.0", "AceEvent-3.0", "AceSerializer-3.0")
 
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 local DEBUG = "|cffff0000Debug:|r "
@@ -135,15 +135,6 @@ function addon:OnInitialize()
             end, 0.1)
         end
     end)
-
-    -- profile sharing
-    self:RegisterComm(ABP_COMM_CMD, function(...)
-        self:OnCommCmd(...)
-    end)
-
-    self:RegisterComm(ABP_COMM_SHARE, function(...)
-        self:OnCommShare(...)
-    end)
 end
 
 function addon:ParseArgs(message)
@@ -207,25 +198,6 @@ function addon:OnChatCommand(message)
 
             if profile then
                 self:UseProfile(profile)
-            else
-                self:Printf(L.msg_profile_not_exists, param)
-            end
-        end
-
-    elseif cmd == "send" or cmd == "share" or cmd == "sh" then
-        if param then
-            local char, profile
-
-            char, param = self:ParseArgs(param)
-
-            if param then
-                profile = self:GetProfiles(param, true)
-            else
-                profile = self:UpdateProfile({}, true)
-            end
-
-            if profile then
-                self:CommSendCmd("share", char, profile)
             else
                 self:Printf(L.msg_profile_not_exists, param)
             end
@@ -456,64 +428,4 @@ end
 
 function addon:PackMacro(macro)
     return macro:gsub("^%s+", ""):gsub("%s+\n", "\n"):gsub("\n%s+", "\n"):gsub("%s+$", ""):sub(1)
-end
-
-function addon:OnCommCmd(prefix, text, channel, sender)
-    if channel == "WHISPER" then
-        local type, cmd, id = strsplit(":", text)
-
-        if type == "req" then
-            self:SendCommMessage(ABP_COMM_CMD, string.format("ack:%s:%s", cmd, id), "WHISPER", sender)
-
-        elseif type == "ack" then
-            if self.commCmds and self.commCmds[id] and self.commCmds[id].cmd == cmd then
-                if self.commCmds[id].timer then
-                    self:CancelTimer(self.commCmds[id].timer)
-                end
-
-                if cmd == "share" then
-                    self:SendCommMessage(ABP_COMM_SHARE, self:Serialize(self.commCmds[id].data), "WHISPER", sender)
-                end
-
-                self.commCmds[id] = nil
-            end
-        end
-    end
-end
-
-function addon:OnCommShare(prefix, text, channel, sender)
-    if channel == "WHISPER" then
-        local profile = select(2, self:Deserialize(text))
-
-        if profile then
-            if not addon:ShowPopup("CONFIRM_RECEIVE_ACTION_BAR_PROFILE", sender, nil, { name = sender, profile = profile }) then
-                UIErrorsFrame:AddMessage(ERR_CLIENT_LOCKED_OUT, 1.0, 0.1, 0.1, 1.0)
-            end
-        end
-    end
-end
-
-function addon:CommSendCmd(cmd, target, data)
-    local id = string.format("%08d", math.random(99999999))
-
-    self.commCmds = self.commCmds or {}
-
-    self.commCmds[id] = {
-        data = data,
-        cmd = cmd,
-        timer = self:ScheduleTimer(function()
-            if cmd == "share" then
-                local messages = { strsplit("\n", L.chat_share_invite:format(ABP_ADDON_NAME, ABP_ADDON_NAME, ABP_DOWNLOAD_LINK)) }
-
-                local message
-                for message in table.s2k_values(messages) do
-                    SendChatMessage(message, "WHISPER", nil, target)
-                end
-            end
-
-            self.commCmds[id] = nil
-        end, 5)
-    }
-
-    self:SendCommMessage(ABP_COMM_CMD, string.format("req:%s:%s", cmd, id), "WHISPER", target)
 end
