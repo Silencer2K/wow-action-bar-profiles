@@ -599,7 +599,10 @@ function addon:FindSpellInCache(cache, id, name, link)
 end
 
 function addon:FindFlyoutInCache(cache, id, name, link)
-    name = GetFlyoutInfo(id) or name
+    local ok, info_name = pcall(GetFlyoutInfo, id)
+    if ok then
+        name = info_name
+    end
 
     local found = self:GetFromCache(cache, id, name, link)
     if found then
