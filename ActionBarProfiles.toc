@@ -1,8 +1,8 @@
-## Interface: 80200
+## Interface: 90001
 ## Title: Action Bar Profiles
 ## Author: silencer2k@gmail.com
 ## SavedVariables: ActionBarProfilesDBv3
-## Version: 8.2.0
+## Version: 9.0.0
 
 ActionBarProfiles.xml
 
