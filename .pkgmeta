@@ -5,21 +5,21 @@ enable-nolib-creation: no
 manual-changelog: CHANGELOG
 
 externals:
-    libs/LibStub: svn://svn.wowace.com/wow/ace3/mainline/trunk/LibStub
-    libs/CallbackHandler-1.0: svn://svn.wowace.com/wow/callbackhandler/mainline/trunk/CallbackHandler-1.0
-    libs/AceAddon-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceAddon-3.0
-    libs/AceGUI-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceGUI-3.0
-    libs/AceConfig-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConfig-3.0
-    libs/AceConsole-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConsole-3.0
-    libs/AceDB-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDB-3.0
-    libs/AceDBOptions-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDBOptions-3.0
-    libs/AceEvent-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceEvent-3.0
-    libs/AceLocale-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceLocale-3.0
-    libs/AceSerializer-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceSerializer-3.0
-    libs/AceTimer-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceTimer-3.0
-    libs/LibDataBroker-1.1: https://github.com/tekkub/libdatabroker-1-1.git
-    libs/LibDBIcon-1.0: svn://svn.wowace.com/wow/libdbicon-1-0/mainline/trunk/LibDBIcon-1.0
-    libs/LibQTip-1.0: svn://svn.wowace.com/wow/libqtip-1-0/mainline/trunk
+    libs/LibStub: https://repos.wowace.com/wow/libstub/trunk
+    libs/CallbackHandler-1.0: https://repos.wowace.com/wow/callbackhandler/trunk
+    libs/AceAddon-3.0: https://repos.wowace.com/wow/ace3/trunk/AceAddon-3.0
+    libs/AceGUI-3.0: https://repos.wowace.com/wow/ace3/trunk/AceGUI-3.0
+    libs/AceConfig-3.0: https://repos.wowace.com/wow/ace3/trunk/AceConfig-3.0
+    libs/AceConsole-3.0: https://repos.wowace.com/wow/ace3/trunk/AceConsole-3.0
+    libs/AceDB-3.0: https://repos.wowace.com/wow/ace3/trunk/AceDB-3.0
+    libs/AceDBOptions-3.0: https://repos.wowace.com/wow/ace3/trunk/AceDBOptions-3.0
+    libs/AceEvent-3.0: https://repos.wowace.com/wow/ace3/trunk/AceEvent-3.0
+    libs/AceLocale-3.0: https://repos.wowace.com/wow/ace3/trunk/AceLocale-3.0
+    libs/AceSerializer-3.0: https://repos.wowace.com/wow/ace3/trunk/AceSerializer-3.0
+    libs/AceTimer-3.0: https://repos.wowace.com/wow/ace3/trunk/AceTimer-3.0
+    libs/LibDataBroker-1.1: https://repos.wowace.com/wow/libdatabroker-1-1
+    libs/LibDBIcon-1.0: https://repos.wowace.com/wow/libdbicon-1-0/trunk
+    libs/LibQTip-1.0: https://repos.wowace.com/wow/libqtip-1-0
     libs/LibS2kFactionalItems-1.0: https://github.com/Silencer2K/wow-lib-s2k-factional-items.git
     libs/LibS2kMisc-1.0: https://github.com/Silencer2K/wow-lib-s2k-misc.git
 
