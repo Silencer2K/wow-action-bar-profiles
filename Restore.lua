@@ -276,6 +276,10 @@ function addon:RestoreTalents(profile, check, cache, res)
 end
 
 function addon:RestorePvpTalents(profile, check, cache, res)
+    if not profile.pvpTalents then
+        return 0, 0
+    end
+
     local fail, total = 0, 0
 
     -- hack: update cache
