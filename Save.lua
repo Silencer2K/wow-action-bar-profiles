@@ -127,6 +127,10 @@ function addon:SaveActions(profile)
 
                 elseif type == "SPELL" and IsTalentSpell(index, BOOKTYPE_SPELL) then
                     tsNames[name] = id
+
+                -- in case a PvP Talent ever shows up in a spellbook
+                elseif type == "SPELL" and IsPvpTalentSpell(index, BOOKTYPE_SPELL) then
+                    tsNames[name] = id
                 end
             end
         end
@@ -149,6 +153,21 @@ function addon:SaveActions(profile)
     end
 
     profile.talents = talents
+
+    local pvpTalentIDs, pvpTalents, pvpTalentSpells = {}, {}, {}
+
+    pvpTalentIDs = C_SpecializationInfo.GetAllSelectedPvpTalentIDs()
+
+    local tier
+    for tier = 1, #pvpTalentIDs do
+        pvpTalents[tier] = GetPvpTalentLink(pvpTalentIDs[tier])
+        local id = select(6, GetPvpTalentInfoByID(pvpTalentIDs[tier]))
+        pvpTalentSpells[tier] = GetSpellLink(id)
+    end
+
+    profile.pvpTalentsIds = pvpTalentIDs
+    profile.pvpTalents = pvpTalents
+    profile.pvpTalentSpells = pvpTalentSpells
 
     local actions = {}
     local savedMacros = {}
