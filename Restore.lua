@@ -284,47 +284,45 @@ function addon:RestorePvpTalents(profile, check, cache, res)
 
     local tier
     for tier = 1, 3 do -- MAX_PVP_TALENT_TIERS does not exist
-        if pvpTalents[tier] then
-            local link = profile.pvpTalents[tier]
-            if link then
-                -- has action
-                local ok
-                total = total + 1
+        local link = profile.pvpTalents[tier]
+        if link then
+            -- has action
+            local ok
+            total = total + 1
 
-                local data, name = link:match("^|c.-|H(.-)|h%[(.-)%]|h|r$")
-                link = link:gsub("|Habp:.+|h(%[.+%])|h", "%1")
+            local data, name = link:match("^|c.-|H(.-)|h%[(.-)%]|h|r$")
+            link = link:gsub("|Habp:.+|h(%[.+%])|h", "%1")
 
-                if data then
-                    local type, sub = strsplit(":", data)
-                    local id = tonumber(sub)
+            if data then
+                local type, sub = strsplit(":", data)
+                local id = tonumber(sub)
 
-                    if type == "pvptal" then
-                        local found = self:GetFromCache(cache.allPvpTalents[tier], id, name, not check and link)
-                        if found then
-                            if self:GetFromCache(cache.pvpTalents, id) or rest or select(2, GetPvpTalentInfoByID(id, 1)) == 0 then
-                                ok = true
+                if type == "pvptal" then
+                    local found = self:GetFromCache(cache.allPvpTalents[tier], id, name, not check and link)
+                    if found then
+                        if self:GetFromCache(cache.pvpTalents, id) or rest or select(2, GetPvpTalentInfoByID(id, 1)) == 0 then
+                            ok = true
 
-                                -- hack: update cache
-                                self:UpdateCache(pvpTalents, found, id, select(2, GetPvpTalentInfoByID(id)))
-                                if not check then
-                                    LearnPvpTalent(found, tier)
-                                end
-                            else
-                                self:cPrintf(not check, L.msg_cant_learn_talent, link)
+                            -- hack: update cache
+                            self:UpdateCache(pvpTalents, found, id, select(2, GetPvpTalentInfoByID(id)))
+                            if not check then
+                                LearnPvpTalent(found, tier)
                             end
                         else
-                            self:cPrintf(not check, L.msg_talent_not_exists, link)
+                            self:cPrintf(not check, L.msg_cant_learn_talent, link)
                         end
                     else
-                        self:cPrintf(not check, L.msg_bad_link, link)
+                        self:cPrintf(not check, L.msg_talent_not_exists, link)
                     end
                 else
                     self:cPrintf(not check, L.msg_bad_link, link)
                 end
+            else
+                self:cPrintf(not check, L.msg_bad_link, link)
+            end
 
-                if not ok then
-                    fail = fail + 1
-                end
+            if not ok then
+                fail = fail + 1
             end
         end
     end
@@ -350,24 +348,22 @@ end
 --
 --	local tier
 --	for tier = 1, 3 do
---		if pvpTalents[tier] then
---			local id = profile.pvpTalents[tier]
---			if id then
---				-- has action
---				local ok
---				total = total + 1
---				if id == tonumber(id) then
---					ok = true
---					if not check then
---						LearnPvpTalent(id, tier)
---					end
---				else
---					self:cPrintf(not check, L.msg_bad_link, id)
+--		local id = profile.pvpTalents[tier]
+--		if id then
+--			-- has action
+--			local ok
+--			total = total + 1
+--			if id == tonumber(id) then
+--				ok = true
+--				if not check then
+--					LearnPvpTalent(id, tier)
 --				end
+--			else
+--				self:cPrintf(not check, L.msg_bad_link, id)
+--			end
 --
---				if not ok then
---					fail = fail + 1
---				end
+--			if not ok then
+--				fail = fail + 1
 --			end
 --		end
 --	end
