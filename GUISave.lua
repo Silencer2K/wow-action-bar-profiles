@@ -9,6 +9,7 @@ function frame:SaveDialogOptions()
         { "Actions", "actions" },
         { "EmptySlots", "empty_slots" },
         { "Talents", "talents" },
+        { "PvPTalents", "pvp_talents" },
         { "Macros", "macros" },
         { "PetActions", "pet_actions" },
         { "Bindings", "bindings" },

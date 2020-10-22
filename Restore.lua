@@ -58,6 +58,10 @@ function addon:UseProfile(profile, check, cache)
         self:RestoreTalents(profile, check, cache, res)
     end
 
+    if not profile.skipPvpTalents then
+        self:RestorePvpTalents(profile, check, cache, res)
+    end
+
     if not profile.skipActions then
         self:RestoreActions(profile, check, cache, res)
     end
@@ -271,6 +275,104 @@ function addon:RestoreTalents(profile, check, cache, res)
     return fail, total
 end
 
+function addon:RestorePvpTalents(profile, check, cache, res)
+    local fail, total = 0, 0
+
+    -- hack: update cache
+    local pvpTalents = { id = {}, name = {} }
+    local rest = self.auraState or IsResting()
+
+    local tier
+    for tier = 1, 3 do -- MAX_PVP_TALENT_TIERS does not exist
+        local link = profile.pvpTalents[tier]
+        if link then
+            -- has action
+            local ok
+            total = total + 1
+
+            local data, name = link:match("^|c.-|H(.-)|h%[(.-)%]|h|r$")
+            link = link:gsub("|Habp:.+|h(%[.+%])|h", "%1")
+
+            if data then
+                local type, sub = strsplit(":", data)
+                local id = tonumber(sub)
+
+                if type == "pvptal" then
+                    local found = self:GetFromCache(cache.allPvpTalents[tier], id, name, not check and link)
+                    if found then
+                        if self:GetFromCache(cache.pvpTalents, id) or rest or select(2, GetPvpTalentInfoByID(id, 1)) == 0 then
+                            ok = true
+
+                            -- hack: update cache
+                            self:UpdateCache(pvpTalents, found, id, select(2, GetPvpTalentInfoByID(id)))
+                            if not check then
+                                LearnPvpTalent(found, tier)
+                            end
+                        else
+                            self:cPrintf(not check, L.msg_cant_learn_talent, link)
+                        end
+                    else
+                        self:cPrintf(not check, L.msg_talent_not_exists, link)
+                    end
+                else
+                    self:cPrintf(not check, L.msg_bad_link, link)
+                end
+            else
+                self:cPrintf(not check, L.msg_bad_link, link)
+            end
+
+            if not ok then
+                fail = fail + 1
+            end
+        end
+    end
+
+    -- hack: update cache
+    cache.pvpTalents = pvpTalents
+
+    if res then
+        res.fail = res.fail + fail
+        res.total = res.total + total
+    end
+
+    return fail, total
+end
+
+--
+--
+---- FURYUS DIRTY HACK PVP TALENT RESTORE
+---- reads directly from the db file pvpTalents table and not the cache
+--
+--function addon:RestorePvpTalents(profile, check)
+--	local fail, total = 0, 0
+--
+--	local tier
+--	for tier = 1, 3 do
+--		local id = profile.pvpTalents[tier]
+--		if id then
+--			-- has action
+--			local ok
+--			total = total + 1
+--			if id == tonumber(id) then
+--				ok = true
+--				if not check then
+--					LearnPvpTalent(id, tier)
+--				end
+--			else
+--				self:cPrintf(not check, L.msg_bad_link, id)
+--			end
+--
+--			if not ok then
+--				fail = fail + 1
+--			end
+--		end
+--	end
+--
+--	return fail, total
+--end
+--
+--
+
 function addon:RestoreActions(profile, check, cache, res)
     local fail, total = 0, 0
 
@@ -316,6 +418,19 @@ function addon:RestoreActions(profile, check, cache, res)
 
                         if not check then
                             self:PlaceTalent(slot, found, link)
+                        end
+                    end
+
+                    self:cPrintf(not ok and not check, L.msg_spell_not_exists, link)
+
+                -- almost certain this routine not needed since a pvp talent that is placed on an action bar is recorded on the bar with its spellid rather than its talentid
+                elseif type == "pvptal" then
+                    local found = self:GetFromCache(cache.pvpTalents, id, name, not check and link)
+                    if found then
+                        ok = true
+
+                        if not check then
+                            self:PlacePvpTalent(slot, found, link)
                         end
                     end
 
@@ -640,6 +755,9 @@ function addon:MakeCache()
         talents = { id = {}, name = {} },
         allTalents = {},
 
+        pvpTalents = { id = {}, name = {} },
+        allPvpTalents = {},
+
         spells = { id = {}, name = {} },
         flyouts = { id = {}, name = {} },
 
@@ -654,6 +772,8 @@ function addon:MakeCache()
     }
 
     self:PreloadTalents(cache.talents, cache.allTalents)
+    self:PreloadPvpTalents(cache.pvpTalents, cache.allPvpTalents)
+--    self:PreloadPvpTalentSpells(cache.spells)
 
     self:PreloadSpecialSpells(cache.spells)
     self:PreloadSpellbook(cache.spells, cache.flyouts)
@@ -782,6 +902,48 @@ function addon:PreloadTalents(talents, all)
     end
 end
 
+function addon:PreloadPvpTalents(pvpTalents, allPvpTalents)
+    local pvpTalentIDs = {}
+    pvpTalentIDs = C_SpecializationInfo.GetAllSelectedPvpTalentIDs()
+    local tier
+    for tier = 1, 3 do
+        allPvpTalents[tier] = allPvpTalents[tier] or { id = {}, name = {} }
+
+        if pvpTalentIDs[tier] then
+            if GetPvpTalentInfoByID(pvpTalentIDs[tier]) then
+                local id, name, _, _, available, spellID, unlocked, _, _, known = GetPvpTalentInfoByID(pvpTalentIDs[tier])
+                if available and unlocked and known then
+                    self:UpdateCache(pvpTalents, id, id, name)
+                end
+            end
+        end
+
+        local pvpAvailableTalentIDs = {}
+        pvpAvailableTalentIDs = C_SpecializationInfo.GetPvpTalentSlotInfo(tier).availableTalentIDs
+        local row
+        for row = 1, #pvpAvailableTalentIDs do
+            local id, name, _, _, available, spellID, unlocked, _, _, known = GetPvpTalentInfoByID(pvpAvailableTalentIDs[row])
+            self:UpdateCache(allPvpTalents[tier], id, id, name)
+        end
+    end
+end
+
+--function addon:PreloadPvpTalentSpells(spells)
+--    local pvpTalentIDs = {}
+--    pvpTalentIDs = C_SpecializationInfo.GetAllSelectedPvpTalentIDs()
+--    local tier
+--    for tier = 1, 3 do
+--        if pvpTalentIDs[tier] then
+--            if GetPvpTalentInfoByID(pvpTalentIDs[tier]) then
+--                local id, name, _, _, available, spellID, unlocked, _, _, known = GetPvpTalentInfoByID(pvpTalentIDs[tier])
+--                if available and unlocked and known then
+--                    self:UpdateCache(spells, spellID, spellID, name)
+--                end
+--            end
+--        end
+--    end
+--end
+--
 function addon:PreloadEquip(equip)
     local slot
     for slot = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
@@ -940,6 +1102,25 @@ function addon:PlaceTalent(slot, id, link, count)
         if count > 0 then
             self:ScheduleTimer(function()
                 self:PlaceTalent(slot, id, link, count - 1)
+            end, ABP_PICKUP_RETRY_INTERVAL)
+        else
+            self:cPrintf(link, DEBUG .. L.msg_cant_place_spell, link)
+        end
+    else
+        self:PlaceToSlot(slot)
+    end
+end
+
+function addon:PlacePvpTalent(slot, id, link, count)
+    count = count or ABP_PICKUP_RETRY_COUNT
+
+    ClearCursor()
+    PickupPvpTalent(id)
+
+    if not CursorHasSpell() then
+        if count > 0 then
+            self:ScheduleTimer(function()
+                self:PlacePvpTalent(slot, id, link, count - 1)
             end, ABP_PICKUP_RETRY_INTERVAL)
         else
             self:cPrintf(link, DEBUG .. L.msg_cant_place_spell, link)
