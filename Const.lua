@@ -99,6 +99,16 @@ ABP_SIMILAR_SPELLS = {
     [87840]  = { 69070, 20577 },    -- Running Wild
     [69070]  = { 87840, 20577 },    -- Rocket Jump
     [20577]  = { 87840, 69070 },    -- Cannibalize
+
+    -- covenant spells
+    [312202] = { 315443, 311648 },  -- Shackle the Unworthy
+    [315443] = { 312202, 311648 },  -- Abomination Limb
+    [311648] = { 312202, 315443 },  -- Swarming Mist
+
+    [324739] = { 324631, 310143, 300728 },  -- Summon Steward
+    [324631] = { 324739, 310143, 300728 },  -- Fleshcraft
+    [310143] = { 324739, 324631, 300728 },  -- Soulshape
+    [300728] = { 324739, 324631, 310143 },  -- Door of Shadows
 }
 
 ABP_SPECIAL_SPELLS = {
